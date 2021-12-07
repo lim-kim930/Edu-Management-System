@@ -114,7 +114,7 @@ export default {
       this.wh = this.windowHeight() < 600 ? 600 : this.windowHeight();
     }
     this.redirect();
-    if (localStorage.getItem("jw_manage_file") === null)
+    if (localStorage.getItem("jw_manager_file") === null)
       this.$confirm("您还未登录,请前往登录", "提示", {
         confirmButtonText: "确定",
         showCancelButton: false,
@@ -125,7 +125,7 @@ export default {
         window.location.href = "https://edu.limkim.cn/sign"
       });
     else
-      this.uName = JSON.parse(localStorage.getItem("jw_manage_file")).uname
+      this.uName = JSON.parse(localStorage.getItem("jw_manager_file")).uname
   },
 };
 </script>

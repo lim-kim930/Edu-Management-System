@@ -33,7 +33,7 @@ export default {
         this.axios({
           method: "put",
           url: "https://api.hduhelp.com/gormja_wrapper/dataFile/resetNewable",
-          headers: { Authorization: "token " + JSON.parse(localStorage.getItem("jw_manage_file")).token },
+          headers: { Authorization: "token " + JSON.parse(localStorage.getItem("jw_manager_file")).token },
           data: { staffID: this.staffID }
         }).then(() => {
           this.$message.success("重置成功");

@@ -98,7 +98,7 @@ export default {
         this.axios({
           method: "put",
           url: "https://api.hduhelp.com/gormja_wrapper/company/delete",
-          headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_manage_file")).token },
+          headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_manager_file")).token },
           data: {
             CompanyCode: row.CompanyCode
           }
@@ -133,7 +133,7 @@ export default {
       this.axios({
         method: "post",
         url: "https://api.hduhelp.com/gormja_wrapper/company/add",
-        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_manage_file")).token },
+        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_manager_file")).token },
         data: {
           CompanyCode: this.form.CompanyCode,
           Name: this.form.Name,

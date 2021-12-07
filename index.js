@@ -15,7 +15,7 @@ if (location.search.split("?")[1] !== undefined) {
                 window.location.href = "https://edu.limkim.cn/student"
             }
             else if (JSON.parse(result).data.STAFFTYPE === "2") {
-                localStorage.setItem("jw_manage_file", JSON.stringify({
+                localStorage.setItem("jw_manager_file", JSON.stringify({
                     token: location.search.split("?")[1].split("&")[0].split("=")[1],
                     staffID: location.search.split("?")[1].split("&")[1].split("=")[1]
                 }))

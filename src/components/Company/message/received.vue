@@ -29,15 +29,19 @@
         @click="goQuery(item.url)"
       >
         <el-col :span="8" class="card">
-          <el-card shadow="always">
+          <el-card shadow="hover">
             <h5>学校: {{item.SchoolCode}}</h5>
             <h5>应聘公司: {{item.TargetCompanyCode}}</h5>
-            <h5>应聘岗位: {{item.TargetTargetJobID}}</h5>
+            <h5>应聘岗位: {{item.TargetJobID}}</h5>
             <h5>过期时间: {{item.date}}</h5>
+            <el-badge :hidden="item.Read" value="new" class="badge">
+              <h5>状态: {{item.Read?"已读":"未读"}}</h5>
+            </el-badge>
           </el-card>
         </el-col>
       </div>
     </div>
+    <el-empty v-show="receivedMsgData.length === 0" :image-size="200" description="您还没有收到的消息哦~"></el-empty>
   </div>
 </template>
 <script>
@@ -47,7 +51,7 @@ export default {
       loading: false,
       sort: "过期时间▼",
       classify: "无",
-      receivedMsgData: []// 
+      receivedMsgData: []
     };
   },
   methods: {
@@ -92,7 +96,6 @@ export default {
 <style scoped>
 .card {
   margin: 15px 5%;
-  height: 100px;
   border-radius: 10px;
   width: 90%;
 }
@@ -103,7 +106,20 @@ export default {
   margin: 0;
 }
 .el-card {
-  height: 120px;
+  height: 140px;
   border-radius: 10px;
+}
+</style>
+<style>
+.el-card__body {
+  padding: 15px 20px;
+}
+/* 未读状态 */
+.badge {
+  width: 73px
+}
+.badge .el-badge__content {
+  margin-top: 8px;
+  line-height: 12px;
 }
 </style>
