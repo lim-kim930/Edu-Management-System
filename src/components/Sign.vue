@@ -72,7 +72,7 @@ export default {
       }
     },
     windowHeight() {
-      var de = document.documentElement;
+      const de = document.documentElement;
       return self.innerHeight || (de && de.clientHeight) || document.body.clientHeight;
     }
   },

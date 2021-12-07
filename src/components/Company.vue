@@ -43,7 +43,7 @@
       </div>
     </el-header>
     <!-- 主体 -->
-    <el-container :style="{ 'min-height': wh - 80 + 'px' }">
+    <el-container>
       <!-- 侧边栏 -->
       <el-aside width="240px" :style="{ 'height': wh - 100 + 'px' }">
         <el-row class="tac">
@@ -177,7 +177,7 @@ export default {
       }
     },
     windowHeight() {
-      var de = document.documentElement;
+      const de = document.documentElement;
       return self.innerHeight || (de && de.clientHeight) || document.body.clientHeight;
     }
   },

@@ -71,7 +71,7 @@
       <el-form
         class="form"
         :model="form"
-        label-width="80px"
+        label-width="100px"
         :style="{'max-height': this.wh - 105 + 'px'}"
       >
         <span
@@ -306,5 +306,14 @@ export default {
 .cell {
   /* 表格字体 */
   font-size: 17px;
+}
+.el-textarea__inner {
+  padding-right: 20px;
+}
+.el-textarea .el-input__count {
+  line-height: 20px;
+  height: 20px;
+  margin-right: 10px;
+  background-color: rgba(255, 255, 255, 0);
 }
 </style>
