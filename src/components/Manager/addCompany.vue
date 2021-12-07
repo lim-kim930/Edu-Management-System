@@ -94,7 +94,7 @@ export default {
       this.loading = true
       this.axios({
         method: "put",
-        url: "https://api.hduhelp.com/gormja_wrapper/company/put",
+        url: "https://api.hduhelp.com/gormja_wrapper/company/putForAdmin",
         headers: {
           "Authorization": "token " + JSON.parse(localStorage.getItem("jw_manage_file")).token
         },

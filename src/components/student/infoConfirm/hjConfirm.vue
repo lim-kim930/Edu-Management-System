@@ -24,14 +24,14 @@
       点击上传学业文件
       <i class="el-icon-upload"></i>
     </el-upload>
-    <el-button
+    <!-- <el-button
       type="primary"
       plain
       icon="el-icon-delete-solid"
       @click="reupload()"
       v-show="file != ''"
       style="margin-left: 10px;"
-    >删除文件</el-button>
+    >删除文件</el-button>-->
     <el-button
       type="primary"
       plain
@@ -136,6 +136,7 @@
   </el-form>
 </template>
 <script>
+let FormData = require("form-data");
 export default {
   data() {
     return {
@@ -254,7 +255,7 @@ export default {
     //拿到文件明文
     getFileInfo() {
       this.loading = true;
-      var data = new FormData();
+      let data = new FormData();
       data.append("dataFile", this.file);
       // 拿到学生档案明文
       this.axios({
@@ -262,33 +263,33 @@ export default {
         url: "https://api.hduhelp.com/gormja_wrapper/dataFile/get?staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
         headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
         data,
-      })
-        .then((response) => {
-          //存储学业文件内有的项目名称,避免每次查询都要请求一次文件明文
-          var data = response.data.data.Body.data_map
-          if (data.reward !== undefined && data.race_reward !== undefined)
-            sessionStorage.setItem("hj", JSON.stringify(["reward", "race_reward"]))
-          else if (data.reward !== undefined && data.race_reward === undefined)
-            sessionStorage.setItem("hj", JSON.stringify(["reward"]))
-          else if (data.reward === undefined && data.race_reward !== undefined)
-            sessionStorage.setItem("hj", JSON.stringify(["race_reward"]))
-          else if (data.reward === undefined && data.race_reward === undefined)
-            sessionStorage.setItem("hj", JSON.stringify([]))
-          this.loading = false
-          this.checkConfirm()//判断确认状态
-        })
-        .catch((err) => {
-          if (err.response.data.msg === "file hash does not equal to chain")
-            this.$message.error("学业文件错误或者过期,请检查后再试")
-          else
-            this.$message.error("获取学业文件信息出错啦,请稍后再试")
-          this.loading = false
+      }).then((response) => {
+        //存储学业文件内有的项目名称,避免每次查询都要请求一次文件明文
+        var data = response.data.data.Body.data_map
+        if (data.reward !== undefined && data.race_reward !== undefined)
+          sessionStorage.setItem("hj", JSON.stringify(["reward", "race_reward"]))
+        else if (data.reward !== undefined && data.race_reward === undefined)
+          sessionStorage.setItem("hj", JSON.stringify(["reward"]))
+        else if (data.reward === undefined && data.race_reward !== undefined)
+          sessionStorage.setItem("hj", JSON.stringify(["race_reward"]))
+        else if (data.reward === undefined && data.race_reward === undefined)
+          sessionStorage.setItem("hj", JSON.stringify([]))
+        this.loading = false
+        this.checkConfirm()//判断确认状态
+      }).catch((err) => {
+        if (err.response.data.msg === "file hash does not equal to chain") {
+          this.$message.error("学业文件错误或者过期,请检查后再试")
           this.reupload()
-          if (this.typeValue === "reward")
-            this.honorConfirmed = false
-          else
-            this.innovConfirmed = false
-        });
+        }
+        else
+          this.$message.error("获取学业文件信息出错啦,请稍后再试")
+        this.loading = false
+        this.reupload()
+        if (this.typeValue === "reward")
+          this.honorConfirmed = false
+        else
+          this.innovConfirmed = false
+      });
     },
     //根据typeValue拿信息
     getInfo() {
@@ -342,6 +343,8 @@ export default {
           data.append("dataFile", this.file);
           data.append("condMap", "{\"SchoolCode\": 1,\"StaffID\": " + JSON.parse(localStorage.getItem("jw_student_file")).staffID + "}");
           this.loading = true;
+          this.$emit("func2", false);
+          this.$emit("func3", 2);
           this.axios({
             method: "put",
             url: "https://api.hduhelp.com/gormja_wrapper/confirm?topic=" + this.typeValue,
@@ -368,6 +371,8 @@ export default {
               sessionStorage.removeItem("hj");
               this.file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
               this.$emit("func", this.file);
+              this.$emit("func2", true);
+              this.$emit("func3", null);
               this.$confirm("综合素质信息确认成功！继续确认请点击任意空白区域", "提示", {
                 confirmButtonText: "下载新的学业文件",
                 cancelButtonText: "查看此次交易详情",
@@ -395,6 +400,8 @@ export default {
                 this.innovConfirmed = true
             })
             .catch(() => {
+              this.$emit("func2", true);
+              this.$emit("func3", null);
               this.$message.error("出错啦,请稍后再试");
               this.loading = false;
             });

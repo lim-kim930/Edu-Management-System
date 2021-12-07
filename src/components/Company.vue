@@ -1,5 +1,4 @@
 <template>
-  <!-- template 中，只能有唯一的一个根元素 -->
   <el-container>
     <!-- 头部 -->
     <el-header class="logo">
@@ -7,9 +6,6 @@
         <span>高校学业核验系统</span>
       </div>
       <div class="user">
-        <!-- <el-badge :value="200" :max="99" class="item">
-          <el-button size="small">评论</el-button>
-        </el-badge>-->
         <el-dropdown style="height: 50px; line-height: 80px" @command="handleCommand">
           <el-badge
             :value="received + sent"
@@ -32,16 +28,20 @@
         </el-dropdown>
         <el-avatar :size="25" :src="circleUrl"></el-avatar>
         <span style="color: #fff;" id="uname">{{uName === ""?"":uName + " |"}}</span>
-        <el-link :underline="false" @click="logOut()" style="color: #fff;">
+        <el-link
+          :underline="false"
+          @click="logOut()"
+          style="font-size: 15px; color: #fff; margin-top: -4px"
+        >
           {{uName === ""?"登录":"退出"}}
           <i class="el-icon-caret-right"></i>
         </el-link>
       </div>
     </el-header>
     <!-- 主体 -->
-    <el-container>
+    <el-container :style="{ 'min-height': wh - 80 + 'px' }">
       <!-- 侧边栏 -->
-      <el-aside width="240px">
+      <el-aside width="240px" :style="{ 'height': wh - 100 + 'px' }">
         <el-row class="tac">
           <el-col :span="24">
             <el-menu
@@ -81,8 +81,14 @@
         </el-row>
       </el-aside>
       <!-- 内容 -->
-      <el-main v-loading="loading" element-loading-text="拼命加载中">
-        <router-view @func="getReceived" @func2="getSent" :received="received" :sent="sent" :wh="wh"></router-view>
+      <el-main v-loading="loading" element-loading-text="拼命加载中" :style="{'height': this.wh - 80 + 'px'}">
+        <router-view
+          @func="getReceived"
+          @func2="getSent"
+          :received="received"
+          :sent="sent"
+          :wh="wh"
+        ></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -180,9 +186,12 @@ export default {
       // to.path  ( 表示的是要跳转到的路由的地址 eg: /home );
     }
   },
-  mounted() {//写在mounted或者activated生命周期内即可
-    this.wh = this.windowHeight();
+  mounted() {
+    this.wh = this.windowHeight() < 600 ? 600 : this.windowHeight();
     document.querySelector(".el-main").style.height = this.wh - 80 + "px";
+    window.onresize = () => {
+      this.wh = this.windowHeight() < 600 ? 600 : this.windowHeight();
+    }
     this.redirect();
     if (localStorage.getItem("jw_ent_file") === null)
       this.$confirm("您还未登录,请前往登录", "提示", {
@@ -198,19 +207,19 @@ export default {
       this.uName = JSON.parse(localStorage.getItem("jw_ent_file")).CompanyCode
       this.axios({
         method: "post",
-        url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLink",
-        headers: { "Content-Type": "application/json", "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization }
-        // data: localStorage.getItem("sss")
-      })
-        .then((response) => {
-          this.received = response.data.data.length;
-          sessionStorage.setItem("message", JSON.stringify(response.data.data))
-        })
-        .catch(error => {
-          this.$message.error("获取站内信息出错啦,请稍后再试");
-        });
+        url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForCompany",
+        headers: { "Content-Type": "application/json", "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization },
+        data: {
+          "schoolCode": "1"
+        }
+      }).then((response) => {
+        this.received = response.data.data.length;
+        sessionStorage.setItem("message", JSON.stringify(response.data.data))
+      }).catch(() => {
+        this.$message.error("获取站内信息出错啦,请稍后再试");
+      });
     }
-  },
+  }
 };
 </script>
 
@@ -263,6 +272,7 @@ export default {
 .el-main {
   padding: 0 !important;
   background-size: 100%;
+  border-radius: 10px;
   height: 800px;
 }
 .el-header .el-menu-item {
@@ -287,12 +297,4 @@ export default {
 .el-avatar {
   vertical-align: middle !important;
 }
-/* #logout {
-  background: url('E:\网站\sever\src\img\logout2.png') no-repeat;
-  background-size: 100%;
-  background-position: 0 0;
-} */
-/* #logout:hover {
-
-} */
 </style>

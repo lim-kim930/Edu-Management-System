@@ -24,14 +24,14 @@
       点击上传学业文件
       <i class="el-icon-upload"></i>
     </el-upload>
-    <el-button
+    <!-- <el-button
       type="primary"
       plain
       icon="el-icon-delete-solid"
       @click="reupload()"
       v-show="file != ''"
       style="margin-left: 10px;"
-    >删除文件</el-button>
+    >删除文件</el-button>-->
     <el-button
       type="primary"
       plain
@@ -111,8 +111,30 @@ export default {
   components: { mavonEditor },
   methods: {
     getFile(params) {
-      this.file = params.file;
-      this.$emit("func", params.file);
+      this.loading = true;
+      let data = new FormData();
+      data.append("dataFile", params.file);
+      this.axios({
+        method: "post",
+        url: "https://api.hduhelp.com/gormja_wrapper/dataFile/get?staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
+        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+        data,
+      }).then((response) => {
+        if (response.data.data.length === 0)
+          this.content = ""
+        else
+          this.content = Base64.decode(response.data.data.Body.data_map.self_introduction["1-" + JSON.parse(localStorage.getItem("jw_student_file")).staffID].SelfIntroduction);
+        this.loading = false
+        this.file = params.file;
+        this.$emit("func", params.file);
+      }).catch((err) => {
+        if (err.response.data.msg === "file hash does not equal to chain")
+          this.$message.error("学业文件错误或者过期,请检查后再试")
+        else
+          this.$message.error("获取学业文件信息出错啦,请稍后再试")
+        this.loading = false
+        this.reupload()
+      });
     },
     //删除文件
     reupload() {
@@ -193,40 +215,100 @@ export default {
         center: true
       }).then(() => {
         this.loading = true;
+        this.$emit("func2", false);
+        this.$emit("func3", 3);
         let data = new FormData();
         data.append("dataFile", this.file);
         this.axios({
-          method: "post",
-          url: "https://api.hduhelp.com/gormja_wrapper/lookup?topic=self_introduction",
-          headers: {
-            "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token
-          },
-          data: JSON.stringify({
-            SchoolCode: 1,
-            StaffID: JSON.parse(localStorage.getItem("jw_student_file")).staffID
-          })
-        }).then((response) => {
-          if (response.data.data.length === 0)
-            return this.$message.error("个性化信息为空,请保存后再试");
-          else {
-            data.append("condMap", "{\"SchoolCode\": 1,\"StaffID\": " + JSON.parse(localStorage.getItem("jw_student_file")).staffID + ", \"SelfIntroduction\": " + JSON.stringify(Base64.decode(response.data.data[0].Value.SelfIntroduction.Value)) + "}");
-            this.axios({
-              method: "put",
-              url: "https://api.hduhelp.com/gormja_wrapper/confirm?topic=self_introduction",
-              headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
-              data,
-            }).then((response) => {
-              this.$message.success("确认个性化信息成功！");
-              this.file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
-              this.$emit("func", this.file);
-              this.loading = false;
-            }).catch(() => {
-              this.$message.error("确认个性化信息出错啦,请稍后再试");
-              this.loading = false;
-            });
+          method: "put",
+          url: "https://api.hduhelp.com/gormja_wrapper/save?topic=self_introduction",
+          headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+          data: {
+            "Topic": "self_introduction",
+            "ItemObj": {
+              "SelfIntroduction": this.content
+            }
           }
+        }).then(() => {
+          this.axios({
+            method: "post",
+            url: "https://api.hduhelp.com/gormja_wrapper/lookup?topic=self_introduction",
+            headers: {
+              "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token
+            },
+            data: JSON.stringify({
+              SchoolCode: 1,
+              StaffID: JSON.parse(localStorage.getItem("jw_student_file")).staffID
+            })
+          }).then((response) => {
+            if (response.data.data.length === 0)
+              return this.$message.error("个性化信息为空,请保存后再试");
+            else {
+              data.append("condMap", "{\"SchoolCode\": 1,\"StaffID\": " + JSON.parse(localStorage.getItem("jw_student_file")).staffID + ", \"SelfIntroduction\": " + JSON.stringify(Base64.decode(response.data.data[0].Value.SelfIntroduction.Value)) + "}");
+              this.axios({
+                method: "put",
+                url: "https://api.hduhelp.com/gormja_wrapper/confirm?topic=self_introduction",
+                headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+                data
+              }).then((response) => {
+                var block = response.data.data.TransactionDetail.detail.result[0]
+                var blockName = Object.keys(block)
+                const translation = {
+                  blockHash: "区块哈希",
+                  blockNumber: "交易号",
+                  blockTimestamp: "区块时间戳",
+                  blockWriteTime: "写入时间",
+                  hash: "交易内容"
+                }
+                this.blockDataInfo = []
+                for (var i = 0; i < blockName.length; i++) {
+                  this.blockDataInfo.push({
+                    value: block[blockName[i]],
+                    name: translation[blockName[i]]
+                  })
+                }
+                this.file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
+                this.$emit("func", this.file);
+                this.$emit("func2", true);
+                this.$emit("func3", null);
+                this.$confirm("个性化信息确认成功！继续确认请点击任意空白区域", "提示", {
+                  confirmButtonText: "下载新的学业文件",
+                  cancelButtonText: "查看此次交易详情",
+                  distinguishCancelAndClose: true,
+                  beforeClose: (action, instance, done) => {//将左边的按钮改为打开交易详情，且不关闭此弹框
+                    if (action === "cancel")
+                      this.dialogTableVisible = true
+                    if (action === "confirm" || action === "close")
+                      done()
+                  },
+                  dangerouslyUseHTMLString: true,
+                  type: "success"
+                }).then(() => {
+                  this.downloadFile("学业文件.enc")
+                }).catch(() => {
+                  this.$message({
+                    type: "info",
+                    message: "请在结束确认时下载最新的学业文件",
+                  });
+                });
+                this.loading = false;
+              }).catch(() => {
+                this.$emit("func2", true);
+                this.$emit("func3", null);
+                this.$message.error("确认个性化信息出错啦,请稍后再试");
+                this.loading = false;
+              });
+            }
+          }).catch(() => {
+            this.$emit("func2", true);
+            this.$emit("func3", null);
+            this.$message.error("获取个性化信息出错啦,请稍后再试");
+            this.loading = false;
+          })
         }).catch(() => {
-          this.$message.error("获取个性化信息出错啦,请稍后再试");
+          this.$emit("func2", true);
+          this.$emit("func3", null);
+          this.$message.error("保存个性化信息出错啦,请稍后再试");
           this.loading = false;
         });
       }).catch(() => {

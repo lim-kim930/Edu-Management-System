@@ -98,14 +98,15 @@ export default {
     downloadFile(Url, filename) {
       let data = new FormData();
       data.append("dataFile", this.file);
-      data.append("body", JSON.stringify({ "ShareItems": [{ "Path": ["profile", this.staffID, "Name"] }, { "Path": ["profile", this.staffID, "UnitName"] }, { "Path": ["profile", this.staffID, "MajorName"] }, { "Path": ["profile", this.staffID, "StaffID"] }] }));
+      this.loadText = "正在为您公开部分信息,此过程较慢,请耐心等待";
+      data.append("body", JSON.stringify({ "ShareItems": [{ "Path": ["profile", this.staffID, "Name"] }, { "Path": ["profile", this.staffID, "UnitName"] }, { "Path": ["profile", this.staffID, "MajorName"] }, { "Path": ["profile", this.staffID, "StaffID"] }, { "Path": ["profile", this.staffID, "MajorCode"] }, { "Path": ["profile", this.staffID, "UnitCode"] }] }));
       this.axios({
         method: "put",
         url: "https://api.hduhelp.com/gormja_wrapper/expose/cache?topic=profile&staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
         headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
         data,
       })
-        .then((response) => {
+        .then(() => {
           this.loading = false
           this.$confirm("学业文件将下载至浏览器默认下载位置,请前往查看并妥善保存", "提示", {
             confirmButtonText: "确定",

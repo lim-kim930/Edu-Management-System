@@ -13,16 +13,17 @@
       mode="horizontal"
       @select="handleSelect"
     >
-      <el-menu-item index="1" style="font-size: 18px">学籍确认</el-menu-item>
-      <el-menu-item index="2" style="font-size: 18px" :disabled="!confirmed">学业成绩确认</el-menu-item>
-      <el-menu-item index="3" style="font-size: 18px" :disabled="!confirmed">综合素质确认</el-menu-item>
-      <el-menu-item index="4" style="font-size: 18px" :disabled="!confirmed">个性化确认</el-menu-item>
-      <el-menu-item index="5" style="font-size: 18px" :disabled="!confirmed">排名确认</el-menu-item>
-      <el-menu-item index="6" style="font-size: 18px" :disabled="!confirmed">毕业确认</el-menu-item>
+      <el-menu-item index="1" style="font-size: 18px" :disabled="route!==null&&route!==0">学籍确认</el-menu-item>
+      <el-menu-item index="2" style="font-size: 18px" :disabled="(route===null&&!confirmed)||(route!==null&&route!==1)">学业成绩确认</el-menu-item>
+      <el-menu-item index="3" style="font-size: 18px" :disabled="(route===null&&!confirmed)||(route!==null&&route!==2)">综合素质确认</el-menu-item>
+      <el-menu-item index="4" style="font-size: 18px" :disabled="(route===null&&!confirmed)||(route!==null&&route!==3)">个性化确认</el-menu-item>
+      <el-menu-item index="5" style="font-size: 18px" :disabled="(route===null&&!confirmed)||(route!==null&&route!==4)">排名确认</el-menu-item>
+      <el-menu-item index="6" style="font-size: 18px" :disabled="(route===null&&!confirmed)||(route!==null&&route!==5)">毕业确认</el-menu-item>
     </el-menu>
     <router-view
       @func="getFile"
       @func2="getConfirmed"
+      @func3="getRoute"
       :globalFile="file"
       :xjConfirmed="xjConfirmed"
       :wh="wh"
@@ -33,15 +34,19 @@
 export default {
   data() {
     return {
+      route: null,
       activeIndex: "1",//上边导航默认选中值
       loading: false,//form加载
-      confirmed: "",//学籍确认状态
+      confirmed: ""//学籍确认状态
     };
   },
   props: ["file", "xjConfirmed", "wh"],//拿到student页面传来的数据
   methods: {
     getFile(file) {
       this.$emit("func", file)
+    },
+    getRoute(route) {
+      this.route = route;
     },
     getConfirmed(confirmed) {
       this.confirmed = confirmed
@@ -80,10 +85,10 @@ export default {
         case "/infoConfirm/hjConfirm":
           this.activeIndex = "3";
           break
-          case "/infoConfirm/gxConfirm":
+        case "/infoConfirm/gxConfirm":
           this.activeIndex = "4";
           break
-          case "/infoConfirm/gpaConfirm":
+        case "/infoConfirm/gpaConfirm":
           this.activeIndex = "5";
           break
         case "/infoConfirm/byConfirm":
@@ -97,9 +102,9 @@ export default {
       this.redirect()
     },
     xjConfirmed: {
-        handler(newValue, oldValue) {
-            this.confirmed = newValue;
-        }
+      handler(newValue, oldValue) {
+        this.confirmed = newValue;
+      }
     }
   },
   mounted() {

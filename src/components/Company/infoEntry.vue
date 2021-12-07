@@ -204,7 +204,7 @@ export default {
         }
         this.step = 1;
         this.loading = false;
-      }).catch(error => {
+      }).catch(() => {
         this.$message.error("获取岗位信息出错啦,请稍后再试");
         this.loading = false;
       });
@@ -225,7 +225,7 @@ export default {
             this.jobList.push(response.data.data[type[i]][j])
         this.step = 0;
         this.loading = false;
-      }).catch(error => {
+      }).catch(() => {
         this.$message.error("获取招聘信息出错啦,请稍后再试");
         this.step = 0;
         this.loading = false;
@@ -271,7 +271,7 @@ export default {
             jobDesc: "",
             jobReq: ""
           };
-        }).catch(error => {
+        }).catch(() => {
           this.$message.error("录入招聘信息出错啦,请稍后再试");
           this.loading = false
         });
@@ -308,7 +308,7 @@ export default {
         for (let j = 0; j < response.data.data[type[i]].length; j++)
           this.jobList.push(response.data.data[type[i]][j])
       this.loading = false;
-    }).catch(error => {
+    }).catch(() => {
       this.$message.error("获取招聘信息出错啦,请稍后再试");
       this.loading = false;
     });

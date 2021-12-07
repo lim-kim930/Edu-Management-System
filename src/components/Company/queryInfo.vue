@@ -192,7 +192,7 @@
   </div>
 </template>
 <script>
-import { removeWatermark, setWaterMark } from "../../watermark.js"
+import { setWaterMark } from "../../watermark.js"
 import html2canvas from "html2canvas"
 import {Base64} from "js-base64"
 export default {
@@ -310,7 +310,7 @@ export default {
           if (response.data.data.ShareFile.data_map.profile != undefined) {
             var profile = response.data.data.ShareFile.data_map.profile[Object.keys(response.data.data.ShareFile.data_map.profile)[0]];
             var profileName = Object.keys(profile);
-            for (var i = 0; i < profileName.length; i++){
+            for (let i = 0; i < profileName.length; i++){
               if(profileName[i] === "Photo")
                 this.profileData[profileName[i]] = "data:image/png;base64," + Base64.decode(profile[profileName[i]])
               else
@@ -322,7 +322,7 @@ export default {
             var score = response.data.data.ShareFile.data_map.score;
             var scoreCode = Object.keys(score);
             var flag = 1;
-            for (var i = 0; i < scoreCode.length; i++) {
+            for (let i = 0; i < scoreCode.length; i++) {
               if (flag === 5) {
                 flag = 1;
                 count++;
@@ -340,7 +340,7 @@ export default {
           if (response.data.data.ShareFile.data_map.level_exam != undefined) {
             var level_exam = response.data.data.ShareFile.data_map.level_exam;
             var level_examCode = Object.keys(level_exam);
-            for (var i = 0; i < level_examCode.length; i++) {
+            for (let i = 0; i < level_examCode.length; i++) {
               this.levelData.push({
                 name: level_exam[level_examCode[i]].ExamName,
                 score: level_exam[level_examCode[i]].Score,
@@ -353,7 +353,7 @@ export default {
           if (response.data.data.ShareFile.data_map.reward != undefined) {
             var reward = response.data.data.ShareFile.data_map.reward;
             var rewardCode = Object.keys(reward);
-            for (var i = 0; i < rewardCode.length; i++) {
+            for (let i = 0; i < rewardCode.length; i++) {
               this.rewardData.push({
                 name: reward[rewardCode[i]].RewardName,
                 level: reward[rewardCode[i]].RewardLevel,
@@ -366,7 +366,7 @@ export default {
           if (response.data.data.ShareFile.data_map.race_reward != undefined) {
             var race_reward = response.data.data.ShareFile.data_map.race_reward;
             var race_rewardCode = Object.keys(race_reward);
-            for (var i = 0; i < race_rewardCode.length; i++) {
+            for (let i = 0; i < race_rewardCode.length; i++) {
               this.raceData.push({
                 name: race_reward[race_rewardCode[i]].RaceName,
                 level: race_reward[race_rewardCode[i]].RaceLevel + " " +race_reward[race_rewardCode[i]].RewardLevel,
@@ -501,11 +501,11 @@ export default {
       //绘制印章英文单位
       context.translate(0, 0);// 平移到此位置,
       context.font = "normal 16px SimSun";
-      var ecount = ecompany.length;// 字数
-      var eangle = (4.9 * Math.PI) / (3 * (ecount));// 字间角度   
-      var echars = ecompany.split("");
-      var ec;
-      for (var j = 0; j < ecount; j++) {
+      let ecount = ecompany.length;// 字数
+      let eangle = (4.9 * Math.PI) / (3 * (ecount));// 字间角度   
+      let echars = ecompany.split("");
+      let ec;
+      for (let j = 0; j < ecount; j++) {
         ec = echars[j];// 需要绘制的字符
         if (j == 0)
           context.rotate(94 * Math.PI / 180);
@@ -521,21 +521,21 @@ export default {
       //绘制区块高度单位
       context.translate(0, 0);// 平移到此位置,
       context.font = "bolder 16px serif";
-      var ecount = blockheight.length;// 字数   
-      var eangle = (1.17 * Math.PI) / (4 * (ecount));// 字间角度   
-      var echars = blockheight.split("");
-      var ec;
-      for (var j = 0; j < ecount; j++) {
-        ec = echars[j];// 需要绘制的字符   
+      let ecount1 = blockheight.length;// 字数   
+      let eangle1 = (1.17 * Math.PI) / (4 * (ecount1));// 字间角度   
+      let echars1 = blockheight.split("");
+      let ec1;
+      for (let j = 0; j < ecount1; j++) {
+        ec1 = echars1[j];// 需要绘制的字符
         if (j == 0)
           context.rotate(14 * Math.PI / 180);//第一个字旋转角度
         else
-          context.rotate(eangle);
+          context.rotate(eangle1);
         context.save();
         // 平移到此位置,此时字和x轴垂直，第一个参数是与圆外边的距离，越大距离越近   
         context.translate(88, 0);
         context.rotate(-90 * Math.PI / 180);// 旋转90度,让字平行于x轴   
-        context.fillText(ec, 0, 0);// 此点为字的中心点   
+        context.fillText(ec1, 0, 0);// 此点为字的中心点   
         context.restore();
       }
     },
@@ -550,7 +550,6 @@ export default {
     }
   },
   mounted() {
-    console.log(window.screen);
     if(this.$route.query.url !== undefined){
       this.input = this.$route.query.url
       this.query()

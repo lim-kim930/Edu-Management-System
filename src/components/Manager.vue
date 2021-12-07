@@ -11,7 +11,11 @@
         </el-badge>-->
         <el-avatar :size="25" :src="circleUrl"></el-avatar>
         <span style="color: #fff;" id="uname">{{uName === ""?"":uName + " |"}}</span>
-        <el-link :underline="false" @click="logOut()" style="color: #fff;">
+        <el-link
+          :underline="false"
+          @click="logOut()"
+          style="font-size: 15px; color: #fff; margin-top: -4px"
+        >
           {{uName === ""?"登录":"退出"}}
           <i class="el-icon-caret-right"></i>
         </el-link>
@@ -124,7 +128,7 @@ export default {
         window.location.href = "https://limkim.xyz/newEdu/sign"
       });
     else
-      this.uName = JSON.parse(localStorage.getItem("jw_manage_file")).name
+      this.uName = JSON.parse(localStorage.getItem("jw_manage_file")).uname
     this.redirect();
   },
 };

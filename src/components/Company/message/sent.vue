@@ -27,13 +27,8 @@ export default {
     getFile() {
       this.btnShow = true
     },
-    change(response, file, fileList) {
-      // console.log(1111)
-      console.log(file)
+    change(response, file) {
       this.file = file
-      // this.fileList.push({
-      //   name: file.name
-      // })
     },
     handleClose(done) {
       if (this.btnloading) {
@@ -45,7 +40,7 @@ export default {
         type: "warning",
         center: true
       })
-        .then(_ => {
+        .then(() => {
           this.btnloading = true;
           this.timer = setTimeout(() => {
             done();
@@ -61,7 +56,7 @@ export default {
           }, 2000);
 
         })
-        .catch(_ => { });
+        .catch(() => { });
     },
     cancelForm() {
       this.btnloading = false;
@@ -98,7 +93,7 @@ export default {
               that.loading = false;
               that.confirmed = true;
             })
-            .catch((error) => {
+            .catch(() => {
               that.$message.error("出错啦,请稍后再试");
               that.loading = false;
             });

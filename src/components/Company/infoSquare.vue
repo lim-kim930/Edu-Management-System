@@ -5,27 +5,54 @@
     label-width="80px"
     v-loading="loading"
     element-loading-text="拼命加载中"
-    :style="{'max-height': this.wh - 105 + 'px'}"
+    :style="{'height': this.wh - 105 + 'px'}"
   >
     <span>请选择筛选条件:</span>
-    <el-cascader
-      @change="lll"
-      style="width: 300px; margin: 10px"
-      :options="options"
-      :props="props"
-      collapse-tags
-      clearable
-    ></el-cascader>
-    <el-input v-show="gpa" style="width: 100px" v-model="input[0]" placeholder="gpa下限"></el-input>
-    <el-input v-show="gpa" style="width: 100px" v-model="input[1]" placeholder="gpa上限"></el-input>
+    <el-select
+      v-model="conditions.UnitCode"
+      filterable
+      placeholder="学院名称"
+      style="width: 180px; margin: 0 10px"
+    >
+      <el-option
+        v-for="item in options[0].children"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      ></el-option>
+    </el-select>
+    <el-select v-model="conditions.MajorCode" filterable placeholder="专业名称" style="width: 180px;">
+      <el-option
+        v-for="item in options[1].children"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      ></el-option>
+    </el-select>
+    <el-select
+      v-model="conditions.Sex"
+      filterable
+      placeholder="性别"
+      style="width: 80px; margin: 0 10px"
+    >
+      <el-option
+        v-for="item in options[2].children"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      ></el-option>
+    </el-select>
+    <el-input style="width: 90px" v-model="conditions.GPA[0]" placeholder="gpa下限"></el-input>
+    <el-input style="width: 90px; margin: 0 10px" v-model="conditions.GPA[1]" placeholder="gpa上限"></el-input>
+    <!-- <el-button type="primary" plain icon="el-icon-plus" circle></el-button> -->
     <el-button type="primary" @click="getInfo()" style="margin-top: 20px">点击筛选</el-button>
     <el-table
       v-show="tableData.length !== 0"
       :data="tableData"
-      style="width: 100%"
+      style="width: 100%; margin-top: 20px"
       border
       :default-sort="{prop: 'id', order: 'descending'}"
-      :max-height="this.wh - 260"
+      :max-height="this.wh - 270"
     >
       <el-table-column type="expand">
         <template slot-scope="props">
@@ -75,17 +102,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- <el-descriptions class="margin-top" :column="3" border v-for="item in data" v-bind:key="item.FileID">
-      <template slot="extra">
-        <el-button type="primary" size="small">操作</el-button>
-      </template>
-      <el-descriptions-item v-for="item2 in item.Source.data_map.profile['1-19270808']" v-bind:key="item2.FileID">
-        <template slot="label">
-          <i class="el-icon-user"></i>
-          {{item2.index}}
-        </template>
-      </el-descriptions-item>
-    </el-descriptions>-->
     <el-empty :image-size="200" v-show="tableData.length === 0"></el-empty>
   </el-form>
 </template>
@@ -93,42 +109,26 @@
 export default {
   data() {
     return {
-      translation: {
-        ClassCode: "班级号码",
-        ClassName: "班级名称",
-        SchoolCode: "学校代码",
-        StaffID: "学号",
-        UnitCode: "学院代码",
-        UnitName: "学院名称",
-        MajorCode: "专业代码",
-        MajorName: "专业名称",
-        Sex: "性别",
-        Name: "姓名",
-        Photo: "照片",
-        Nation: "民族",
-      },
       tableData: [],
       loading: false,
       props: { multiple: true },
       options: [{
-        value: "gpa",
-        label: "GPA范围",
-        children: [
-          { value: 1, label: "请选择范围" },
-        ]
-      }, {
         value: "UnitCode",
         label: "学院",
         children: [
-          { value: "网络空间安全学院", label: "网络空间安全学院" },
-          { value: "外国语学院", label: "外国语学院" },
+          { value: "27", label: "网络空间安全学院" },
+          { value: "14", label: "会计学院" },
+          { value: "03", label: "管理学院" },
+          { value: "06", label: "自动化学院（人工智能学院）" }
         ]
       }, {
         value: "MajorCode",
         label: "专业",
         children: [
-          { value: "英语", label: "英语" },
-          { value: "网络空间安全专业", label: "网络空间安全专业" }
+          { value: "0304", label: "管理科学与工程类" },
+          { value: "0648", label: "生物医学工程" },
+          { value: "1483", label: "会计学类" },
+          { value: "2701", label: "网络空间安全专业" }
         ]
       }, {
         value: "Sex",
@@ -138,8 +138,14 @@ export default {
           { value: "女", label: "女" }
         ]
       }],
-      selected: [],
+      conditions: {
+        GPA: [],
+        MajorCode: "",
+        UnitCode: "",
+        Sex: ""
+      },
       input: [],
+      selected: [],
       gpa: false,
       Predicates: []
     }
@@ -147,7 +153,7 @@ export default {
   props: ["wh"],
   methods: {
     lll(v) {
-      if (v.length === 0){
+      if (v.length === 0) {
         this.gpa = false;
         this.Predicates = []
       }
@@ -160,20 +166,22 @@ export default {
       this.selected = v;
     },
     getInfo() {
-      this.Predicates = []
-      console.log(this.selected.length);
-      for (let i = 0; i < this.selected.length; i++)
-        this.Predicates.push({
-          "FieldPath": [
-            "data_map",
-            this.selected[i][0] === "gpa" ? "rank" : "profile",
-            "*",
-            this.selected[i][0]
-          ],
-          "RelationType": this.selected.length > 1 ? "should" : "must",
-          "NodeType": this.selected[i][0] === "gpa" ? "range" : "match",
-          "Predicate": this.selected[i][0] === "gpa" ? { "from": +this.input[0], "to": +this.input[1] } : { "value": this.selected[i][1] }
-        })
+      this.Predicates = [];
+      const index = Object.keys(this.conditions);
+      for (let i = 0; i < index.length; i++) {
+        if (this.conditions[index[i]].length !== 0)
+          this.Predicates.push({
+            "FieldPath": [
+              "data_map",
+              index[i] === "GPA" ? "rank" : "profile",
+              "*",
+              index[i]
+            ],
+            "RelationType": "must",
+            "NodeType": index[i] === "GPA" ? "range" : "match",
+            "Predicate": index[i] === "GPA" ? { "from": +this.conditions[index[i]][0] ? +this.conditions[index[i]][0] : 0, "to": +this.conditions[index[i]][1] ? +this.conditions[index[i]][1] : 5.0 } : { "value": this.conditions[index[i]] }
+          });
+      }
       this.loading = true;
       this.tableData = []
       this.axios({
@@ -190,8 +198,6 @@ export default {
             return;
           }
           let result = response.data.data.Results;
-          console.log(result);
-
           for (let i = 0; i < result.length; i++) {
             this.tableData.push(result[i].Source.data_map.profile[result[i].FileID])
             this.tableData[i].Photo = "/"
@@ -225,9 +231,6 @@ export default {
   border: 1px solid rgba(204, 204, 204, 0.5);
   box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-}
-.el-table {
-  margin: 0 !important;
 }
 </style>
 <style>

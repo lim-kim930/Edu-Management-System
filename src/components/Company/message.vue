@@ -30,7 +30,7 @@ export default {
     getReceived(received) {
       this.$emit("func", received)
     },
-    handleSelect(key, keyPath) {
+    handleSelect(key) {
       switch (key) {
         case "1":
           this.$router.push("/comMessage/received");

@@ -9,11 +9,11 @@ import "element-ui/lib/theme-chalk/index.css"
 // import APP from "../src/components/Sign.vue"
 // import router from "./router_sign"
 
-import APP from "../src/components/Student.vue"
-import router from "./router_student"
+// import APP from "../src/components/Student.vue"
+// import router from "./router_student"
 
-// import APP from "../src/components/Company.vue"
-// import router from "./router_company"
+import APP from "../src/components/Company.vue"
+import router from "./router_company"
 
 // import APP from "../src/components/Manager.vue"
 // import router from "./router_manager"
@@ -31,7 +31,7 @@ const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
-const vm = new Vue({
+new Vue({
   el: "#app",
   render: c => c(APP),
   router

@@ -28,7 +28,11 @@
         </el-dropdown>
         <el-avatar :size="25" :src="circleUrl"></el-avatar>
         <span style="color: #fff;" id="uname">{{uName === null?"":uName + " |"}}</span>
-        <el-link :underline="false" @click="logOut()" style="font-size: 15px; color: #fff; margin-top: -4px">
+        <el-link
+          :underline="false"
+          @click="logOut()"
+          style="font-size: 15px; color: #fff; margin-top: -4px"
+        >
           {{uName === null?"登录":"退出"}}
           <i class="el-icon-caret-right"></i>
         </el-link>
@@ -117,6 +121,23 @@ export default {
     };
   },
   methods: {
+    downloadFile(filename) {
+      const Url = URL.createObjectURL(this.file);
+      const eleLink = document.createElement("a")
+      eleLink.download = filename
+      eleLink.style.display = "none"
+      eleLink.href = Url
+      document.body.appendChild(eleLink)
+      eleLink.click()
+      document.body.removeChild(eleLink)
+      setTimeout(() => {
+        this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
+          confirmButtonText: "确定",
+          showCancelButton: false,
+          type: "success"
+        })
+      }, 400)
+    },
     //拿到子组件传来的学业文件,全局存储在student页面
     getFile(file) {
       this.file = file
@@ -155,15 +176,18 @@ export default {
         location.href = "https://limkim.xyz/newEdu/sign"
       }
       else {
-        this.$confirm("确定要退出登录吗?", "提示", {
+        this.$confirm("确定要退出登录吗?" + (this.file === "" ? "" : "请确认您已经将最新的学业文件下载到了本地"), "提示", {
           confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-          center: true
+          cancelButtonText: this.file === "" ? "取消" : "现在下载",
+          type: "warning"
         }).then(() => {
           //清除localStorage里的用户信息,定向到登录
           localStorage.removeItem("jw_student_file")
           window.location.href = "https://limkim.xyz/newEdu/sign"
+        }).catch(() => {
+          if (this.file === "")
+            return
+          this.downloadFile("学业文件.enc")
         })
       }
     },
@@ -228,7 +252,23 @@ export default {
       // to.path  ( 表示的是要跳转到的路由的地址 eg: /home );
     }
   },
-  mounted() {//写在mounted或者activated生命周期内即可
+  mounted() {
+    window.onbeforeunload = (e) => {
+      if (this.file !== "") {
+        console.log(e);
+        e = e || window.event;
+        // 兼容IE8和Firefox 4之前的版本
+        if (e)
+          e.returnValue = "done";
+        return this.$confirm("请确认您已经将最新的学业文件下载到了本地", "提示", {
+          confirmButtonText: "现在下载",
+          cancelButtonText: "已下载",
+          type: "warning"
+        }).then(() => {
+          this.downloadFile("学业文件.enc")
+        })
+      }
+    };
     //拿到屏幕高度
     this.wh = this.windowHeight();
     document.querySelector(".el-form").style.maxHeight = this.wh - 190 + "px";
@@ -261,8 +301,24 @@ export default {
         this.redirect();
         this.loading = false
       });
+      // this.axios({
+      //   method: "post",
+      //   url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForSelf",
+      //   headers: {"Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+      //   data: {
+      //     "CompanyCode":"company1"
+      //   }
+      // }).then((response) => {
+      //   this.received = response.data.data.length;
+      //   sessionStorage.setItem("message", JSON.stringify(response.data.data))
+      // }).catch(error => {
+      //   this.$message.error("获取站内信息出错啦,请稍后再试");
+      // });
     }
   },
+  destroyed() {
+    window.onbeforeunload = null
+  }
 };
 </script>
 

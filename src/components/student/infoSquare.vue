@@ -37,17 +37,13 @@
     </el-form-item>
     <el-autocomplete
       class="inline-input"
-      v-model="CompanyCode"
+      v-model="CompanyName"
       prefix-icon="el-icon-search"
       :fetch-suggestions="querySearch"
+      @select="companySelect"
       placeholder="公司"
       :trigger-on-focus="false"
     ></el-autocomplete>
-    <!-- <el-input style="width: 190px" placeholder="最低薪资(K)" v-model="MinSalary" type='number' max="20" class="input-with-select">
-      <el-button style="width: 30px; padding: 13px" slot="prepend" icon="el-icon-minus"></el-button>
-      <el-button style="width: 30px; padding: 13px" slot="append" icon="el-icon-plus"></el-button>
-    </el-input>-->
-    <!-- <i @click="add" style="margin-right: 5px; cursor: pointer; color: #409eff" title="添加条件" class="el-icon-circle-plus-outline"></i> -->
     <el-button type="primary" @click="getInfo()" style="margin: 20px" icon="el-icon-search">点击查询</el-button>
     <el-table
       v-show="tableData.length !== 0"
@@ -157,6 +153,7 @@ export default {
       MinSalary: "",
       WorkLocation: "",
       JobTypeCode: null,
+      CompanyName: "",
       CompanyCode: "",
       select: { "MinSalary": 0 },
       input: [],
@@ -165,6 +162,10 @@ export default {
   },
   props: ["wh"],
   methods: {
+    companySelect(v) {
+      console.log(v);
+      this.CompanyCode = v.CompanyCode
+    },
     querySearch(queryString, cb) {
       let results = []
       this.axios({
