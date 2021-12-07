@@ -209,9 +209,7 @@ export default {
         method: "post",
         url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForCompany",
         headers: { "Content-Type": "application/json", "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization },
-        data: {
-          "schoolCode": "1"
-        }
+        data: { "schoolCode": "1" }
       }).then((response) => {
         this.received = response.data.data.length;
         sessionStorage.setItem("message", JSON.stringify(response.data.data));

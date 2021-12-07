@@ -36,18 +36,6 @@
         target="_blank"
         href="http://wpa.qq.com/msgrd?v=3&uin=1625753207&site=qq&menu=yes&hm"
       >遇到问题?</el-link>
-      <!-- <el-link
-        type="info"
-        @click="test()"
-        style="color: #1890ff; margin-left: 5%;"
-        :underline="false"
-      >管理员</el-link> -->
-      <!-- <el-link
-        type="info"
-        @click="byHDU()"
-        style="color: #1890ff; margin-left: calc(95% - 140px)"
-        :underline="false"
-      >数字杭电登录</el-link> -->
     </div>
   </el-form>
 </template>
@@ -56,8 +44,8 @@ export default {
   data() {
     return {
       name: "",
-      pwd: "",//密钥
-      btnLoad: false,//登录按钮加载
+      pwd: "",
+      btnLoad: false,// 登录按钮加载
     };
   },
   methods: {
@@ -71,62 +59,31 @@ export default {
     },
     onSubmit() {
       this.btnLoad = true;
-      // var input = document.querySelector("#path");
-      // var reader = new FileReader();
-      // reader.readAsText(input.files[0], "utf8");
-      // reader.onload = () => {
-      //   //判断企业密钥文件可用性
-      //   var token = JSON.parse(reader.result);
-      //   if (
-      //     token.FileID === undefined ||
-      //     token.CompanyCode === undefined ||
-      //     token.Name === undefined ||
-      //     token.AccountForm === undefined ||
-      //     token.PrivateKey === undefined
-      //   ) {
-      //     this.$message.error("密钥文件错误, 请检查后重试");
-      //     this.btnLoad = false;
-      //   }
-      //   else {
-      //     localStorage.setItem("jw_ent_file", reader.result);
-      //     this.$message.success("登录成功");
-      //     setTimeout(() => {
-      //       this.btnLoad = false;
-      //       window.location.href = "../company";
-      //     }, 500);
-      //   }
-      // };
-      if (this.name.trim().length !== 0 && this.pwd.trim().length !== 0) {
-        this.axios({
-          method: "post",
-          url: "https://api.hduhelp.com/gormja_wrapper/company/login",
-          // headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
-          data: {
-            "CompanyCode": this.name,
-            "Passphrase": this.pwd
-          },
-        })
-          .then((response) => {
-            this.$message({
-              type: "success",
-              message: "登录成功",
-            });
-            localStorage.setItem("jw_ent_file", JSON.stringify({
-              CompanyCode: this.name,
-              authorization: response.headers.authorization
-            }));
-            window.location = "../company";
-          })
-          .catch((err) => {
-            this.btnLoad = false;
-            this.$message.error("账号或密码错误,请检查后再试");
-          })
-      }
-      else {
-        this.btnLoad = false;
+      if (this.name.trim().length === 0 || this.pwd.trim().length === 0) {
         this.$message.error("请正确填写账号和密码")
+        this.btnLoad = false;
+        return;
       }
-    },
+      this.axios({
+        method: "post",
+        url: "https://api.hduhelp.com/gormja_wrapper/company/login",
+        data: {
+          "CompanyCode": this.name,
+          "Passphrase": this.pwd
+        }
+      }).then((response) => {
+        this.$message.success("登录成功");
+        //把企业账号和token存起来
+        localStorage.setItem("jw_ent_file", JSON.stringify({
+          CompanyCode: this.name,
+          authorization: response.headers.authorization
+        }));
+        window.location = "../company";
+      }).catch(() => {
+        this.$message.error("账号或密码错误,请检查后再试");
+        this.btnLoad = false;
+      })
+    }
   },
 };
 </script>
