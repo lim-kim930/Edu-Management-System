@@ -11,7 +11,7 @@
             :value="received + sent"
             :hidden="received + sent === 0"
             class="item"
-            style="width: 30px; height: 30px; margin-right: 20px; line-height: 30px !important; cursor: pointer;"
+            style="width: 30px; height: 25px; margin-right: 20px; line-height: 25px !important; cursor: pointer;"
           >
             <i
               class="el-icon-message"
@@ -31,13 +31,13 @@
           </el-dropdown-menu>
         </el-dropdown>
         <el-avatar :size="25" :src="circleUrl"></el-avatar>
-        <span style="color: #fff;" id="uname">{{uName === ""?"":uName + " |"}}</span>
+        <span id="uname">{{uName === ""?"":uName + ' |'}}</span>
         <el-link
           :underline="false"
           @click="logOut()"
           style="font-size: 15px; color: #fff; margin-top: -4px"
         >
-          {{uName === ""?"登录":"退出"}}
+          {{uName === ""?"登录":"退出登录"}}
           <i class="el-icon-caret-right"></i>
         </el-link>
       </div>
@@ -224,23 +224,6 @@ export default {
 </script>
 
 <style scoped>
-.item {
-  margin-top: 10px;
-}
-</style>
-<style>
-/* 收信箱dropdown的右上角数字 */
-.item .el-badge__content{
-  line-height: 16px;
-}
-* {
-  margin: 0px;
-  padding: 0px;
-  text-decoration: none;
-  list-style: none;
-  outline: none;
-  box-sizing: border-box;
-}
 .el-header {
   background: url(../img/logo2.png) no-repeat;
   background-position: 20px;
@@ -268,6 +251,11 @@ export default {
   margin-left: 47%;
   text-align: center;
   line-height: 80px;
+  color: #fff;
+}
+#uname {
+  display: inline-block;
+  margin: 0 5px;
 }
 .el-container {
   background-color: rgba(224, 224, 224, 0.685);
@@ -300,5 +288,19 @@ export default {
 }
 .el-avatar {
   vertical-align: middle !important;
+}
+</style>
+<style>
+/* 收信箱dropdown的右上角数字 */
+.item .el-badge__content {
+  line-height: 16px;
+}
+* {
+  margin: 0px;
+  padding: 0px;
+  text-decoration: none;
+  list-style: none;
+  outline: none;
+  box-sizing: border-box;
 }
 </style>

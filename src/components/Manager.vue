@@ -16,7 +16,7 @@
           @click="logOut()"
           style="font-size: 15px; color: #fff; margin-top: -4px"
         >
-          {{uName === ""?"登录":"退出"}}
+          {{uName === ""?"登录":"退出登录"}}
           <i class="el-icon-caret-right"></i>
         </el-link>
       </div>

@@ -33,7 +33,7 @@
           @click="logOut()"
           style="font-size: 15px; color: #fff; margin-top: -4px"
         >
-          {{uName === null?"登录":"退出"}}
+          {{uName === null?"登录":"退出登录"}}
           <i class="el-icon-caret-right"></i>
         </el-link>
       </div>
@@ -169,7 +169,7 @@ export default {
         this.$router.push("/accountManage");
       }
     },
-    //退出
+    //退出登录
     logOut() {
       if (this.uName === null) {
         //没有用户信息直接定向到登录
