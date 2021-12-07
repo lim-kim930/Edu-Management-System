@@ -40,6 +40,8 @@
       v-show="file != ''"
       style="margin-left: 10px;"
     >下载文件</el-button>
+    <el-button style="margin: 10px 0 0 calc(100% - 560px)" @click="save()">暂时保存</el-button>
+    <el-button plain type="primary" :disabled="file === ''" @click="confirm()">确认信息</el-button>
     <mavonEditor
       :placeholder="holder"
       :toolbars="toolbars"
@@ -50,8 +52,6 @@
       ref="md"
       :style="{'width': '99%', 'margin-top': '10px', 'height': this.wh - 345 + 'px'}"
     />
-    <el-button style="margin-top: 10px" @click="save()">暂时保存</el-button>
-    <el-button plain type="primary" :disabled="file === ''" @click="confirm()">确认信息</el-button>
     <el-dialog title="交易详情" :visible.sync="dialogTableVisible">
       <el-table :data="blockDataInfo">
         <el-table-column property="name" label="交易信息" width="150"></el-table-column>
@@ -350,7 +350,7 @@ export default {
 }
 .upload {
   display: inline-block;
-  margin-left: 30px;
+  margin-left: 10px;
   width: 170px;
   height: 40px;
   line-height: 40px;

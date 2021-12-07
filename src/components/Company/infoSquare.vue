@@ -47,8 +47,8 @@
     <!-- <el-button type="primary" plain icon="el-icon-plus" circle></el-button> -->
     <el-button type="primary" @click="getInfo()" style="margin-top: 20px">点击筛选</el-button>
     <el-table
-      v-show="tableData.length !== 0"
-      :data="tableData"
+      v-show="exposeData.length !== 0"
+      :data="exposeData"
       style="width: 100%; margin-top: 20px"
       border
       :default-sort="{prop: 'id', order: 'descending'}"
@@ -98,18 +98,40 @@
       <el-table-column label="专业" prop="MajorName"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">请求详细简历</el-button>
+          <el-button size="mini" @click="askMore(scope.$index, scope.row)">请求详细简历</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-empty :image-size="200" v-show="tableData.length === 0"></el-empty>
+    <el-empty :image-size="200" v-show="exposeData.length === 0"></el-empty>
+    <el-dialog title="请填写您想要的内容" :visible.sync="dialogFormVisible" style="width: 100%;">
+      <el-form :model="form" label-width="100px">
+        <el-form-item label="请求对象">
+          <el-input style="width: 150px" disabled :placeholder="form.ExposeFileID"></el-input>
+        </el-form-item>
+        <el-form-item label="其他请求描述">
+          <el-input
+            type="textarea"
+            v-model="form.Text"
+            :rows="10"
+            resize="none"
+            show-word-limit
+            maxlength="500"
+            style="width: 400px;"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sendAsk()">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-form>
 </template>
 <script>
 export default {
   data() {
     return {
-      tableData: [],
+      exposeData: [],
       loading: false,
       options: [{
         value: "UnitCode",
@@ -143,14 +165,25 @@ export default {
         UnitCode: "",
         Sex: ""
       },// 选择的条件
-      Predicates: []// 要传给后端的筛选条件
+      Predicates: [],// 要传给后端的筛选条件
+      dialogFormVisible: false,
+      form: {
+        ExposeFileID: "",
+        Text: ""
+      }
     }
   },
   props: ["wh"],
   methods: {
+    resetForm() {
+      this.form = {
+        ExposeFileID: "",
+        Text: ""
+      }
+    },
     getInfo() {
       this.loading = true;
-      this.tableData = [];
+      this.exposeData = [];
       // 先根据conditions填好Predicates
       this.Predicates = [];
       const index = Object.keys(this.conditions);
@@ -172,12 +205,38 @@ export default {
           return this.loading = false;
         const result = response.data.data.Results;
         for (let i = 0; i < result.length; i++) {
-          this.tableData.push(result[i].Source.data_map.profile[result[i].FileID])
-          this.tableData[i].Photo = "/"
+          // 把FileID也放进去
+          let data = result[i].Source.data_map.profile[result[i].FileID]
+          data.FileID = result[i].FileID
+          this.exposeData.push(data)
+          // 对照片做处理
+          this.exposeData[i].Photo = "/"
         }
         this.loading = false;
       }).catch(() => {
         this.$message.error("获取公开信息出错啦,请稍后再试")
+        this.loading = false
+      });
+    },
+    askMore(index, row) {
+      this.resetForm()
+      this.form.ExposeFileID = row.FileID;
+      this.dialogFormVisible = true
+    },
+    sendAsk() {
+      this.loading = true;
+      this.axios({
+        method: "post",
+        url: "https://api.hduhelp.com/gormja_wrapper/share/addFurtherShareRequest",
+        headers: { "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization },
+        data: this.form
+      }).then(() => {
+        this.$message.success("已成功向该求职者发送详细简历请求")
+        this.resetForm()
+        this.dialogFormVisible = false
+        this.loading = false;
+      }).catch(() => {
+        this.$message.error("请求详细简历出错啦,请稍后再试")
         this.loading = false
       });
     }
@@ -216,5 +275,10 @@ export default {
 }
 .el-form--inline .el-form-item {
   margin-right: 0;
+}
+.el-dialog__wrapper .el-dialog {
+  /* margin: 90px 25%; */
+  width: 40%;
+  min-width: 600px;
 }
 </style>

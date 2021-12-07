@@ -40,7 +40,7 @@
       v-show="file != ''"
       style="margin-left: 10px;"
     >下载文件</el-button>
-    <span style="margin-left: calc(100% - 700px)">请选择类型:</span>
+    <span style="margin-left: calc(100% - 800px)">请选择类型:</span>
     <el-select
       v-model="typeValue"
       placeholder="请选择"
@@ -54,6 +54,20 @@
         :value="item.value"
       ></el-option>
     </el-select>
+    <el-button
+      type="primary"
+      @click="submit()"
+      plain
+      v-show="(typeValue==='reward'&&!honorConfirmed&&honorData.length !== 0)||(typeValue==='race_reward'&&!innovConfirmed&&innovData.length !== 0)"
+      :disabled="file===''"
+    >确认信息</el-button>
+    <!-- 使用typeValue、Confirmed和Data.length来判断按钮是否显示和禁用 -->
+    <el-button
+      type="info"
+      @click="dialog = true;"
+      plain
+      v-show="(typeValue==='reward'&&!honorConfirmed&&honorData.length !== 0)||(typeValue==='race_reward'&&!innovConfirmed&&innovData.length !== 0)"
+    >错误反馈</el-button>
     <el-table
       :data="honorData"
       v-show="typeValue==='reward'&&honorData.length !== 0"
@@ -92,20 +106,6 @@
     ></el-empty>
     <el-result icon="success" title="个人荣誉信息已确认" v-show="typeValue==='reward'&&honorConfirmed"></el-result>
     <el-result icon="success" title="创新学分信息已确认" v-show="typeValue==='race_reward'&&innovConfirmed"></el-result>
-    <el-button
-      type="primary"
-      @click="submit()"
-      plain
-      v-show="(typeValue==='reward'&&!honorConfirmed&&honorData.length !== 0)||(typeValue==='race_reward'&&!innovConfirmed&&innovData.length !== 0)"
-      :disabled="file===''"
-    >确认信息</el-button>
-    <!-- 使用typeValue、Confirmed和Data.length来判断按钮是否显示和禁用 -->
-    <el-button
-      type="info"
-      @click="dialog = true;"
-      plain
-      v-show="(typeValue==='reward'&&!honorConfirmed&&honorData.length !== 0)||(typeValue==='race_reward'&&!innovConfirmed&&innovData.length !== 0)"
-    >错误反馈</el-button>
     <el-drawer
       title="综合素质信息错误反馈提示"
       :visible.sync="dialog"
@@ -438,7 +438,7 @@ export default {
 }
 .upload {
   display: inline-block;
-  margin-left: 30px;
+  margin-left: 10px;
   width: 170px;
   height: 40px;
   line-height: 40px;

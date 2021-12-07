@@ -1,5 +1,4 @@
 import VueRouter from "vue-router"
-import scoreChange from "./components/student/scoreChange.vue"
 import infoConfirm from "./components/student/infoConfirm.vue"
 import xjConfirm from "./components/student/infoConfirm/xjConfirm.vue"
 import xyConfirm from "./components/student/infoConfirm/xyConfirm.vue"
@@ -7,10 +6,13 @@ import byConfirm from "./components/student/infoConfirm/byConfirm.vue"
 import hjConfirm from "./components/student/infoConfirm/hjConfirm.vue"
 import gpaConfirm from "./components/student/infoConfirm/gpaConfirm.vue"
 import gxConfirm from "./components/student/infoConfirm/gxConfirm.vue"
+import scoreChange from "./components/student/scoreChange.vue"
 import arcManage from "./components/student/arcManage.vue"
 import infoShare from "./components/student/infoShare.vue"
 import infoSquare from "./components/student/infoSquare.vue"
 import message from "./components/student/message.vue"
+import received from "./components/student/message/received.vue"
+import sent from "./components/student/message/sent.vue"
 import infoDisclose from "./components/student/infoDisclose.vue"
 import accountManage from "./components/student/accountManage.vue"
 
@@ -49,7 +51,18 @@ const router = new VueRouter({
     { path: "/arcManage", component: arcManage },
     { path: "/infoShare", component: infoShare },
     { path: "/infoSquare", component: infoSquare },
-    { path: "/message", component: message },
+    {
+      path: "/message",
+      component:message,
+      children: [{
+        path: "/message/received",
+        component: received
+      },
+      {
+        path: "/message/sent",
+        component: sent
+      }]
+    },
     { path: "/infoDisclose", component: infoDisclose },
     { path: "/accountManage", component: accountManage }
   ]

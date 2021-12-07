@@ -8,7 +8,7 @@
     :style="{'max-height': this.wh - 105 + 'px'}"
   >
     <span>请选择筛选条件:</span>
-    <el-select v-model="Name" filterable placeholder="岗位名称" style="width: 180px">
+    <el-select v-model="Name" filterable placeholder="岗位名称" style="width: 180px; margin: 0 10px">
       <el-option
         v-for="item in options[0].children"
         :key="item.value"
@@ -24,7 +24,7 @@
         :value="item.value"
       ></el-option>
     </el-select>
-    <el-select v-model="MinSalary" filterable placeholder="最低薪资" style="width: 140px">
+    <el-select v-model="MinSalary" filterable placeholder="最低薪资" style="width: 140px; margin: 0 10px">
       <el-option
         v-for="item in options[2].children"
         :key="item.value"
@@ -43,6 +43,7 @@
       @select="companySelect"
       placeholder="公司"
       :trigger-on-focus="false"
+      style="margin-left: 10px"
     ></el-autocomplete>
     <el-button type="primary" @click="getInfo()" style="margin: 20px" icon="el-icon-search">点击查询</el-button>
     <el-table
@@ -255,8 +256,7 @@ export default {
     }).then((response) => {
       this.axios({
         method: "get",
-        url: "https://api.hduhelp.com/gormja_wrapper/job/type/list",
-        data: { "MinSalary": 0 }
+        url: "https://api.hduhelp.com/gormja_wrapper/job/type/list"
       }).then((response2) => {
         if (response.data.data.length !== 0) {
           let temp = [];

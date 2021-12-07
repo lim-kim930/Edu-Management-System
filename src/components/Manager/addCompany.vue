@@ -88,6 +88,29 @@ export default {
   },
   props: ["wh"],
   methods: {
+    handleEdit(index, row) {
+      this.$confirm("确定要删除该公司吗", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        center: true
+      }).then(() => {
+        this.axios({
+          method: "put",
+          url: "https://api.hduhelp.com/gormja_wrapper/company/delete",
+          headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_manage_file")).token },
+          data: {
+            CompanyCode: row.CompanyCode
+          }
+        }).then(() => {
+          this.$message.success("公司删除成功！");
+          this.getCompanyInfo()
+        }).catch((err) => {
+        this.$message.error("公司删除失败啦,请重试");
+        this.loading = false
+      });
+      })
+    },
     getCompanyInfo() {
       this.companyListData = []
       this.step = 0
@@ -108,8 +131,8 @@ export default {
         return this.$message.warning("请将内容填写完成！");
       this.loading = true
       this.axios({
-        method: "put",
-        url: "https://api.hduhelp.com/gormja_wrapper/company/putForAdmin",
+        method: "post",
+        url: "https://api.hduhelp.com/gormja_wrapper/company/add",
         headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_manage_file")).token },
         data: {
           CompanyCode: this.form.CompanyCode,

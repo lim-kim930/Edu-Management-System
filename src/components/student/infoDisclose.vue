@@ -72,6 +72,20 @@
           >{{item.name}}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
+      <el-form-item label="gpa信息" required>
+        <el-table
+          :data="rankData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          border
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column prop="MajorName" label="专业"></el-table-column>
+          <el-table-column prop="GPA" label="绩点"></el-table-column>
+          <el-table-column prop="Rank" label="排名"></el-table-column>
+        </el-table>
+      </el-form-item>
       <!-- <el-form-item label="课程成绩信息" required>
         <h4 v-show="scoreData.length === 0">暂无信息</h4>
         <el-table
@@ -187,9 +201,11 @@ export default {
       scoreData: [],
       scoreDataValue: [],
       rewardData: [],
+      rankData: [],
       rewardDataValue: [],
       raceData: [],
       raceDataValue: [],
+      gpa: true,
       loading: false
     };
   },
@@ -204,6 +220,9 @@ export default {
         this.submitForm(true)
       }
     },
+    handleSelectionChange(v) {
+      this.gpa = (v.length !== 0)
+    },  
     handleSelectionChange1(val) {
       val.forEach(item => {
         this.ruleForm.scoreType.push(item.value)
@@ -289,6 +308,7 @@ export default {
         let levelData = [];
         let rewardData = [];
         let raceData = [];
+        let rankData = [];
         for (let i = 0; i < range.length; i++) {
           if (range[i] === "profile") {
             const translation = {
@@ -354,8 +374,18 @@ export default {
               })
             }
           }
+          else if (range[i] === "rank") {
+            let rank = Object.keys(content.rank);
+            for (let j = 0; j < rank.length; j++) {
+              rankData.push({
+                content: "GPA: "+content.rank[rank[j]].GPA + " / 排名: " + content.rank[rank[j]].Rank,
+                name: "GPA排名",
+                type: "排名信息"
+              })
+            }
+          }
         }
-        this.tableData = [...profileData, ...scoreData, ...levelData, ...rewardData, ...raceData];
+        this.tableData = [...profileData, ...scoreData, ...levelData, ...rewardData, ...raceData, ...rankData];
         this.loading = false;
       })
         .catch((err) => {
@@ -397,7 +427,7 @@ export default {
                 Photo: "照片",
                 Nation: "民族"
               }
-              const sort = ["Name", "Sex", "Nation", "Photo", "ClassCode", "ClassName", "MajorName", "MajorCode", "UnitName", "UnitCode", "SchoolCode"]
+              const sort = ["Name", "Sex", "Nation", "Photo",  "ClassName", "MajorName", "UnitName", "SchoolCode"]
               const profile = Object.keys(this.content.profile[Object.keys(this.content.profile)]);
               this.profileData = [];
               this.profileDataValue = [];
@@ -471,6 +501,14 @@ export default {
                 })
               }
             }
+            else if (range[i] === "rank") {
+              const rank = this.content.rank[Object.keys(this.content.rank)[0]];
+              this.rankData = [{
+                GPA: rank.GPA,
+                MajorName: rank.MajorName,
+                Rank: rank.Rank
+              }]
+            }
           }
           this.loading = false
         })
@@ -494,50 +532,30 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(() => {
+      }).then(() => {
           this.loading = true;
           var ShareItems = [{ "Path": ["profile", Object.keys(this.content.profile)[0], "StaffID"] }];
           var Path = [];
           var data = new FormData();
           data.append("dataFile", this.dataFile);
           if (this.ruleForm.profileType.length != 0) {
-            if (this.checkAll1 === true)
-              ShareItems.push({ "Path": ["profile", Object.keys(this.content.profile)[0]] })
-            else
-              for (var i = 0; i < this.ruleForm.profileType.length; i++) {
-                Path = ["profile", Object.keys(this.content.profile)[0]]
-                Path.push(this.ruleForm.profileType[i])
-                ShareItems.push({ "Path": Path })
-              }
-          }
-          if (this.ruleForm.scoreType.length != 0) {
-            for (var i = 0; i < this.ruleForm.scoreType.length; i++) {
-              Path = ["score"]
-              Path.push(this.ruleForm.scoreType[i])
+            // if (this.checkAll1 === true)
+            //   ShareItems.push({ "Path": ["profile", Object.keys(this.content.profile)[0]] })
+            // else
+            for (let i = 0; i < this.ruleForm.profileType.length; i++) {
+              if(this.ruleForm.profileType[i] === "MajorName")
+                this.ruleForm.profileType.push("MajorCode")
+              if(this.ruleForm.profileType[i] === "UnitName")
+                this.ruleForm.profileType.push("UnitCode")
+              Path = ["profile", Object.keys(this.content.profile)[0]]
+              Path.push(this.ruleForm.profileType[i])
               ShareItems.push({ "Path": Path })
             }
           }
-          if (this.ruleForm.levelType.length != 0) {
-            for (var i = 0; i < this.ruleForm.levelType.length; i++) {
-              Path = ["level_exam"]
-              Path.push(this.ruleForm.levelType[i])
-              ShareItems.push({ "Path": Path })
-            }
-          }
-          if (this.ruleForm.rewardType.length != 0) {
-            for (var i = 0; i < this.ruleForm.rewardType.length; i++) {
-              Path = ["reward"]
-              Path.push(this.ruleForm.rewardType[i])
-              ShareItems.push({ "Path": Path })
-            }
-          }
-          if (this.ruleForm.raceType.length != 0) {
-            for (var i = 0; i < this.ruleForm.raceType.length; i++) {
-              Path = ["race_reward"]
-              Path.push(this.ruleForm.raceType[i])
-              ShareItems.push({ "Path": Path })
-            }
+          if (this.gpa) {
+            ShareItems.push({ "Path": ["rank", Object.keys(this.content.profile)[0], "GPA"] })
+            ShareItems.push({ "Path": ["rank", Object.keys(this.content.profile)[0], "Rank"] })
+            ShareItems.push({ "Path": ["rank", Object.keys(this.content.profile)[0], "MajorName"] })
           }
           data.append("body", JSON.stringify({ "ShareItems": ShareItems }));
           this.axios({
@@ -545,8 +563,7 @@ export default {
             url: "https://api.hduhelp.com/gormja_wrapper/expose/cache?topic=profile&staffID" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
             headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
             data,
-          })
-            .then((response) => {
+          }).then(() => {
               this.$confirm("信息已经成功公开，你也可以随时更改", "提示", {
                 confirmButtonText: "确定",
                 showCancelButton: false,
@@ -557,7 +574,7 @@ export default {
               this.dialogVisible = true;
               this.loading = false
             })
-            .catch((error) => {
+            .catch(() => {
               this.$message.error("出错啦,请稍后再试");
               this.loading = false;
             });

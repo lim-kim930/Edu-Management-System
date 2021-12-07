@@ -6,7 +6,7 @@
         <span>高校学业核验系统</span>
       </div>
       <div class="user">
-        <el-dropdown style="height: 50px; line-height: 80px" @command="msgRouteSwitch()">
+        <el-dropdown style="height: 50px; line-height: 80px" @command="msgRouteSwitch">
           <el-badge
             :value="received + sent"
             :hidden="received + sent === 0"
@@ -208,10 +208,12 @@ export default {
       this.axios({
         method: "post",
         url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForCompany",
-        headers: { "Content-Type": "application/json", "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization },
+        headers: { "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization },
         data: { "schoolCode": "1" }
       }).then((response) => {
-        this.received = response.data.data.length;
+        for (let i = 0; i < response.data.data.length; i++)
+          if (!response.data.data[i].Read)
+            this.received++;
         sessionStorage.setItem("message", JSON.stringify(response.data.data));
       }).catch(() => {
         this.$message.error("获取站内信息出错啦,请稍后再试");
@@ -232,16 +234,7 @@ export default {
   height: 80px !important;
   min-width: 1500px;
 }
-.title {
-  float: left;
-  width: 250px;
-  height: 80px;
-  line-height: 80px;
-  margin-left: 120px;
-  font-size: 26px;
-  color: #fff;
-  font-weight: 700;
-}
+
 .user {
   float: left;
   width: 400px;
@@ -300,5 +293,15 @@ export default {
   list-style: none;
   outline: none;
   box-sizing: border-box;
+}
+.title {
+  float: left;
+  width: 250px;
+  height: 80px;
+  line-height: 80px;
+  margin-left: 120px;
+  font-size: 26px;
+  color: #fff;
+  font-weight: 700;
 }
 </style>

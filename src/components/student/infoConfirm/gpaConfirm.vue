@@ -28,19 +28,26 @@
     <el-button
       type="primary"
       plain
-      icon="el-icon-delete-solid"
-      @click="reupload()"
-      v-show="file != ''"
-      style="margin: 0 0 10px 10px;"
-    >删除文件</el-button>
-    <el-button
-      type="primary"
-      plain
       icon="el-icon-download"
       @click="downloadFile('学业文件.enc')"
       v-show="file != ''"
       style="margin: 0 0 10px 10px;"
     >下载文件</el-button>
+    <el-button
+      type="primary"
+      @click="submit()"
+      plain
+      v-show="!confirmed&&JSON.stringify(data) !== '{}'"
+      :disabled="file===''"
+      style="margin: 10px 0 0 calc(100% - 550px)"
+    >确认信息</el-button>
+    <!-- 使用typeValue、Confirmed和Data.length来判断按钮是否显示和禁用 -->
+    <el-button
+      type="info"
+      @click="dialog = true;"
+      plain
+      v-show="!confirmed&&JSON.stringify(data) !== '{}'"
+    >错误反馈</el-button>
     <br />
     <span v-show="loading2" class="loadmask">
       <i style="dispaly: block" class="el-icon-loading"></i>
@@ -67,21 +74,6 @@
     </el-descriptions>
     <el-empty :image-size="150" v-show="JSON.stringify(data) === '{}'" description="未查询到您的排名信息"></el-empty>
     <el-result icon="success" title="排名信息已确认" v-show="confirmed"></el-result>
-    <el-button
-      type="primary"
-      @click="submit()"
-      plain
-      v-show="!confirmed&&JSON.stringify(data) !== '{}'"
-      :disabled="file===''"
-      style="margin-top: 10px"
-    >确认信息</el-button>
-    <!-- 使用typeValue、Confirmed和Data.length来判断按钮是否显示和禁用 -->
-    <el-button
-      type="info"
-      @click="dialog = true;"
-      plain
-      v-show="!confirmed&&JSON.stringify(data) !== '{}'"
-    >错误反馈</el-button>
     <el-drawer
       title="排名信息错误反馈提示"
       :visible.sync="dialog"
@@ -365,7 +357,7 @@ export default {
 }
 .upload {
   display: inline-block;
-  margin-left: 30px;
+  margin-left: 10px;
   width: 170px;
   height: 40px;
   line-height: 40px;

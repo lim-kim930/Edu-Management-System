@@ -6,23 +6,30 @@
         <span>教务—学业分享系统</span>
       </div>
       <div class="user">
-        <el-dropdown style="height: 50px; cursor: pointer; line-height: 80px">
+        <el-dropdown
+          style="height: 50px; cursor: pointer; line-height: 80px"
+          @command="msgRouteSwitch"
+        >
           <el-badge
             :value="received + sent"
             :hidden="received + sent === 0"
             class="item"
             style="width: 30px; height: 30px; margin-right: 20px; line-height: 30px !important"
           >
-            <i class="el-icon-message-solid el-dropdown-link" style="font-size: 20px; color: #fff"></i>
+            <i
+              class="el-icon-message el-dropdown-link"
+              style="font-size: 20px; color: #fff"
+              @click="msgRoute('received')"
+            ></i>
           </el-badge>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item class="clearfix">
-              已发送
-              <el-badge class="mark" :value="sent" :hidden="sent === 0" />
-            </el-dropdown-item>
-            <el-dropdown-item class="clearfix">
+            <el-dropdown-item command="received" class="clearfix">
               收信箱
               <el-badge class="mark" :value="received" :hidden="received === 0" />
+            </el-dropdown-item>
+            <el-dropdown-item command="sent" class="clearfix">
+              已发送
+              <el-badge class="mark" :value="sent" :hidden="sent === 0" />
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -85,6 +92,10 @@
                 <span slot="title" style="font-size: 20px">信息公开设置</span>
               </el-menu-item>
               <el-menu-item index="5" :disabled="!xjConfirmed">
+                <i class="el-icon-message-solid"></i>
+                <span slot="title" style="font-size: 20px">消息中心</span>
+              </el-menu-item>
+              <el-menu-item index="6" :disabled="!xjConfirmed">
                 <i class="el-icon-s-custom"></i>
                 <span slot="title" style="font-size: 20px">账号设置</span>
               </el-menu-item>
@@ -121,6 +132,9 @@ export default {
     };
   },
   methods: {
+    msgRouteSwitch(command) {
+      this.$router.push("/message/" + command);
+    },
     downloadFile(filename) {
       const Url = URL.createObjectURL(this.file);
       const eleLink = document.createElement("a")
@@ -166,6 +180,9 @@ export default {
         this.$router.push("/infoDisclose");
       }
       else if (key === "5") {
+        this.$router.push("/message/received");
+      }
+      else if (key === "6") {
         this.$router.push("/accountManage");
       }
     },
@@ -208,7 +225,7 @@ export default {
             this.activeIndex = "1-3";
             break
           case "/accountManage":
-            this.activeIndex = "5";
+            this.activeIndex = "6";
             break
           case "/infoDisclose":
             this.activeIndex = "4";
@@ -218,6 +235,9 @@ export default {
             break
           case "/infoSquare":
             this.activeIndex = "3";
+            break
+          case "/message":
+            this.activeIndex = "5";
             break
         }
       else
@@ -301,19 +321,32 @@ export default {
         this.redirect();
         this.loading = false
       });
-      // this.axios({
-      //   method: "post",
-      //   url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForSelf",
-      //   headers: {"Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
-      //   data: {
-      //     "CompanyCode":"company1"
-      //   }
-      // }).then((response) => {
-      //   this.received = response.data.data.length;
-      //   sessionStorage.setItem("message", JSON.stringify(response.data.data))
-      // }).catch(error => {
-      //   this.$message.error("获取站内信息出错啦,请稍后再试");
-      // });
+      this.axios({
+        method: "post",
+        url: "https://api.hduhelp.com/gormja_wrapper/share/listFurtherShareRequestForReceiver",
+        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+        data: {
+           "student": "any"
+        }
+      }).then((response) => {
+        this.received = response.data.data.length;
+        sessionStorage.setItem("message", JSON.stringify(response.data.data))
+      }).catch(() => {
+        this.$message.error("获取站内信息出错啦,请稍后再试");
+      });
+      this.axios({
+        method: "post",
+        url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForSelf",
+        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+        data: {
+          "CompanyCode": "company1"
+        }
+      }).then((response) => {
+        this.sent = response.data.data.length;
+        // sessionStorage.setItem("message", JSON.stringify(response.data.data))
+      }).catch(() => {
+        this.$message.error("获取站内信息出错啦,请稍后再试");
+      });
     }
   },
   destroyed() {
@@ -352,12 +385,16 @@ export default {
   font-weight: 700;
 }
 .user {
-  float: left;
-  width: 230px;
+  float: right;
+  width: 300px;
   height: 80px;
-  margin-left: 45%;
+  margin-right: 10%;
   text-align: center;
   line-height: 80px;
+}
+#uname {
+  display: inline-block;
+  margin: 0 5px;
 }
 .el-container {
   background-color: rgba(224, 224, 224, 0.685);

@@ -134,6 +134,20 @@
             <el-table-column prop="value" label="获得时间"></el-table-column>
           </el-table>
         </el-form-item>
+        <el-form-item label="gpa信息" required>
+          <el-table
+            :data="rankData"
+            tooltip-effect="dark"
+            style="width: 100%"
+            border
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column prop="name" label="专业"></el-table-column>
+            <el-table-column prop="GPA" label="绩点"></el-table-column>
+            <el-table-column prop="Rank" label="排名"></el-table-column>
+          </el-table>
+        </el-form-item>
         <el-form-item label="选择目的企业和岗位" required>
           <el-cascader
             v-model="ruleForm.hr"
@@ -200,8 +214,8 @@
             <span class="content">{{profileValue.Nation}}</span>
           </div>
           <div class="classCode">
-            <span class="title">班级代码</span>
-            <span class="content">{{profileValue.ClassCode}}</span>
+            <span class="title">GPA</span>
+            <span class="content">{{rankData[0].GPA}}</span>
           </div>
           <div class="className">
             <span class="title">班级名称</span>
@@ -226,8 +240,8 @@
             <span class="content">{{profileValue.UnitName}}</span>
           </div>
           <div class="majorCode">
-            <span class="title">专业代码</span>
-            <span class="content">{{profileValue.MajorCode}}</span>
+            <span class="title">GPA排名</span>
+            <span class="content">{{rankData[0].Rank}}</span>
           </div>
           <div class="majorName">
             <span class="title">专业名称</span>
@@ -340,7 +354,6 @@
 </template>
 <script>
 let FormData = require("form-data");
-import html2canvas from "html2canvas"
 import { Base64 } from "js-base64"
 export default {
   data() {
@@ -387,6 +400,7 @@ export default {
         scoreType: [],
         levelType: [],
         rewardType: [],
+        rankType: [],
         raceType: []
       },
       profileData: [],//学籍信息数据
@@ -397,12 +411,14 @@ export default {
       rewardData: [],
       rewardDataValue: [],
       raceData: [],
+      rankData: [{}],
+      rankValue: {},
+      rankDataValue: [],
       raceDataValue: [],
       options: [],
       props: {
         lazy: true,
         lazyLoad(node, resolve) {
-          console.log(node);
           that.target_show = false;
           const { data, level } = node;
           if (data === undefined)
@@ -436,6 +452,12 @@ export default {
   },
   props: ["wh", "file"],
   methods: {
+    handleSelectionChange(val) {
+      console.log(val);
+      val.forEach(item => {
+        this.ruleForm.rankType.push(item.value)
+      });
+    },
     handleSelectionChange1(val) {
       val.forEach(item => {
         this.ruleForm.scoreType.push(item.value)
@@ -507,6 +529,7 @@ export default {
         profileType: [],
         scoreType: [],
         levelType: [],
+        rankType: [],
         rewardType: [],
         raceType: []
       };
@@ -539,9 +562,9 @@ export default {
                 })
               }
               this.resetForm();
-              if (sessionStorage.getItem("com")){
-                this.target = JSON.parse(sessionStorage.getItem("com")).Name+"/"+JSON.parse(sessionStorage.getItem("com")).job
-                this.ruleForm.hr=[JSON.parse(sessionStorage.getItem("com")).CompanyCode, JSON.parse(sessionStorage.getItem("com")).JobID]
+              if (sessionStorage.getItem("com")) {
+                this.target = JSON.parse(sessionStorage.getItem("com")).Name + "/" + JSON.parse(sessionStorage.getItem("com")).job
+                this.ruleForm.hr = [JSON.parse(sessionStorage.getItem("com")).CompanyCode, JSON.parse(sessionStorage.getItem("com")).JobID]
                 this.target_show = true;
               }
               sessionStorage.removeItem("com");
@@ -628,6 +651,22 @@ export default {
                     })
                   }
                 }
+                else if (range[i] === "rank") {
+                  console.log(this.content.rank);
+                  this.rankData = [];
+                  this.rankValue = {};
+                  var rank = Object.keys(this.content.rank[Object.keys(this.content.rank)[0]]);
+                  console.log(rank);
+                  for (var j = 0; j < rank.length; j++)
+                    this.rankValue = this.content.rank[Object.keys(this.content.rank)[0]][rank[j]]
+                  this.rankData.push({
+                      value: "GPA",
+                      GPA: this.content.rank[Object.keys(this.content.rank)[0]].GPA,
+                      name: this.content.rank[Object.keys(this.content.rank)[0]].MajorName,
+                      Rank: this.content.rank[Object.keys(this.content.rank)[0]].Rank,
+                      key: Object.keys(this.content.rank)[0]
+                    })
+                }
               }
               this.loading = false;
             }).catch(() => {
@@ -707,6 +746,13 @@ export default {
             for (var i = 0; i < this.ruleForm.raceType.length; i++) {
               Path = ["race_reward"]
               Path.push(this.ruleForm.raceType[i])
+              ShareItems.push({ "Path": Path })
+            }
+          }
+          if (this.ruleForm.rankType.length != 0) {
+            for (var i = 0; i < this.ruleForm.rankType.length; i++) {
+              Path = ["rank", Object.keys(this.content.rank)[0]]
+              Path.push(this.ruleForm.rankType[i])
               ShareItems.push({ "Path": Path })
             }
           }
@@ -828,14 +874,14 @@ export default {
               this.title_height = count * 51 + "px"
               this.title_paddingTop = (count * 51 / 2 - 82) + "px"
               this.score_content_height = (count * 51 + 1) + "px"
-              this.table_height = (count*51 + (count2 + count3) * 41 + 500) + "px"
+              this.table_height = (count * 51 + (count2 + count3) * 41 + 500) + "px"
               this.level_top = (count * 51 + 240) + "px"
               this.level_paddingTop = (count2 * 41 / 2 - 100) + "px"
               this.level_height = count2 * 41 + "px"
               this.reward_top = (count * 51 + 240) + count2 * 41 + "px"
               this.reward_paddingTop = (count3 * 41 / 2 - 100) + "px"
               this.reward_height = count3 * 41 + "px"
-              this.info_top = (count * 51 +(count2 + count3) * 41 + 240) + "px"
+              this.info_top = (count * 51 + (count2 + count3) * 41 + 240) + "px"
               // this.creat22();
               // this.emptyShow = false;
               // this.tableShow = true;
@@ -874,7 +920,7 @@ export default {
     }
   },
   mounted() {
-    if(this.file){
+    if (this.file) {
       this.dataFile = this.file
       this.next()
     }

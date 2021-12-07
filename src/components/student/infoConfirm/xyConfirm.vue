@@ -676,7 +676,7 @@ export default {
 }
 .upload {
   display: inline-block;
-  margin-left: 30px;
+  margin-left: 10px;
   width: 170px;
   height: 40px;
   line-height: 40px;
