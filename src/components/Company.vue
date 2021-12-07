@@ -6,14 +6,18 @@
         <span>高校学业核验系统</span>
       </div>
       <div class="user">
-        <el-dropdown style="height: 50px; line-height: 80px" @command="handleCommand">
+        <el-dropdown style="height: 50px; line-height: 80px" @command="msgRouteSwitch()">
           <el-badge
             :value="received + sent"
             :hidden="received + sent === 0"
             class="item"
             style="width: 30px; height: 30px; margin-right: 20px; line-height: 30px !important; cursor: pointer;"
           >
-            <i class="el-icon-message" style="font-size: 20px; color: #fff" @click="goMessage()"></i>
+            <i
+              class="el-icon-message"
+              style="font-size: 20px; color: #fff"
+              @click="msgRoute('received')"
+            ></i>
           </el-badge>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="received" class="clearfix">
@@ -46,7 +50,7 @@
           <el-col :span="24">
             <el-menu
               :default-active="activeIndex"
-              @select="btn"
+              @select="indexRouteSwitch"
               background-color="#fff"
               text-color="#3a4b56"
               active-text-color="#409eff"
@@ -81,7 +85,11 @@
         </el-row>
       </el-aside>
       <!-- 内容 -->
-      <el-main v-loading="loading" element-loading-text="拼命加载中" :style="{'height': this.wh - 80 + 'px'}">
+      <el-main
+        v-loading="loading"
+        element-loading-text="拼命加载中"
+        :style="{'height': this.wh - 80 + 'px'}"
+      >
         <router-view
           @func="getReceived"
           @func2="getSent"
@@ -97,13 +105,12 @@
 export default {
   data() {
     return {
-      circleUrl: "https://limkim.xyz/newEdu/user.png",
-      activeIndex: "",
-      tokenInfo: "",
+      circleUrl: "https://limkim.xyz/newEdu/user.png",// 头像地址
+      activeIndex: "",// 侧边栏index
       loading: false,
-      received: 0,
-      sent: 0,
-      uName: "",
+      received: 0,// 收信箱接收数
+      sent: 0,// 收信箱发送数
+      uName: "",// 用户名
       wh: ""//屏幕高度
     };
   },
@@ -114,13 +121,10 @@ export default {
     getSent(sent) {
       this.sent = sent
     },
-    handleCommand(command) {
+    msgRouteSwitch(command) {
       this.$router.push("/comMessage/" + command);
     },
-    goMessage() {
-      this.$router.push("/comMessage");
-    },
-    btn(key) {
+    indexRouteSwitch(key) {
       if (key === "1")
         this.$router.push("/queryInfo");
       else if (key === "2")
@@ -136,7 +140,6 @@ export default {
     },
     logOut() {
       if (this.uName === "")
-        //改成登录
         this.$router.push("/signIn");
       else {
         this.$confirm("确定要退出登录吗?", "提示", {
@@ -155,15 +158,15 @@ export default {
         case "/queryInfo":
           this.activeIndex = "1";
           break
-        case "/comAccountManage":
-          this.activeIndex = "4";
-          break
         case "/internCert":
           this.activeIndex = "2";
           break
         case "/comMessage/received":
         case "/comMessage/sent":
           this.activeIndex = "3";
+          break
+        case "/comAccountManage":
+          this.activeIndex = "4";
           break
         case "/infoEntry":
           this.activeIndex = "5";
@@ -178,12 +181,9 @@ export default {
       return self.innerHeight || (de && de.clientHeight) || document.body.clientHeight;
     }
   },
-  watch: {   //监听路由变化
-    $route() {
-      this.redirect()
-      //  console.log(to , from )
-      // to , from 分别表示从哪跳转到哪，都是一个对象
-      // to.path  ( 表示的是要跳转到的路由的地址 eg: /home );
+  watch: {
+    $route() {//监听路由变化
+      this.redirect();
     }
   },
   mounted() {
@@ -199,12 +199,12 @@ export default {
         showCancelButton: false,
         type: "warning"
       }).then(() => {
-        window.location.href = "https://limkim.xyz/newEdu/sign"
+        window.location.href = "https://limkim.xyz/newEdu/sign";
       }).catch(() => {
-        window.location.href = "https://limkim.xyz/newEdu/sign"
+        window.location.href = "https://limkim.xyz/newEdu/sign";
       });
     else {
-      this.uName = JSON.parse(localStorage.getItem("jw_ent_file")).CompanyCode
+      this.uName = JSON.parse(localStorage.getItem("jw_ent_file")).CompanyCode;
       this.axios({
         method: "post",
         url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForCompany",
@@ -214,7 +214,7 @@ export default {
         }
       }).then((response) => {
         this.received = response.data.data.length;
-        sessionStorage.setItem("message", JSON.stringify(response.data.data))
+        sessionStorage.setItem("message", JSON.stringify(response.data.data));
       }).catch(() => {
         this.$message.error("获取站内信息出错啦,请稍后再试");
       });

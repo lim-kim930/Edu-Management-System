@@ -5,7 +5,7 @@
     label-width="80px"
     v-loading="loading"
     element-loading-text="拼命加载中"
-    :style="{'height': this.wh - 105 + 'px'}"
+    :style="{'max-height': this.wh - 105 + 'px'}"
   >
     <span>请选择筛选条件:</span>
     <el-select

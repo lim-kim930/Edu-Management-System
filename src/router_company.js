@@ -11,7 +11,6 @@ import comAccountManage from "./components/Company/accountManage.vue"
 const router = new VueRouter({
   routes: [
     { path: "/", redirect: "/queryInfo" },
-    { path: "/comMessage", redirect: "/comMessage/received" },
     { path: "/queryInfo", component: queryInfo },
     { path: "/infoSquare", component: infoSquare },
     { path: "/infoEntry", component: infoEntry },
