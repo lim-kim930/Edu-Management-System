@@ -105,7 +105,7 @@
 export default {
   data() {
     return {
-      circleUrl: "https://limkim.xyz/newEdu/user.png",// 头像地址
+      circleUrl: "https://edu.limkim.cn/static/user.png",// 头像地址
       activeIndex: "",// 侧边栏index
       loading: false,
       received: 0,// 收信箱接收数
@@ -149,7 +149,7 @@ export default {
           center: true
         }).then(() => {
           localStorage.removeItem("jw_ent_file");
-          window.location.href = "https://limkim.xyz/newEdu/sign";
+          window.location.href = "https://edu.limkim.cn/sign";
         })
       }
     },
@@ -199,9 +199,9 @@ export default {
         showCancelButton: false,
         type: "warning"
       }).then(() => {
-        window.location.href = "https://limkim.xyz/newEdu/sign";
+        window.location.href = "https://edu.limkim.cn/sign";
       }).catch(() => {
-        window.location.href = "https://limkim.xyz/newEdu/sign";
+        window.location.href = "https://edu.limkim.cn/sign";
       });
     else {
       this.uName = JSON.parse(localStorage.getItem("jw_ent_file")).CompanyCode;

@@ -109,7 +109,7 @@
 export default {
   data() {
     return {
-      circleUrl: "https://limkim.xyz/newEdu/user.png",//头像url
+      circleUrl: "https://edu.limkim.cn/static/user.png",//头像url
       activeIndex: "1",//侧边导航默认选中值
       loading: false,//main的加载
       uName: "",//用户名
@@ -173,7 +173,7 @@ export default {
     logOut() {
       if (this.uName === null) {
         //没有用户信息直接定向到登录
-        location.href = "https://limkim.xyz/newEdu/sign"
+        location.href = "https://edu.limkim.cn/sign"
       }
       else {
         this.$confirm("确定要退出登录吗?" + (this.file === "" ? "" : "请确认您已经将最新的学业文件下载到了本地"), "提示", {
@@ -183,7 +183,7 @@ export default {
         }).then(() => {
           //清除localStorage里的用户信息,定向到登录
           localStorage.removeItem("jw_student_file")
-          window.location.href = "https://limkim.xyz/newEdu/sign"
+          window.location.href = "https://edu.limkim.cn/sign"
         }).catch(() => {
           if (this.file === "")
             return
@@ -280,9 +280,9 @@ export default {
         showCancelButton: false,
         type: "warning"
       }).then(() => {
-        window.location.href = "https://limkim.xyz/newEdu/sign"
+        window.location.href = "https://edu.limkim.cn/sign"
       }).catch(() => {
-        window.location.href = "https://limkim.xyz/newEdu/sign"
+        window.location.href = "https://edu.limkim.cn/sign"
       });
     else {
       this.uName = JSON.parse(localStorage.getItem("jw_student_file")).staffID

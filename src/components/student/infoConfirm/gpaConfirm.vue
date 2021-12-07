@@ -347,9 +347,9 @@ export default {
         showCancelButton: false,
         type: "warning"
       }).then(() => {
-        window.location.href = "https://limkim.xyz/newEdu/sign"
+        window.location.href = "https://edu.limkim.cn/sign"
       }).catch(() => {
-        window.location.href = "https://limkim.xyz/newEdu/sign"
+        window.location.href = "https://edu.limkim.cn/sign"
       });
   },
 };

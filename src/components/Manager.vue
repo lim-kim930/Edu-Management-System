@@ -59,7 +59,7 @@ export default {
   data() {
     return {
       wh: "",
-      circleUrl: "https://limkim.xyz/newEdu/user.png",
+      circleUrl: "https://edu.limkim.cn/static/user.png",
       activeIndex: "",
       tokenInfo: "",
       loading: false,
@@ -87,7 +87,7 @@ export default {
           center: true
         }).then(() => {
           localStorage.removeItem("jw_ent_file")
-          window.location.href = "https://limkim.xyz/newEdu/sign"
+          window.location.href = "https://edu.limkim.cn/sign"
         })
       }
     },
@@ -123,9 +123,9 @@ export default {
         showCancelButton: false,
         type: "warning"
       }).then(() => {
-        window.location.href = "https://limkim.xyz/newEdu/sign"
+        window.location.href = "https://edu.limkim.cn/sign"
       }).catch(() => {
-        window.location.href = "https://limkim.xyz/newEdu/sign"
+        window.location.href = "https://edu.limkim.cn/sign"
       });
     else
       this.uName = JSON.parse(localStorage.getItem("jw_manage_file")).uname
