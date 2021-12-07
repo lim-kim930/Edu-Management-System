@@ -23,17 +23,14 @@ export default {
   },
   methods: {
     submit() {
-
     }
   },
   mounted() {
-
-  },
+  }
 };
 </script>
 
 <style scoped>
-.pwd,
 .chain {
   overflow: auto;
   margin: 10px;
@@ -44,8 +41,5 @@ export default {
   box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   max-height: 750px;
-}
-.pwd .el-input {
-  width: 250px;
 }
 </style>

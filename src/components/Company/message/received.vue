@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <el-dropdown @command="handleCommand1" style="cursor: pointer; margin: 10px 30px 10px 71%">
+    <el-dropdown @command="classifySwitch" style="cursor: pointer; margin: 10px 30px 10px 71%">
       <span class="el-dropdown-link">
         分类依据 : {{classify}}
         <i class="el-icon-arrow-down el-icon--right"></i>
@@ -11,7 +11,7 @@
         <el-dropdown-item command="应聘岗位">应聘岗位</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <el-dropdown @command="handleCommand2" style="cursor: pointer; margin: 10px 0">
+    <el-dropdown @command="sortSwitch" style="cursor: pointer; margin: 10px 0">
       <span class="el-dropdown-link">
         排序方式 : {{sort}}
         <i class="el-icon-arrow-down el-icon--right"></i>
@@ -24,7 +24,7 @@
     <div style="overflow: auto; padding-bottom: 10px">
       <div
         style="cursor: pointer;"
-        v-for="item in data"
+        v-for="item in receivedMsgData"
         v-bind:key="item.id"
         @click="goQuery(item.url)"
       >
@@ -47,21 +47,20 @@ export default {
       loading: false,
       sort: "过期时间▼",
       classify: "无",
-      data: []
+      receivedMsgData: []// 
     };
   },
   methods: {
-    handleCommand1(command) {
+    classifySwitch(command) {
       this.classify = command
     },
-    handleCommand2(command) {
+    sortSwitch(command) {
       if (command !== this.sort) {
         this.sort = command
-        var temp = this.data;
-        this.data = []
-        console.log(temp);
-        for (var i = 0; i < temp.length; i++)
-          this.data[i] = temp[temp.length - i - 1]
+        const temp = this.receivedMsgData;
+        this.receivedMsgData = []
+        for (let i = 0; i < temp.length; i++)
+          this.receivedMsgData[i] = temp[temp.length - i - 1]
       }
     },
     goQuery(url) {
@@ -73,6 +72,7 @@ export default {
   },
   mounted() {
     this.loading = true
+    // 通过sessionStorage得到信息
     const data = JSON.parse(sessionStorage.getItem("message"))
     for (let i = 0; i < data.length; i++) {
       data[i].id = i + 1
@@ -80,12 +80,12 @@ export default {
       data[i].date = new Date(+new Date(data[i].ExpireAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")
       data[i].url = "https://api.hduhelp.com/gormja_wrapper/share/verify?fileID=" + data[i].FileID + "&encryptedK1S=" + data[i].EncryptedK1S
     }
-    const data2 = data.sort(function (a, b) {
+    const newData = data.sort((a, b) => {
       return a.sortDate - b.sortDate
     })
-    this.data = data2
+    this.receivedMsgData = newData
     this.loading = false
-  },
+  }
 };
 </script>
 

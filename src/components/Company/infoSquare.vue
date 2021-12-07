@@ -111,7 +111,6 @@ export default {
     return {
       tableData: [],
       loading: false,
-      props: { multiple: true },
       options: [{
         value: "UnitCode",
         label: "学院",
@@ -143,76 +142,44 @@ export default {
         MajorCode: "",
         UnitCode: "",
         Sex: ""
-      },
-      input: [],
-      selected: [],
-      gpa: false,
-      Predicates: []
+      },// 选择的条件
+      Predicates: []// 要传给后端的筛选条件
     }
   },
   props: ["wh"],
   methods: {
-    lll(v) {
-      if (v.length === 0) {
-        this.gpa = false;
-        this.Predicates = []
-      }
-      let flag = 0;
-      for (let i = 0; i < v.length; i++) {
-        if (v[i].indexOf("gpa") === -1)
-          flag++
-        this.gpa = flag !== v.length
-      }
-      this.selected = v;
-    },
     getInfo() {
+      this.loading = true;
+      this.tableData = [];
+      // 先根据conditions填好Predicates
       this.Predicates = [];
       const index = Object.keys(this.conditions);
       for (let i = 0; i < index.length; i++) {
         if (this.conditions[index[i]].length !== 0)
           this.Predicates.push({
-            "FieldPath": [
-              "data_map",
-              index[i] === "GPA" ? "rank" : "profile",
-              "*",
-              index[i]
-            ],
+            "FieldPath": ["data_map", index[i] === "GPA" ? "rank" : "profile", "*", index[i]],
             "RelationType": "must",
             "NodeType": index[i] === "GPA" ? "range" : "match",
             "Predicate": index[i] === "GPA" ? { "from": +this.conditions[index[i]][0] ? +this.conditions[index[i]][0] : 0, "to": +this.conditions[index[i]][1] ? +this.conditions[index[i]][1] : 5.0 } : { "value": this.conditions[index[i]] }
           });
       }
-      this.loading = true;
-      this.tableData = []
       this.axios({
         method: "post",
         url: "https://api.hduhelp.com/gormja_wrapper/expose/search",
-        // headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
-        data: {
-          "Predicates": this.Predicates
-        },
-      })
-        .then((response) => {
-          if (response.data.data.Results.length === 0) {
-            this.loading = false;
-            return;
-          }
-          let result = response.data.data.Results;
-          for (let i = 0; i < result.length; i++) {
-            this.tableData.push(result[i].Source.data_map.profile[result[i].FileID])
-            this.tableData[i].Photo = "/"
-            // this.tableData[i]
-            // data[i].Source = data[i].Source.data_map
-            // data[i].Source = data[i].Source.data_map
-          }
-          // console.log(data);
-
-          this.loading = false;
-        })
-        .catch(() => {
-          this.$message.error("获取公开信息出错啦,请稍后再试")
-          this.loading = false
-        });
+        data: { "Predicates": this.Predicates }
+      }).then((response) => {
+        if (response.data.data.Results.length === 0)
+          return this.loading = false;
+        const result = response.data.data.Results;
+        for (let i = 0; i < result.length; i++) {
+          this.tableData.push(result[i].Source.data_map.profile[result[i].FileID])
+          this.tableData[i].Photo = "/"
+        }
+        this.loading = false;
+      }).catch(() => {
+        this.$message.error("获取公开信息出错啦,请稍后再试")
+        this.loading = false
+      });
     }
   },
   mounted() {
@@ -234,6 +201,7 @@ export default {
 }
 </style>
 <style>
+/* table里下拉菜单的样式表 */
 .demo-table-expand {
   font-size: 0;
 }

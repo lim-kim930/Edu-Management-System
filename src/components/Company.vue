@@ -22,11 +22,11 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="received" class="clearfix">
               收信箱
-              <el-badge class="mark" :value="received" :hidden="received === 0" />
+              <el-badge class="item" :value="received" :hidden="received === 0" />
             </el-dropdown-item>
             <el-dropdown-item command="sent" class="clearfix">
               已发送
-              <el-badge class="mark" :value="sent" :hidden="sent === 0" />
+              <el-badge class="item" :value="sent" :hidden="sent === 0" />
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -224,11 +224,15 @@ export default {
 </script>
 
 <style scoped>
-.mark {
+.item {
   margin-top: 10px;
 }
 </style>
 <style>
+/* 收信箱dropdown的右上角数字 */
+.item .el-badge__content{
+  line-height: 16px;
+}
 * {
   margin: 0px;
   padding: 0px;
