@@ -103,33 +103,33 @@ export default {
             CompanyCode: row.CompanyCode
           }
         }).then(() => {
-          this.$message.success("公司删除成功！");
-          this.getCompanyInfo()
-        }).catch((err) => {
-        this.$message.error("公司删除失败啦,请重试");
-        this.loading = false
+          this.$message.success("公司删除成功!");
+          this.getCompanyInfo();
+        }).catch(() => {
+          this.$message.error("公司删除失败啦,请重试");
+          this.loading = false;
+        });
       });
-      })
     },
     getCompanyInfo() {
-      this.companyListData = []
-      this.step = 0
-      this.loading = true
+      this.companyListData = [];
+      this.step = 0;
+      this.loading = true;
       this.axios({
         method: "get",
         url: "https://api.hduhelp.com/gormja_wrapper/company/lookup",
       }).then((response) => {
-        this.companyListData = response.data.data
-        this.loading = false
+        this.companyListData = response.data.data;
+        this.loading = false;
       }).catch(() => {
         this.$message.error("获取企业列表出错啦,请稍后再试");
-        this.loading = false
-      })
+        this.loading = false;
+      });
     },
     addCompany() {
       if (this.form.Name.trim().length === 0 || this.form.CompanyCode.trim().length === 0 || this.form.Passphrase.trim().length === 0)
-        return this.$message.warning("请将内容填写完成！");
-      this.loading = true
+        return this.$message.warning("请将内容填写完成!");
+      this.loading = true;
       this.axios({
         method: "post",
         url: "https://api.hduhelp.com/gormja_wrapper/company/add",
@@ -141,23 +141,23 @@ export default {
           Description: this.form.Description
         }
       }).then(() => {
-        this.$message.success("企业添加成功！");
+        this.$message.success("企业添加成功!");
         this.form = {
           Name: "",
           CompanyCode: "",
           Passphrase: "",
           Description: ""
-        }
-        this.getCompanyInfo()
-        this.loading = false
+        };
+        this.getCompanyInfo();
+        this.loading = false;
       }).catch((err) => {
         this.$message.error(err.response.data.msg);
-        this.loading = false
+        this.loading = false;
       });
     }
   },
   mounted() {
-    this.getCompanyInfo()
+    this.getCompanyInfo();
   },
 };
 </script>

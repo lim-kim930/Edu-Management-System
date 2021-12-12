@@ -85,11 +85,7 @@
         </el-row>
       </el-aside>
       <!-- 内容 -->
-      <el-main
-        v-loading="loading"
-        element-loading-text="拼命加载中"
-        :style="{'height': this.wh - 80 + 'px'}"
-      >
+      <el-main :style="{'height': this.wh - 80 + 'px'}">
         <router-view
           @func="getReceived"
           @func2="getSent"
@@ -107,7 +103,6 @@ export default {
     return {
       circleUrl: "https://edu.limkim.cn/static/user.png",// 头像地址
       activeIndex: "",// 侧边栏index
-      loading: false,
       received: 0,// 收信箱接收数
       sent: 0,// 收信箱发送数
       uName: "",// 用户名

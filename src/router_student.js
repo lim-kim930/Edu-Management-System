@@ -1,11 +1,11 @@
 import VueRouter from "vue-router"
 import infoConfirm from "./components/student/infoConfirm.vue"
-import xjConfirm from "./components/student/infoConfirm/xjConfirm.vue"
-import xyConfirm from "./components/student/infoConfirm/xyConfirm.vue"
-import byConfirm from "./components/student/infoConfirm/byConfirm.vue"
-import hjConfirm from "./components/student/infoConfirm/hjConfirm.vue"
-import gpaConfirm from "./components/student/infoConfirm/gpaConfirm.vue"
-import gxConfirm from "./components/student/infoConfirm/gxConfirm.vue"
+import xjConfirm from "./components/student/infoConfirm/profileConfirm.vue"
+import scoreConfirm from "./components/student/infoConfirm/scoreConfirm.vue"
+import gradConfirm from "./components/student/infoConfirm/gradConfirm.vue"
+import rewardConfirm from "./components/student/infoConfirm/rewardConfirm.vue"
+import rankConfirm from "./components/student/infoConfirm/rankConfirm.vue"
+import intConfirm from "./components/student/infoConfirm/intConfirm.vue"
 import scoreChange from "./components/student/scoreChange.vue"
 import arcManage from "./components/student/arcManage.vue"
 import infoShare from "./components/student/infoShare.vue"
@@ -18,34 +18,34 @@ import accountManage from "./components/student/accountManage.vue"
 
 const router = new VueRouter({
   routes: [ // 路由规则
-    { path: "/", redirect: "/infoConfirm/xjConfirm" },
+    { path: "/", redirect: "/infoConfirm/profileConfirm" },
     { path: "/scoreChange", component: scoreChange },
     {
       path: "/infoConfirm",
       component: infoConfirm,
       children: [{
-        path: "/infoConfirm/xjConfirm",
+        path: "/infoConfirm/profileConfirm",
         component: xjConfirm
       },
       {
-        path: "/infoConfirm/xyConfirm",
-        component: xyConfirm
+        path: "/infoConfirm/scoreConfirm",
+        component: scoreConfirm
       },
       {
-        path: "/infoConfirm/hjConfirm",
-        component: hjConfirm
+        path: "/infoConfirm/rewardConfirm",
+        component: rewardConfirm
       },
       {
-        path: "/infoConfirm/byConfirm",
-        component: byConfirm
+        path: "/infoConfirm/gradConfirm",
+        component: gradConfirm
       },
       {
-        path: "/infoConfirm/gpaConfirm",
-        component: gpaConfirm
+        path: "/infoConfirm/rankConfirm",
+        component: rankConfirm
       },
       {
-        path: "/infoConfirm/gxConfirm",
-        component: gxConfirm
+        path: "/infoConfirm/intConfirm",
+        component: intConfirm
       }]
     },
     { path: "/arcManage", component: arcManage },
@@ -53,7 +53,7 @@ const router = new VueRouter({
     { path: "/infoSquare", component: infoSquare },
     {
       path: "/message",
-      component:message,
+      component: message,
       children: [{
         path: "/message/received",
         component: received

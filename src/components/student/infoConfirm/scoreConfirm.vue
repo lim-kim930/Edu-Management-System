@@ -25,14 +25,6 @@
       点击上传学业文件
       <i class="el-icon-upload"></i>
     </el-upload>
-    <!-- <el-button
-      type="primary"
-      plain
-      icon="el-icon-delete-solid"
-      @click="reupload()"
-      v-show="file != ''"
-      style="margin-left: 10px;"
-    >删除文件</el-button> -->
     <el-button
       type="primary"
       plain
@@ -86,13 +78,12 @@
       type="primary"
       @click="levelSubmit()"
       plain
-      style="margin-left: 0"
       v-show="typeValue==='level_exam'"
       :disabled="multipleSelection.length === 0 || levelBtnDisabled"
     >确认信息</el-button>
     <el-button
       type="info"
-      @click="dialog = true"
+      @click="feedbackDialogShow = true"
       plain
       v-show="(typeValue==='score'&&!scoreConfirmed)||(typeValue==='level_exam'&&!levelConfirmed)"
     >错误反馈</el-button>
@@ -102,7 +93,7 @@
       border
       style="width: 100%; margin-top: 0;"
       @selection-change="handleSelectionChange"
-      :default-sort="{prop: 'Term', order: 'descending'}"
+      :default-sort="{prop: 'Term', order: 'ascending'}"
       :max-height="this.wh - 415"
     >
       <el-table-column type="selection" width="55" :selectable="selectable"></el-table-column>
@@ -155,7 +146,7 @@
     ></el-pagination>
     <el-drawer
       title="学业信息错误反馈提示"
-      :visible.sync="dialog"
+      :visible.sync="feedbackDialogShow"
       direction="rtl"
       custom-class="demo-drawer"
       ref="drawer"
@@ -171,13 +162,13 @@
       </div>
       <el-button @click="$refs.drawer.closeDrawer()" style="margin: 20px 0 0 50px; width: 100px">确 定</el-button>
     </el-drawer>
-    <el-dialog title="交易详情" :visible.sync="dialogTableVisible">
+    <el-dialog title="交易详情" :visible.sync="blockInfoDialogShow">
       <el-table :data="blockDataInfo">
         <el-table-column property="name" label="交易信息" width="150"></el-table-column>
         <el-table-column property="value" label="对应值"></el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogTableVisible = false">确 定</el-button>
+        <el-button type="primary" @click="blockInfoDialogShow = false">确 定</el-button>
       </div>
     </el-dialog>
   </el-form>
@@ -187,10 +178,10 @@ let FormData = require("form-data");
 export default {
   data() {
     return {
-      total: 0,
-      page: 0,
-      Score: [[]],//学期成绩数据
-      LevelScore: [[]],//等级考试信息数据
+      total: 0,// 分页用的总成绩条数
+      page: 0,// 当前的页数
+      Score: [[]],// 学期成绩数据
+      LevelScore: [[]],// 等级考试信息数据
       typeOptions: [{
         value: "score",
         label: "课程成绩"
@@ -215,7 +206,7 @@ export default {
         label: "第二学期"
       }],
       termValue: "",
-      dialog: false,//错误反馈显示
+      feedbackDialogShow: false,//错误反馈显示
       loading: false,//form加载
       secLoading: false,//查询按钮加载
       scoreConfirmed: false,//学期成绩信息确认状态
@@ -223,7 +214,7 @@ export default {
       scoreBtnDisabled: true,//学期成绩信息确认按钮禁用
       levelBtnDisabled: true,//等级考试信息确认按钮禁用
       file: "",//学业文件
-      dialogTableVisible: false,//交易详情显示
+      blockInfoDialogShow: false,//交易详情显示
       blockDataInfo: [],//交易详情信息数据
       multipleSelection: []
     };
@@ -240,7 +231,6 @@ export default {
       return row.tag === value;
     },
     handleSelectionChange(val) {
-      console.log(val);
       this.multipleSelection = val;
     },
     //文件上传成功后
@@ -389,7 +379,6 @@ export default {
                 this.scoreBtnDisabled = false;
               }
               else if (this.typeValue === "level_exam") {
-                console.log(scores);
                 let temp = response.data.data;
                 let count = 0
                 for (let i = 0; i < temp.length; i++) {
@@ -505,7 +494,6 @@ export default {
                   count++
                   this.LevelScore[count] = []
                 }
-                console.log(this.LevelScore[0]);
                 this.LevelScore[count].push(temp[i]);
                 this.LevelScore[count][i - count * 10].Confirmed = {
                   label: "未知",
@@ -579,7 +567,7 @@ export default {
           distinguishCancelAndClose: true,
           beforeClose: (action, instance, done) => {
             if (action === "cancel")
-              this.dialogTableVisible = true
+              this.blockInfoDialogShow = true
             if (action === "confirm" || action === "close")
               done()
           },

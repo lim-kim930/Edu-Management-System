@@ -35,7 +35,7 @@
         上传文件进行修改
         <i class="el-icon-upload"></i>
       </el-upload>
-      <el-button @click="next()" v-show="!upload" type="primary" plain>点击修改</el-button>
+      <el-button @click="next()" v-show="!upload" type="primary" style="margin-left: 10px" plain>点击修改</el-button>
       <el-table
         v-show="tableData.length !== 0"
         :data="tableData"

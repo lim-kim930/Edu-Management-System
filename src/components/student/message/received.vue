@@ -26,10 +26,10 @@
         style="cursor: pointer;"
         v-for="item in receivedMsgData"
         v-bind:key="item.id"
-        @click="goQuery()"
+        @click="goQuery(item.CompanyCode)"
       >
         <el-col :span="8" class="card">
-          <el-card shadow="always">
+          <el-card shadow="hover">
             <h5>请求公司: {{item.CompanyCode}}</h5>
             <h5>请求描述: {{item.Text}}</h5>
             <!-- <h5>应聘岗位: {{item.TargetTargetJobID}}</h5>
@@ -63,7 +63,13 @@ export default {
           this.receivedMsgData[i] = temp[temp.length - i - 1]
       }
     },
-    goQuery() {
+    goQuery(CompanyCode) {
+      sessionStorage.setItem("com", JSON.stringify({
+        CompanyCode: CompanyCode,
+        Name: "",
+        job: "",
+        JobID: ""
+      }))
       this.$router.push("/infoShare")
     }
   },

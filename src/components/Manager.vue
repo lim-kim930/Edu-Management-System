@@ -205,4 +205,7 @@ export default {
   outline: none;
   box-sizing: border-box;
 }
+.cell {
+  font-size: 17px;
+}
 </style>

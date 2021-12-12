@@ -25,11 +25,11 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="received" class="clearfix">
               收信箱
-              <el-badge class="mark" :value="received" :hidden="received === 0" />
+              <el-badge class="item" :value="received" :hidden="received === 0" />
             </el-dropdown-item>
             <el-dropdown-item command="sent" class="clearfix">
               已发送
-              <el-badge class="mark" :value="sent" :hidden="sent === 0" />
+              <el-badge class="item" :value="sent" :hidden="sent === 0" />
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -48,12 +48,12 @@
     <!-- 主体 -->
     <el-container>
       <!-- 侧边栏 -->
-      <el-aside width="240px">
+      <el-aside width="240px" :style="{ 'height': wh - 100 + 'px' }">
         <el-row class="tac">
           <el-col :span="24">
             <el-menu
               :default-active="activeIndex"
-              @select="btn"
+              @select="indexRouteSwitch"
               background-color="#fff"
               text-color="#3a4b56"
               active-text-color="#409eff"
@@ -104,12 +104,16 @@
         </el-row>
       </el-aside>
       <!-- 内容 -->
-      <el-main v-loading="loading" element-loading-text="拼命加载中">
+      <el-main :style="{'height': this.wh - 80 + 'px'}">
         <router-view
+          v-loading="loading"
+          element-loading-text="拼命加载中"
           @func="getFile"
           @func2="getConfirmed"
           :file="file"
           :xjConfirmed="xjConfirmed"
+          :received="received"
+          :sent="sent"
           :wh="wh"
         ></router-view>
       </el-main>
@@ -120,21 +124,22 @@
 export default {
   data() {
     return {
-      circleUrl: "https://edu.limkim.cn/static/user.png",//头像url
-      activeIndex: "1",//侧边导航默认选中值
-      loading: false,//main的加载
-      uName: "",//用户名
-      file: "",//文件
-      received: 0,//收件箱数量
-      sent: 0,//已发送数量
-      xjConfirmed: "",//学籍确认状态
-      wh: ""//屏幕高度
+      circleUrl: "https://edu.limkim.cn/static/user.png",// 头像url
+      activeIndex: "1",// 侧边导航默认选中值
+      loading: false,// main的加载
+      uName: "",// 用户名
+      file: "",// 文件
+      received: 0,// 收件箱数量
+      sent: 0,// 已发送数量
+      xjConfirmed: "",// 学籍确认状态
+      wh: ""// 屏幕高度
     };
   },
   methods: {
     msgRouteSwitch(command) {
       this.$router.push("/message/" + command);
     },
+    // 下载文件
     downloadFile(filename) {
       const Url = URL.createObjectURL(this.file);
       const eleLink = document.createElement("a")
@@ -161,29 +166,32 @@ export default {
       this.xjConfirmed = confirmed
     },
     //路由切换
-    btn(key) {
-      if (key === "1-1")
-        this.$router.push("/infoConfirm/xjConfirm");
-      else if (key === "1-2") {
-        this.$router.push("/scoreChange");
-      }
-      else if (key === "1-3") {
-        this.$router.push("/arcManage");
-      }
-      else if (key === "2") {
-        this.$router.push("/infoShare");
-      }
-      else if (key === "3") {
-        this.$router.push("/infoSquare");
-      }
-      else if (key === "4") {
-        this.$router.push("/infoDisclose");
-      }
-      else if (key === "5") {
-        this.$router.push("/message/received");
-      }
-      else if (key === "6") {
-        this.$router.push("/accountManage");
+    indexRouteSwitch(key) {
+      switch (key) {
+        case "1-1":
+          this.$router.push("/infoConfirm/profileConfirm");
+          break
+        case "1-2":
+          this.$router.push("/scoreChange");
+          break
+        case "1-3":
+          this.$router.push("/arcManage");
+          break
+        case "2":
+          this.$router.push("/infoShare");
+          break
+        case "3":
+          this.$router.push("/infoSquare");
+          break
+        case "4":
+          this.$router.push("/infoDisclose");
+          break
+        case "5":
+          this.$router.push("/message/received");
+          break
+        case "6":
+          this.$router.push("/accountManage");
+          break
       }
     },
     //退出登录
@@ -212,23 +220,19 @@ export default {
     redirect() {
       if (this.xjConfirmed === true)
         switch (this.$route.path) {
+          case "/infoConfirm/scoreConfirm":
+          case "/infoConfirm/rewardConfirm":
+          case "/infoConfirm/gradConfirm":
+          case "/infoConfirm/profileConfirm":
+          case "/infoConfirm/intConfirm":
+          case "/infoConfirm/rankConfirm":
+            this.activeIndex = "1-1";
+            break
           case "/scoreChange":
             this.activeIndex = "1-2";
             break
-          case "/infoConfirm/xyConfirm":
-          case "/infoConfirm/hjConfirm":
-          case "/infoConfirm/byConfirm":
-          case "/infoConfirm/xjConfirm":
-            this.activeIndex = "1-1";
-            break
           case "/arcManage":
             this.activeIndex = "1-3";
-            break
-          case "/accountManage":
-            this.activeIndex = "6";
-            break
-          case "/infoDisclose":
-            this.activeIndex = "4";
             break
           case "/infoShare":
             this.activeIndex = "2";
@@ -236,13 +240,20 @@ export default {
           case "/infoSquare":
             this.activeIndex = "3";
             break
-          case "/message":
+          case "/infoDisclose":
+            this.activeIndex = "4";
+            break
+          case "/message/received":
+          case "/message/sent":
             this.activeIndex = "5";
+            break
+          case "/accountManage":
+            this.activeIndex = "6";
             break
         }
       else
         switch (this.$route.path) {
-          case "/infoConfirm/xjConfirm":
+          case "/infoConfirm/profileConfirm":
             this.activeIndex = "1-1";
             break
           default:
@@ -252,9 +263,9 @@ export default {
                 showCancelButton: false,
                 type: "warning"
               }).then(() => {
-                this.$router.push("/infoConfirm/xjConfirm");
+                this.$router.push("/infoConfirm/profileConfirm");
               }).catch(() => {
-                this.$router.push("/infoConfirm/xjConfirm");
+                this.$router.push("/infoConfirm/profileConfirm");
               });
             }, 100)
         }
@@ -264,15 +275,13 @@ export default {
       return self.innerHeight || (de && de.clientHeight) || document.body.clientHeight;
     }
   },
-  watch: {//监听路由变化,调用redirect()
+  watch: {
     $route() {
       this.redirect()
-      //  console.log(to , from )
-      // to , from 分别表示从哪跳转到哪，都是一个对象
-      // to.path  ( 表示的是要跳转到的路由的地址 eg: /home );
     }
   },
   mounted() {
+    // 刷新和关闭标签页提示
     window.onbeforeunload = (e) => {
       if (this.file !== "") {
         console.log(e);
@@ -289,11 +298,13 @@ export default {
         })
       }
     };
-    //拿到屏幕高度
-    this.wh = this.windowHeight();
-    document.querySelector(".el-form").style.maxHeight = this.wh - 190 + "px";
+    // 拿到屏幕高度
+    this.wh = this.windowHeight() < 650 ? 650 : this.windowHeight();
     document.querySelector(".el-main").style.height = this.wh - 80 + "px";
-    //判断是否登录
+    window.onresize = () => {
+      this.wh = this.windowHeight() < 650 ? 650 : this.windowHeight();
+    }
+    // 判断是否登录
     if (localStorage.getItem("jw_student_file") === null)
       this.$confirm("您还未登录,请前往登录", "提示", {
         confirmButtonText: "确定",
@@ -307,7 +318,7 @@ export default {
     else {
       this.uName = JSON.parse(localStorage.getItem("jw_student_file")).staffID
       this.loading = true
-      //拿学籍确认状态
+      // 拿学籍确认状态
       this.axios({
         method: "get",
         url: "https://api.hduhelp.com/gormja_wrapper/dataFile/getFileID",
@@ -315,37 +326,34 @@ export default {
       }).then((response) => {
         this.xjConfirmed = response.data.data.FileID === "null" ? false : true
         this.redirect();
-        this.loading = false
+        if (this.xjConfirmed)
+          this.axios({
+            method: "post",
+            url: "https://api.hduhelp.com/gormja_wrapper/share/listFurtherShareRequestForReceiver",
+            headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+            data: { "student": "any" }
+          }).then((response) => {
+            this.received = response.data.data.length;
+            sessionStorage.setItem("message", JSON.stringify(response.data.data))
+            return this.axios({
+              method: "post",
+              url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForSelf",
+              headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+              data: { "StaffID": JSON.parse(localStorage.getItem("jw_student_file")).staffID }
+            })
+          }).then((response) => {
+            sessionStorage.setItem("sent", JSON.stringify(response.data.data))
+            this.loading = false
+          }).catch(() => {
+            this.$message.error("获取站内信息出错啦,请稍后再试");
+            this.loading = false
+          });
+        else
+          this.loading = false
       }).catch(() => {
         this.$message.error("获取学业文件状态出错啦,请稍后重试")
         this.redirect();
         this.loading = false
-      });
-      this.axios({
-        method: "post",
-        url: "https://api.hduhelp.com/gormja_wrapper/share/listFurtherShareRequestForReceiver",
-        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
-        data: {
-           "student": "any"
-        }
-      }).then((response) => {
-        this.received = response.data.data.length;
-        sessionStorage.setItem("message", JSON.stringify(response.data.data))
-      }).catch(() => {
-        this.$message.error("获取站内信息出错啦,请稍后再试");
-      });
-      this.axios({
-        method: "post",
-        url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForSelf",
-        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
-        data: {
-          "CompanyCode": "company1"
-        }
-      }).then((response) => {
-        this.sent = response.data.data.length;
-        // sessionStorage.setItem("message", JSON.stringify(response.data.data))
-      }).catch(() => {
-        this.$message.error("获取站内信息出错啦,请稍后再试");
       });
     }
   },
@@ -355,15 +363,7 @@ export default {
 };
 </script>
 
-<style>
-* {
-  margin: 0px;
-  padding: 0px;
-  text-decoration: none;
-  list-style: none;
-  outline: none;
-  box-sizing: border-box;
-}
+<style scoped>
 .el-header {
   background: url(../img/logo.png) no-repeat;
   background-position: 20px;
@@ -373,16 +373,6 @@ export default {
   z-index: 99;
   height: 80px !important;
   min-width: 1500px;
-}
-.title {
-  float: left;
-  width: 240px;
-  height: 80px;
-  line-height: 80px;
-  margin-left: 330px;
-  font-size: 26px;
-  color: #fff;
-  font-weight: 700;
 }
 .user {
   float: right;
@@ -429,5 +419,28 @@ export default {
 }
 .el-aside ul {
   border: none;
+}
+</style>
+<style>
+* {
+  margin: 0px;
+  padding: 0px;
+  text-decoration: none;
+  list-style: none;
+  outline: none;
+  box-sizing: border-box;
+}
+.item .el-badge__content {
+  line-height: 16px;
+}
+.title {
+  float: left;
+  width: 240px;
+  height: 80px;
+  line-height: 80px;
+  margin-left: 330px;
+  font-size: 26px;
+  color: #fff;
+  font-weight: 700;
 }
 </style>

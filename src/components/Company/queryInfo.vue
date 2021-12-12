@@ -10,7 +10,7 @@
           {{title}}
           <el-popover
             placement="right-start"
-            title="注意："
+            title="注意: "
             width="200"
             trigger="hover"
             content="此信息仅用于有效期内核验使用, 请勿随意泄露"
@@ -36,148 +36,171 @@
           @click="blockInfoDialogShow = true"
           v-show="blockInfoBtnShow"
         >查看交易详情</el-button>
+        <br>
+        <el-button 
+          type="primary" 
+          style="margin-top: -10px" 
+          :icon="this.switch===1?'el-icon-search':'el-icon-arrow-left'"
+          :disabled="!this.selfData.md"
+          v-show="btnShow"
+          plain
+          @click="dialogSwitch()"
+        >
+          {{this.selfData.md?(this.switch===1?"查看个性化信息":"返回"):"未分享个性化信息"}}
+        </el-button>
         <el-empty :image-size="200" description="输入链接即可核验" v-show="emptyShow"></el-empty>
-        <div
+        <div v-show="this.switch === 1">
+          <div
           id="mycanvas"
           v-show="!tableShow"
-          :style="{background: 'url('+ canvasUrl +') no-repeat', height: table_height}"
+          :style="{background: 'url('+ canvasUrl +') no-repeat', height: table_height, 'margin-top': '10px'}"
           @contextmenu.prevent
-        ></div>
-        <div
-          class="table"
-          v-show="tableShow"
-          :style="{height: table_height}"
-          style="width: 1166px;"
-        >
-          <div class="hash">
-            <span class="title">交易哈希</span>
-            <span id="hash_content">{{blockData.blockHash}}</span>
-          </div>
-          <div class="name">
-            <span class="title">姓名</span>
-            <span class="content">{{profileData.Name}}</span>
-          </div>
-          <div class="sex">
-            <span class="title">性别</span>
-            <span class="content">{{profileData.Sex}}</span>
-          </div>
-          <div class="nation">
-            <span class="title">民族</span>
-            <span class="content">{{profileData.Nation}}</span>
-          </div>
-          <div class="classCode">
-            <span class="title">班级代码</span>
-            <span class="content">{{profileData.ClassCode}}</span>
-          </div>
-          <div class="className">
-            <span class="title">班级名称</span>
-            <span class="content">{{profileData.ClassName}}</span>
-          </div>
-          <div class="pic" :style="{background: 'url('+ profileData.Photo +') no-repeat' }"></div>
-          
-          <div class="schoolCode">
-            <span class="title">学校代码</span>
-            <span class="content">{{profileData.SchoolCode}}</span>
-          </div>
-          <div class="staffID">
-            <span class="title">学号</span>
-            <span class="content">{{profileData.StaffID}}</span>
-          </div>
-          <div class="unitCode">
-            <span class="title">学院代码</span>
-            <span class="content">{{profileData.UnitCode}}</span>
-          </div>
-          <div class="unitName">
-            <span class="title">学院名称</span>
-            <span class="content">{{profileData.UnitName}}</span>
-          </div>
-          <div class="majorCode">
-            <span class="title">专业代码</span>
-            <span class="content">{{profileData.MajorCode}}</span>
-          </div>
-          <div class="majorName">
-            <span class="title">专业名称</span>
-            <span class="content">{{profileData.MajorName}}</span>
-          </div>
-          <div class="score" :style="{height: score_height}">
-            <span
-              class="title"
-              :style="{height: score_height, paddingTop: title_paddingTop}"
-            >成绩单</span>
-            <div class="score_content" :style="{height: score_height}">
-              <div class="part1" :style="{height: score_height}">
-                <span class="course_name">课程名</span><span class="course_score">成绩</span><span class="course_gp">绩点</span>
-                <span class="score_value" v-for="item in scoreDataPart1" :key="item.id">
-                  <span class="course_name_value" :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}" :title="item.name">{{item.name}}</span><span class="course_score_value">{{item.score}}</span><span class="course_gp_value">{{item.gp}}</span>
-                </span>
-              </div>
-              <div class="part2" :style="{height: score_height}">
-                <span class="course_name">课程名</span><span class="course_score">成绩</span><span class="course_gp">绩点</span>
-                <span class="score_value" v-for="item in scoreDataPart2" :key="item.id">
-                  <span class="course_name_value" :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}" :title="item.name">{{item.name}}</span><span class="course_score_value">{{item.score}}</span><span class="course_gp_value">{{item.gp}}</span>
-                </span>
-              </div>
-              <div class="part3" :style="{height: score_height}">
-                <span class="course_name">课程名</span><span class="course_score">成绩</span><span class="course_gp">绩点</span>
-                <span class="score_value" v-for="item in scoreDataPart3" :key="item.id">
-                  <span class="course_name_value" :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}" :title="item.name">{{item.name}}</span><span class="course_score_value">{{item.score}}</span><span class="course_gp_value">{{item.gp}}</span>
-                </span>
-              </div>
-              <div class="part4" :style="{height: score_height}">
-                <span class="course_name">课程名</span><span class="course_score">成绩</span><span class="course_gp">绩点</span>
-                <span class="score_value" v-for="item in scoreDataPart4" :key="item.id">
-                  <span class="course_name_value" :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}" :title="item.name">{{item.name}}</span><span class="course_score_value">{{item.score}}</span><span class="course_gp_value">{{item.gp}}</span>
-                </span>
-              </div>
+          ></div>
+          <div
+            class="table"
+            v-show="tableShow"
+            :style="{height: table_height}"
+            style="width: 1166px;"
+          >
+            <div class="hash">
+              <span class="title">交易哈希</span>
+              <span id="hash_content">{{blockData.blockHash}}</span>
             </div>
-          </div>
-          <div class="level" :style="{top: level_top, height: level_height}">
-            <span
-              class="title"
-              :style="{height: level_height, paddingTop: level_paddingTop}"
-            >等级考试</span>
-            <div class="level_content" :style="{height: level_height}">
-                <span class="level_name">考试名称</span><span class="level_score">考试成绩</span><span class="level_year">考试时间</span>
-                <span class="level_value" v-for="item in levelData" :key="item.id">
-                  <span class="level_name_value" >{{item.name}}</span><span class="level_score_value">{{item.score}}</span><span class="level_year_value">{{item.date}}</span>
-                </span>
+            <div class="name">
+              <span class="title">姓名</span>
+              <span class="content">{{profileData.Name}}</span>
             </div>
-          </div>
-          <div class="reward" :style="{top: reward_top, height: reward_height}">
-            <span
-              class="title"
-              :style="{height: reward_height, paddingTop: reward_paddingTop}"
-            >综合素质</span>
-            <div class="reward_content" :style="{height: reward_height}">
-                <div class="rewardPart" :style="{height: reward_height}">
-                  <h4>个人荣誉</h4>
-                  <span class="reward_name">奖项名称</span><span class="reward_level">奖项等级</span><span class="reward_year">获奖年份</span>
-                  <span class="reward_value" v-for="item in rewardData" :key="item.id">
-                    <span class="reward_name_value" >{{item.name}}</span><span class="reward_level_value">{{item.level}}</span><span class="reward_year_value">{{item.date}}</span>
+            <div class="sex">
+              <span class="title">性别</span>
+              <span class="content">{{profileData.Sex}}</span>
+            </div>
+            <div class="nation">
+              <span class="title">民族</span>
+              <span class="content">{{profileData.Nation}}</span>
+            </div>
+            <div class="classCode">
+              <span class="title">GPA</span>
+              <span class="content">{{rankData.GPA}}</span>
+            </div>
+            <div class="className">
+              <span class="title">班级名称</span>
+              <span class="content">{{profileData.ClassName}}</span>
+            </div>
+            <div class="pic" :style="{background: 'url('+ profileData.Photo +') no-repeat' }"></div>
+            
+            <div class="schoolCode">
+              <span class="title">学校代码</span>
+              <span class="content">{{profileData.SchoolCode}}</span>
+            </div>
+            <div class="staffID">
+              <span class="title">学号</span>
+              <span class="content">{{profileData.StaffID}}</span>
+            </div>
+            <div class="unitCode">
+              <span class="title">学院代码</span>
+              <span class="content">{{profileData.UnitCode}}</span>
+            </div>
+            <div class="unitName">
+              <span class="title">学院名称</span>
+              <span class="content">{{profileData.UnitName}}</span>
+            </div>
+            <div class="majorCode">
+              <span class="title">GPA排名</span>
+              <span class="content">{{rankData.Rank}}</span>
+            </div>
+            <div class="majorName">
+              <span class="title">专业名称</span>
+              <span class="content">{{profileData.MajorName}}</span>
+            </div>
+            <div class="score" :style="{height: score_height}">
+              <span
+                class="title"
+                :style="{height: score_height, paddingTop: title_paddingTop}"
+              >成绩单</span>
+              <div class="score_content" :style="{height: score_height}">
+                <div class="part1" :style="{height: score_height}">
+                  <span class="course_name">课程名</span><span class="course_score">成绩</span><span class="course_gp">绩点</span>
+                  <span class="score_value" v-for="item in scoreDataPart1" :key="item.id">
+                    <span class="course_name_value" :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}" :title="item.name">{{item.name}}</span><span class="course_score_value">{{item.score}}</span><span class="course_gp_value">{{item.gp}}</span>
                   </span>
                 </div>
-                <div class="racePart" :style="{height: reward_height}">
-                  <h4>创新学分</h4>
-                  <span class="race_name">项目名称</span><span class="race_level">奖项等级</span><span class="race_year">获奖时间</span>
-                  <span class="race_value" v-for="item in raceData" :key="item.id">
-                    <span class="race_name_value" >{{item.name}}</span><span class="race_level_value">{{item.level}}</span><span class="race_year_value">{{item.date}}</span>
+                <div class="part2" :style="{height: score_height}">
+                  <span class="course_name">课程名</span><span class="course_score">成绩</span><span class="course_gp">绩点</span>
+                  <span class="score_value" v-for="item in scoreDataPart2" :key="item.id">
+                    <span class="course_name_value" :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}" :title="item.name">{{item.name}}</span><span class="course_score_value">{{item.score}}</span><span class="course_gp_value">{{item.gp}}</span>
                   </span>
                 </div>
+                <div class="part3" :style="{height: score_height}">
+                  <span class="course_name">课程名</span><span class="course_score">成绩</span><span class="course_gp">绩点</span>
+                  <span class="score_value" v-for="item in scoreDataPart3" :key="item.id">
+                    <span class="course_name_value" :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}" :title="item.name">{{item.name}}</span><span class="course_score_value">{{item.score}}</span><span class="course_gp_value">{{item.gp}}</span>
+                  </span>
+                </div>
+                <div class="part4" :style="{height: score_height}">
+                  <span class="course_name">课程名</span><span class="course_score">成绩</span><span class="course_gp">绩点</span>
+                  <span class="score_value" v-for="item in scoreDataPart4" :key="item.id">
+                    <span class="course_name_value" :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}" :title="item.name">{{item.name}}</span><span class="course_score_value">{{item.score}}</span><span class="course_gp_value">{{item.gp}}</span>
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="info" :style="{top: info_top}">
-            <span class="title">注意事项</span>
-            <div class="info_content">
-              <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
-              <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
-              <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
+            <div class="level" :style="{top: level_top, height: level_height}">
+              <span
+                class="title"
+                :style="{height: level_height, paddingTop: level_paddingTop}"
+              >等级考试</span>
+              <div class="level_content" :style="{height: level_height}">
+                  <span class="level_name">考试名称</span><span class="level_score">考试成绩</span><span class="level_year">考试时间</span>
+                  <span class="level_value" v-for="item in levelData" :key="item.id">
+                    <span class="level_name_value" >{{item.name}}</span><span class="level_score_value">{{item.score}}</span><span class="level_year_value">{{item.date}}</span>
+                  </span>
+              </div>
             </div>
-            <div class="end_time">
-              <span>有效期至:</span>
-              <span>{{profileData.expired_at}}</span>
+            <div class="reward" :style="{top: reward_top, height: reward_height}">
+              <span
+                class="title"
+                :style="{height: reward_height, paddingTop: reward_paddingTop}"
+              >综合素质</span>
+              <div class="reward_content" :style="{height: reward_height}">
+                  <div class="rewardPart" :style="{height: reward_height}">
+                    <h4>个人荣誉</h4>
+                    <span class="reward_name">奖项名称</span><span class="reward_level">奖项等级</span><span class="reward_year">获奖年份</span>
+                    <span class="reward_value" v-for="item in rewardData" :key="item.id">
+                      <span class="reward_name_value" >{{item.name}}</span><span class="reward_level_value">{{item.level}}</span><span class="reward_year_value">{{item.date}}</span>
+                    </span>
+                  </div>
+                  <div class="racePart" :style="{height: reward_height}">
+                    <h4>创新学分</h4>
+                    <span class="race_name">项目名称</span><span class="race_level">奖项等级</span><span class="race_year">获奖时间</span>
+                    <span class="race_value" v-for="item in raceData" :key="item.id">
+                      <span class="race_name_value" >{{item.name}}</span><span class="race_level_value">{{item.level}}</span><span class="race_year_value">{{item.date}}</span>
+                    </span>
+                  </div>
+              </div>
+            </div>
+            <div class="info" :style="{top: info_top}">
+              <span class="title">注意事项</span>
+              <div class="info_content">
+                <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
+                <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
+                <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
+              </div>
+              <div class="end_time">
+                <span>有效期至:</span>
+                <span>{{profileData.expired_at}}</span>
+              </div>
             </div>
           </div>
         </div>
+        <mavonEditor
+        :toolbars="toolbars"
+        :autofocus="false"
+        defaultOpen="preview"
+        :editable="false"
+        v-show="this.switch===2"
+        v-model="selfData.md"
+        :style="{'width': '90%', 'margin': ' 10px 5%', 'height': this.wh - 300 + 'px'}"
+      />
       </el-form>
     </div>
     <el-dialog title="交易详情" :visible.sync="blockInfoDialogShow">
@@ -195,6 +218,8 @@
 import { setWaterMark } from "../../watermark.js"
 import html2canvas from "html2canvas"
 import { Base64 } from "js-base64"
+import { mavonEditor } from "mavon-editor"
+import "mavon-editor/dist/css/index.css"
 export default {
   data() {
     return {
@@ -203,11 +228,18 @@ export default {
       blockInfoBtnShow: false,// 交易详情按钮
       blockInfoDialogShow: false,// 交易详情dialog
       emptyShow: true,
+      switch: 1,
       title: "请输入要核验的链接, 点击即可核验",
       queryUrl: "",// 输入的核验链接
       canvasUrl: "",// canvas生成的图片
       file: "",
       profileData: {},
+      rankData: {},
+      selfData: {},
+      btnShow: false,
+      toolbars: {
+        readmodel: true
+      },
       blockData: {},// 交易详情数据对象形式
       blockDataArray: [],// 交易详情数据数组形式
       scoreDataPart1: [],// 四列成绩单的数据
@@ -231,6 +263,7 @@ export default {
     };
   },
   props: ["wh"],
+  components: { mavonEditor },
   methods: {
     resetForm() {// 重置数据
       this.profileData = {};
@@ -271,7 +304,11 @@ export default {
         this.blockInfoBtnShow = true;
       });
     },
-    query(flag) {// 核验链接
+    dialogSwitch() {
+      this.switch = this.switch === 1 ? 2 : 1
+    },
+    query() {// 核验链接
+    this.btnShow = false;
       this.blockInfoBtnShow = false;
       this.table_height = "";
       // 先简单判断连接正确性
@@ -283,22 +320,21 @@ export default {
         url: this.queryUrl,
         headers: { "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization }
       }).then((response) => {
-        if(flag)
-          this.axios({
-            method: "post",
-            url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForCompany",
-            headers: { "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization },
-            data: { "schoolCode": "1" }
-          }).then((response) => {
-            let received = 0
-            for (let i = 0; i < response.data.data.length; i++)
-              if (!response.data.data[i].Read)
-                received++;
-            this.$emit("func", received)
-            sessionStorage.setItem("message", JSON.stringify(response.data.data));
-          }).catch(() => {
-            this.$message.error("获取站内信息出错啦,请稍后再试");
-          });
+        this.axios({
+          method: "post",
+          url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForCompany",
+          headers: { "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization },
+          data: { "schoolCode": "1" }
+        }).then((response) => {
+          let received = 0
+          for (let i = 0; i < response.data.data.length; i++)
+            if (!response.data.data[i].Read)
+              received++;
+          this.$emit("func", received)
+          sessionStorage.setItem("message", JSON.stringify(response.data.data));
+        }).catch(() => {
+          this.$message.error("获取站内信息出错啦,请稍后再试");
+        });
         this.resetForm();
         // 先把过期时间拿出来放到profileData里
         const date = new Date(response.data.data.ShareFile.expired_at).toJSON();
@@ -386,6 +422,21 @@ export default {
             count4++;
           }
         }
+        if (response.data.data.ShareFile.data_map.rank != undefined) {
+          const rank = response.data.data.ShareFile.data_map.rank;
+          const rankCode = Object.keys(rank);
+          this.rankData = {
+            GPA: rank[rankCode[0]].GPA.toFixed(2),
+            Rank: rank[rankCode[0]].Rank
+          };
+        }
+        if (response.data.data.ShareFile.data_map.self_introduction != undefined) {
+          const self_introduction = response.data.data.ShareFile.data_map.self_introduction;
+          const selfCode = Object.keys(self_introduction);
+          this.selfData = {
+            md: Base64.decode(self_introduction[selfCode[0]].SelfIntroduction)
+          };
+        }
         // 接下来对所有属于自适应高度的变量赋值
         count = count < 4 ? 4 : count;
         count2 = count2 < 5 ? 5 : count2;
@@ -408,11 +459,11 @@ export default {
         this.title = "为您核验到以下信息: "
         this.emptyShow = false;
         this.tableShow = true;
-        this.loading = false
+        this.btnShow = true;
         // 生成canvas图片链接
-        // setTimeout(() => {
-        //   this.saveImg(".table");
-        // }, 50)
+        setTimeout(() => {
+          this.saveImg(".table");
+        }, 50)
       }).catch(() => {
         this.$message.error("核验链接出错啦,请稍后再试");
       });
@@ -560,7 +611,7 @@ export default {
     // url是否包含链接，即是否是信息中心跳转来的
     if (this.$route.query.url !== undefined) {
       this.queryUrl = this.$route.query.url;
-      this.query(true);
+      this.query();
     }
   }
 };
@@ -970,5 +1021,13 @@ export default {
   width: 1166px;
   margin: 0 5%;
   background-size: 100% !important;
+}
+</style>
+<style>
+.v-note-edit {
+  display: none !important;
+}
+.v-note-show {
+  flex-basis: 100% !important;
 }
 </style>
