@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-loading="loading"
-    element-loading-text="拼命加载中"
-    style="margin: 10px; border-radius: 10px;"
-  >
+  <div v-loading="loading" element-loading-text="拼命加载中" style="margin: 10px; border-radius: 10px;">
     <div class="list" v-show="step === 0" :style="{'max-height': this.wh - 105 + 'px'}">
       <span
         style="font-size: 18px; font-weight: 700; display: inline-block; margin-bottom: 20px"
@@ -167,7 +163,7 @@ export default {
         40: "40k",
         50: "50k"
       }
-    }
+    };
   },
   props: ["wh"],
   methods: {
@@ -180,7 +176,7 @@ export default {
         jobDesc: "",
         num: "",
         jobReq: ""
-      }
+      };
     },
     deleteJob(row) {
       this.$confirm("删除该招聘信息后,求职者将无法再看到,是否继续?", "提示", {
@@ -201,7 +197,7 @@ export default {
           this.$message.error("删除岗位出错啦,请稍后再试");
           this.loading = false;
         });
-      })
+      });
     },
     getJobInfo() {
       this.jobList = [];
@@ -214,7 +210,7 @@ export default {
         const type = Object.keys(response.data.data);
         for (let i = 0; i < type.length; i++)
           for (let j = 0; j < response.data.data[type[i]].length; j++)
-            this.jobList.push(response.data.data[type[i]][j])
+            this.jobList.push(response.data.data[type[i]][j]);
         this.step = 0;
         this.loading = false;
       }).catch(() => {
@@ -244,7 +240,7 @@ export default {
     onSubmit() {
       // 简单判断表单是否完成
       if (this.form.name.trim().length === 0 || this.form.type.trim().length === 0 || this.form.location === "" || this.form.jobDesc.trim().length === 0)
-        return this.$message.warning("请将招聘信息填写完成！");
+        return this.$message.warning("请将招聘信息填写完成!");
       this.$confirm("请确认招聘信息选填无误,是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -271,15 +267,15 @@ export default {
           this.loading = false;
         }).catch(() => {
           this.$message.error("录入招聘信息出错啦,请稍后再试");
-          this.loading = false
+          this.loading = false;
         });
       }).catch(() => {
         this.$message.info("录入已取消");
-      })
+      });
     }
   },
   mounted() {
-    this.getJobInfo()
+    this.getJobInfo();
   }
 };
 </script>
@@ -295,6 +291,9 @@ export default {
   border: 1px solid rgba(204, 204, 204, 0.5);
   box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+}
+.list {
+  margin: 0;
 }
 .el-radio {
   width: 155px;

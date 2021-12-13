@@ -4,10 +4,10 @@
     <el-divider></el-divider>
     <el-form>
       <el-form-item label="输入新密码">
-        <el-input v-model="form.Passphrase" style="width: 200px;" maxlength="50"></el-input>
+        <el-input show-password v-model="form.Passphrase" style="width: 200px;" maxlength="50"></el-input>
       </el-form-item>
       <el-form-item label="确认新密码">
-        <el-input v-model="form.confirmPassphrase" style="width: 200px;" maxlength="50"></el-input>
+        <el-input show-password v-model="form.confirmPassphrase" style="width: 200px;" maxlength="50"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="changePwd">确认修改</el-button>
@@ -59,8 +59,10 @@ export default {
         }
       }).then(() => {
         this.$message.success("成功修改!");
+        localStorage.removeItem("jw_ent_file");
+        window.location.href = "https://edu.limkim.cn/sign";
         this.resetForm();
-        this.loading = false;
+        this.loading = false; 
       }).catch(() => {
         this.$message.error("修改失败,请稍后重试");
         this.loading = false;

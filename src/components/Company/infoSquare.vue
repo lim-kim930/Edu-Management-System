@@ -150,8 +150,8 @@
       :default-sort="{prop: 'id', order: 'descending'}"
       :max-height="this.wh - 270"
     >
-      <el-table-column label="姓名" prop="Name"></el-table-column>
-      <el-table-column label="年级" prop="Grade" sortable></el-table-column>
+      <el-table-column label="姓名" prop="Name" width="120px"></el-table-column>
+      <el-table-column label="年级" prop="Grade" width="150px" sortable></el-table-column>
       <el-table-column label="学院" prop="UnitName"></el-table-column>
       <el-table-column label="专业" prop="MajorName"></el-table-column>
       <el-table-column label="操作">
@@ -164,18 +164,23 @@
     <el-dialog title="请填写您想详细了解的内容" :visible.sync="dialogFormVisible" style="width: 100%;">
       <el-form :model="form" label-width="100px">
         <el-form-item label="请求对象">
-          <el-input style="width: 150px" disabled :placeholder="form.ExposeFileID"></el-input>
+          <el-input style="width: 150px" disabled :placeholder="chossenName"></el-input>
         </el-form-item>
-        <el-form-item label="其他请求描述">
-          <el-input
-            type="textarea"
-            v-model="form.Text"
-            :rows="10"
-            resize="none"
-            show-word-limit
-            maxlength="500"
-            style="width: 400px;"
-          ></el-input>
+        <el-form-item label="其他请求描述" class="text">
+          <el-alert type="info" :closable="false">
+            【{{uname}}】亲爱的同学您好，由于您的信息与我们岗位: 【<el-select style="width: 150px" v-model="form.FromJobID" filterable placeholder="请选择">
+              <el-option
+                v-for="item in jobList"
+                :key="item.JobID"
+                :label="item.Name"
+                :value="item.JobID"
+              ></el-option>
+            </el-select>】的需求高度匹配，为进一步了解，诚邀您提供一份完整的简历。如有意向，请尽快登录学业分享系统分享完整版简历。如有任何问题，请联系HR，联系方式:
+            <el-input
+              v-model="form.Text"
+              style="width: 200px;"
+            ></el-input>
+          </el-alert>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -190,6 +195,7 @@ export default {
   data() {
     return {
       exposeData: [],
+      uname: "",
       loading: false,
       options: [{
         value: "UnitCode",
@@ -208,8 +214,8 @@ export default {
           { value: "", label: "不限" },
           { value: "0304", label: "管理科学与工程类" },
           { value: "0648", label: "生物医学工程" },
-          { value: "1483", label: "会计学类" },
-          { value: "2701", label: "网络空间安全专业" }
+          { value: "1406", label: "会计学类" },
+          { value: "2703", label: "网络空间安全专业" }
         ]
       }, {
         value: "Sex",
@@ -275,9 +281,12 @@ export default {
       Predicates: [],// 要传给后端的筛选条件
       dialogFormVisible: false,
       form: {
-        ExposeFileID: "",
-        Text: ""
-      }
+        "ExposeFileID": "",
+        "Text": "",
+        "FromJobID": ""
+      },
+      chossenName: "",
+      jobList: []
     };
   },
   props: ["wh"],
@@ -327,10 +336,20 @@ export default {
         for (let i = 0; i < result.length; i++) {
           // 把FileID也放进去
           let data = result[i].Source.data_map.profile[result[i].FileID];
+          if (data.Name.length === 2)
+            data.Name = data.Name.substr(0, 1) + "*";
+          else {
+            let name = data.Name.substr(0, 1);
+            for (let i = 0; i < (data.Name.length - 2); i++)
+              name += "*";
+            data.Name = name + data.Name.substr(data.Name.length - 1);
+          }
+          if (data.ClassCode)
+            data.Grade = "20" + data.ClassCode.substr(0, 2);
+          else
+            data.Grade = "/";
           data.FileID = result[i].FileID;
           this.exposeData.push(data);
-          // 对照片做处理
-          this.exposeData[i].Photo = "/";
         }
         this.loading = false;
       }).catch(() => {
@@ -341,6 +360,7 @@ export default {
     askMore(index, row) {
       this.resetForm();
       this.form.ExposeFileID = row.FileID;
+      this.chossenName = row.Name;
       this.dialogFormVisible = true;
     },
     sendAsk() {
@@ -375,7 +395,23 @@ export default {
     }
   },
   mounted() {
-    this.getInfo();
+    this.loading = true;
+    this.uname = JSON.parse(localStorage.getItem("jw_ent_file")).CompanyCode;
+    this.axios({
+      method: "post",
+      url: "https://api.hduhelp.com/gormja_wrapper/job/lookup",
+      data: { "CompanyCode": this.uname }
+    }).then(response => {
+      const type = Object.keys(response.data.data);
+      for (let i = 0; i < type.length; i++)
+        for (let j = 0; j < response.data.data[type[i]].length; j++)
+          this.jobList.push(response.data.data[type[i]][j]);
+      this.getInfo();
+    }).catch(() => {
+      this.$message.error("获取招聘信息出错啦,请稍后再试");
+      this.loading = false;
+    });
+
   }
 };
 </script>
@@ -416,12 +452,15 @@ export default {
 .el-dialog__wrapper .el-dialog {
   /* margin: 90px 25%; */
   width: 40%;
-  min-width: 600px;
+  min-width: 740px;
 }
 .coditions .el-form-item {
   margin-bottom: 10px;
 }
 .form .el-loading-mask {
   height: 1000px;
+}
+.text .el-alert .el-alert__description {
+  font-size: 14px;
 }
 </style>

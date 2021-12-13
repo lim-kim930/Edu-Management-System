@@ -8,7 +8,7 @@
     :style="{'max-height': this.wh - 105 + 'px', 'overflow': loading?'hidden':'auto'}"
   >
     <div class="infoShow" v-show="dataFile === ''">
-      <span>当前公开的信息：</span>
+      <span>当前公开的信息:</span>
       <el-popover
         placement="right-start"
         title="提示"
@@ -35,7 +35,13 @@
         上传文件进行修改
         <i class="el-icon-upload"></i>
       </el-upload>
-      <el-button @click="next()" v-show="!upload" type="primary" style="margin-left: 10px" plain>点击修改</el-button>
+      <el-button
+        @click="next()"
+        v-show="!upload"
+        type="primary"
+        style="margin-left: 10px"
+        plain
+      >点击修改</el-button>
       <el-table
         v-show="tableData.length !== 0"
         :data="tableData"
@@ -205,7 +211,7 @@ export default {
       rewardDataValue: [],
       raceData: [],
       raceDataValue: [],
-      gpa: true,
+      gpa: false,
       loading: false
     };
   },
@@ -216,31 +222,31 @@ export default {
     },
     switcher() {
       if (!this.disclose) {
-        this.resetForm()
-        this.submitForm(true)
+        this.resetForm();
+        this.submitForm(true);
       }
     },
     handleSelectionChange(v) {
-      this.gpa = (v.length !== 0)
-    },  
+      this.gpa = (v.length !== 0);
+    },
     handleSelectionChange1(val) {
       val.forEach(item => {
-        this.ruleForm.scoreType.push(item.value)
+        this.ruleForm.scoreType.push(item.value);
       });
     },
     handleSelectionChange2(val) {
       val.forEach(item => {
-        this.ruleForm.levelType.push(item.key)
+        this.ruleForm.levelType.push(item.key);
       });
     },
     handleSelectionChange3(val) {
       val.forEach(item => {
-        this.ruleForm.rewardType.push(item.key)
+        this.ruleForm.rewardType.push(item.key);
       });
     },
     handleSelectionChange4(val) {
       val.forEach(item => {
-        this.ruleForm.raceType.push(item.key)
+        this.ruleForm.raceType.push(item.key);
       });
     },
     CheckAllChange(val) {
@@ -253,10 +259,10 @@ export default {
     },
     //文件加载完成,出现下一步按钮
     getFile() {
-      this.next()
+      this.next();
     },
-    change(response, file, fileList) {
-      this.dataFile = file[0].raw
+    change(response, file) {
+      this.dataFile = file[0].raw;
       this.$emit("func", this.dataFile);
     },
     //重置
@@ -269,7 +275,7 @@ export default {
         levelType: [],
         rewardType: [],
         raceType: []
-      }
+      };
       this.isIndeterminate = false;
       this.checkAll = false;
     },
@@ -312,26 +318,23 @@ export default {
         for (let i = 0; i < range.length; i++) {
           if (range[i] === "profile") {
             const translation = {
-              ClassCode: "班级号码",
               ClassName: "班级名称",
               SchoolCode: "学校代码",
               StaffID: "学号",
-              UnitCode: "学院代码",
               UnitName: "学院名称",
-              MajorCode: "专业代码",
               MajorName: "专业名称",
               Sex: "性别",
               Name: "姓名",
-              Photo: "照片",
               Nation: "民族",
-            }
+            };
             let profile = Object.keys(content.profile[Object.keys(content.profile)]);
             for (let j = 0; j < profile.length; j++) {
-              profileData.push({
-                content: profile[j] !== "Photo" ? content.profile[Object.keys(content["profile"])][profile[j]] : "/",
-                name: translation[profile[j]],
-                type: "学籍信息"
-              })
+              if (translation[profile[j]])
+                profileData.push({
+                  content: profile[j] !== "Photo" ? content.profile[Object.keys(content["profile"])][profile[j]] : "/",
+                  name: translation[profile[j]],
+                  type: "学籍信息"
+                });
             }
           }
           else if (range[i] === "score") {
@@ -341,7 +344,7 @@ export default {
                 content: "最终成绩: " + content.score[score[j]].ScoreFinal + " / " + content.score[score[j]].SchoolYear + "第" + content.score[score[j]].Semester + "学期",
                 name: content.score[score[j]].CourseName,
                 type: "成绩信息"
-              })
+              });
             }
           }
           else if (range[i] === "level_exam") {
@@ -351,7 +354,7 @@ export default {
                 content: "成绩: " + content.level_exam[level[j]].Score + " / " + content.level_exam[level[j]].ExamDate,
                 name: content.level_exam[level[j]].ExamName,
                 type: "等级考试信息",
-              })
+              });
             }
           }
           else if (range[i] === "reward") {
@@ -361,7 +364,7 @@ export default {
                 content: content.reward[reward[j]].Semester === 0 ? "第一学期" : "第二学期",
                 name: content.reward[reward[j]].RewardName,
                 type: "个人荣誉信息"
-              })
+              });
             }
           }
           else if (range[i] === "race_reward") {
@@ -371,32 +374,31 @@ export default {
                 content: "获奖类型: " + content.race_reward[race[j]].RaceLevel + "-" + content.race_reward[race[j]].RewardLevel + " / " + content.race_reward[race[j]].RewardDate,
                 name: content.race_reward[race[j]].RaceName,
                 type: "创新学分类型"
-              })
+              });
             }
           }
           else if (range[i] === "rank") {
             let rank = Object.keys(content.rank);
             for (let j = 0; j < rank.length; j++) {
               rankData.push({
-                content: "GPA: "+content.rank[rank[j]].GPA + " / 排名: " + content.rank[rank[j]].Rank,
+                content: "GPA: " + content.rank[rank[j]].GPA + " / 排名: " + content.rank[rank[j]].Rank,
                 name: "GPA排名",
                 type: "排名信息"
-              })
+              });
             }
           }
         }
         this.tableData = [...profileData, ...scoreData, ...levelData, ...rewardData, ...raceData, ...rankData];
         this.loading = false;
-      })
-        .catch((err) => {
-          this.$message.error("出错啦,请稍后再试");
-          this.loading = false;
-        })
+      }).catch(() => {
+        this.$message.error("出错啦,请稍后再试");
+        this.loading = false;
+      });
     },
     //下一步
     next() {
       if (!this.upload)
-        this.dataFile = this.file
+        this.dataFile = this.file;
       document.querySelector(".disclose").style.maxHeight = this.wh - 300 + "px";
       this.resetForm();
       this.loading = true;
@@ -414,30 +416,26 @@ export default {
           for (var i = 0; i < range.length; i++) {
             if (range[i] === "profile") {
               const translation = {
-                ClassCode: "班级号码",
                 ClassName: "班级名称",
                 SchoolCode: "学校代码",
                 StaffID: "学号",
-                UnitCode: "学院代码",
                 UnitName: "学院名称",
-                MajorCode: "专业代码",
                 MajorName: "专业名称",
                 Sex: "性别",
                 Name: "姓名",
-                Photo: "照片",
                 Nation: "民族"
-              }
-              const sort = ["Name", "Sex", "Nation", "Photo",  "ClassName", "MajorName", "UnitName", "SchoolCode"]
+              };
+              const sort = ["Name", "Sex", "Nation", "ClassName", "MajorName", "UnitName", "SchoolCode"];
               const profile = Object.keys(this.content.profile[Object.keys(this.content.profile)]);
               this.profileData = [];
               this.profileDataValue = [];
               for (let i = 0; i < sort.length; i++) {
                 if (profile.indexOf(sort[i])) {
-                  this.profileDataValue.push(sort[i])
+                  this.profileDataValue.push(sort[i]);
                   this.profileData.push({
                     value: sort[i],
                     name: translation[sort[i]]
-                  })
+                  });
                 }
               }
               // for (var j = 0; j < profile.length; j++) {
@@ -455,12 +453,12 @@ export default {
               this.scoreDataValue = [];
               var score = Object.keys(this.content.score);
               for (var j = 0; j < score.length; j++) {
-                this.scoreDataValue.push(score[j])
+                this.scoreDataValue.push(score[j]);
                 this.scoreData.push({
                   value: this.content.score[score[j]].CourseCode,
                   name: this.content.score[score[j]].CourseName,
                   gp: this.content.score[score[j]].GP,
-                })
+                });
               }
             }
             else if (range[i] === "level_exam") {
@@ -471,7 +469,7 @@ export default {
                   value: this.content.level_exam[level[j]].ExamDate,
                   name: this.content.level_exam[level[j]].ExamName,
                   key: level[j]
-                })
+                });
               }
             }
             else if (range[i] === "reward") {
@@ -479,13 +477,13 @@ export default {
               this.rewardDataValue = [];
               var reward = Object.keys(this.content.reward);
               for (var j = 0; j < reward.length; j++) {
-                this.rewardDataValue.push(reward[j])
+                this.rewardDataValue.push(reward[j]);
                 this.rewardData.push({
                   yearValue: this.content.reward[reward[j]].SchoolYear,
                   semValue: this.content.reward[reward[j]].Semester === 0 ? "第一学期" : "第二学期",
                   name: this.content.reward[reward[j]].RewardName,
                   key: reward[j]
-                })
+                });
               }
             }
             else if (range[i] === "race_reward") {
@@ -493,12 +491,12 @@ export default {
               this.raceDataValue = [];
               var race = Object.keys(this.content.race_reward);
               for (var j = 0; j < race.length; j++) {
-                this.raceDataValue.push(race[j])
+                this.raceDataValue.push(race[j]);
                 this.raceData.push({
                   value: this.content.race_reward[race[j]].RewardDate,
                   name: this.content.race_reward[race[j]].RaceName,
                   key: race[j]
-                })
+                });
               }
             }
             else if (range[i] === "rank") {
@@ -507,24 +505,24 @@ export default {
                 GPA: rank.GPA,
                 MajorName: rank.MajorName,
                 Rank: rank.Rank
-              }]
+              }];
             }
           }
-          this.loading = false
+          this.loading = false;
         })
         .catch((err) => {
           if (err.response.data.msg === "file hash does not equal to chain")
-            this.$message.error("学业文件错误或者过期,请检查后再试")
+            this.$message.error("学业文件错误或者过期,请检查后再试");
           else
-            this.$message.error("获取学业文件信息出错啦,请稍后再试")
-          this.dataFile = ""
+            this.$message.error("获取学业文件信息出错啦,请稍后再试");
+          this.dataFile = "";
           this.loading = false;
         });
     },
     back() {
       this.upload = false;
       this.dataFile = "";
-      this.getInfo()
+      this.getInfo();
     },
     // 提交按钮
     submitForm(id) {
@@ -533,52 +531,49 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-          this.loading = true;
-          var ShareItems = [{ "Path": ["profile", Object.keys(this.content.profile)[0], "StaffID"] }];
-          var Path = [];
-          var data = new FormData();
-          data.append("dataFile", this.dataFile);
-          if (this.ruleForm.profileType.length != 0) {
-            // if (this.checkAll1 === true)
-            //   ShareItems.push({ "Path": ["profile", Object.keys(this.content.profile)[0]] })
-            // else
-            for (let i = 0; i < this.ruleForm.profileType.length; i++) {
-              if(this.ruleForm.profileType[i] === "MajorName")
-                this.ruleForm.profileType.push("MajorCode")
-              if(this.ruleForm.profileType[i] === "UnitName")
-                this.ruleForm.profileType.push("UnitCode")
-              Path = ["profile", Object.keys(this.content.profile)[0]]
-              Path.push(this.ruleForm.profileType[i])
-              ShareItems.push({ "Path": Path })
-            }
+        this.loading = true;
+        var ShareItems = [{ "Path": ["profile", Object.keys(this.content.profile)[0], "StaffID"] }, { "Path": ["profile", Object.keys(this.content.profile)[0], "ClassCode"] }];
+        var Path = [];
+        var data = new FormData();
+        data.append("dataFile", this.dataFile);
+        if (this.ruleForm.profileType.length != 0) {
+          // if (this.checkAll1 === true)
+          //   ShareItems.push({ "Path": ["profile", Object.keys(this.content.profile)[0]] })
+          // else
+          for (let i = 0; i < this.ruleForm.profileType.length; i++) {
+            if (this.ruleForm.profileType[i] === "MajorName")
+              this.ruleForm.profileType.push("MajorCode");
+            if (this.ruleForm.profileType[i] === "UnitName")
+              this.ruleForm.profileType.push("UnitCode");
+            Path = ["profile", Object.keys(this.content.profile)[0]];
+            Path.push(this.ruleForm.profileType[i]);
+            ShareItems.push({ "Path": Path });
           }
-          if (this.gpa) {
-            ShareItems.push({ "Path": ["rank", Object.keys(this.content.profile)[0], "GPA"] })
-            ShareItems.push({ "Path": ["rank", Object.keys(this.content.profile)[0], "Rank"] })
-            ShareItems.push({ "Path": ["rank", Object.keys(this.content.profile)[0], "MajorName"] })
-          }
-          data.append("body", JSON.stringify({ "ShareItems": ShareItems }));
-          this.axios({
-            method: "put",
-            url: "https://api.hduhelp.com/gormja_wrapper/expose/cache?topic=profile&staffID" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
-            headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
-            data,
+        }
+        if (this.gpa)
+          ShareItems.push({ "Path": ["rank", Object.keys(this.content.profile)[0]] });
+        data.append("body", JSON.stringify({ "ShareItems": ShareItems }));
+        this.axios({
+          method: "put",
+          url: "https://api.hduhelp.com/gormja_wrapper/expose/cache?topic=profile&staffID" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
+          headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+          data,
+        }).then(() => {
+          this.$confirm("信息已经成功公开，你也可以随时更改", "提示", {
+            confirmButtonText: "确定",
+            showCancelButton: false,
+            type: "warning",
           }).then(() => {
-              this.$confirm("信息已经成功公开，你也可以随时更改", "提示", {
-                confirmButtonText: "确定",
-                showCancelButton: false,
-                type: "warning",
-              }).then(() => {
-                this.back()
-              })
-              this.dialogVisible = true;
-              this.loading = false
-            })
-            .catch(() => {
-              this.$message.error("出错啦,请稍后再试");
-              this.loading = false;
-            });
+            this.back();
+          });
+          this.dialogVisible = true;
+          this.loading = false;
         })
+          .catch(() => {
+            this.$message.error("出错啦,请稍后再试");
+            this.loading = false;
+          });
+      })
         .catch(() => {
           this.$message({
             type: "info",
@@ -589,9 +584,9 @@ export default {
   },
   mounted() {
     if (this.file) {
-      this.upload = false
+      this.upload = false;
     }
-    this.getInfo()
+    this.getInfo();
   },
 };
 </script>

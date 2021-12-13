@@ -82,19 +82,19 @@ export default {
           type: "warning",
           center: true
         }).then(() => {
-          localStorage.removeItem("jw_ent_file")
-          window.location.href = "https://edu.limkim.cn/sign"
-        })
+          localStorage.removeItem("jw_ent_file");
+          window.location.href = "https://edu.limkim.cn/sign";
+        });
       }
     },
     redirect() {
       switch (this.$route.path) {
         case "/addCompany":
           this.activeIndex = "1";
-          break
+          break;
         case "/profileReset":
           this.activeIndex = "2";
-          break
+          break;
       }
     },
     windowHeight() {
@@ -104,7 +104,7 @@ export default {
   },
   watch: {
     $route() {
-      this.redirect()
+      this.redirect();
     }
   },
   mounted() {
@@ -112,7 +112,7 @@ export default {
     document.querySelector(".el-main").style.height = this.wh - 80 + "px";
     window.onresize = () => {
       this.wh = this.windowHeight() < 600 ? 600 : this.windowHeight();
-    }
+    };
     this.redirect();
     if (localStorage.getItem("jw_manager_file") === null)
       this.$confirm("您还未登录,请前往登录", "提示", {
@@ -120,12 +120,12 @@ export default {
         showCancelButton: false,
         type: "warning"
       }).then(() => {
-        window.location.href = "https://edu.limkim.cn/sign"
+        window.location.href = "https://edu.limkim.cn/sign";
       }).catch(() => {
-        window.location.href = "https://edu.limkim.cn/sign"
+        window.location.href = "https://edu.limkim.cn/sign";
       });
     else
-      this.uName = JSON.parse(localStorage.getItem("jw_manager_file")).uname
+      this.uName = JSON.parse(localStorage.getItem("jw_manager_file")).uname;
   },
 };
 </script>

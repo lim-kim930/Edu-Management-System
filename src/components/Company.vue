@@ -111,10 +111,10 @@ export default {
   },
   methods: {
     getReceived(received) {
-      this.received = received
+      this.received = received;
     },
     getSent(sent) {
-      this.sent = sent
+      this.sent = sent;
     },
     msgRouteSwitch(command) {
       this.$router.push("/comMessage/" + command);
@@ -145,30 +145,30 @@ export default {
         }).then(() => {
           localStorage.removeItem("jw_ent_file");
           window.location.href = "https://edu.limkim.cn/sign";
-        })
+        });
       }
     },
     redirect() {
       switch (this.$route.path) {
         case "/queryInfo":
           this.activeIndex = "1";
-          break
+          break;
         case "/internCert":
           this.activeIndex = "2";
-          break
+          break;
         case "/comMessage/received":
         case "/comMessage/sent":
           this.activeIndex = "3";
-          break
+          break;
         case "/comAccountManage":
           this.activeIndex = "4";
-          break
+          break;
         case "/infoEntry":
           this.activeIndex = "5";
-          break
+          break;
         case "/infoSquare":
           this.activeIndex = "6";
-          break
+          break;
       }
     },
     windowHeight() {
@@ -186,7 +186,7 @@ export default {
     document.querySelector(".el-main").style.height = this.wh - 80 + "px";
     window.onresize = () => {
       this.wh = this.windowHeight() < 600 ? 600 : this.windowHeight();
-    }
+    };
     this.redirect();
     if (localStorage.getItem("jw_ent_file") === null)
       this.$confirm("您还未登录,请前往登录", "提示", {

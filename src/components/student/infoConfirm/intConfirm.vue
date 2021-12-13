@@ -103,6 +103,7 @@
       <el-table-column prop="time" label="工作时间"></el-table-column>
     </el-table>
     <el-dialog :title="typeValue==='club'?'添加班团工作经历':'添加社会工作经历'" :visible.sync="addDialogShow">
+      <h3 style="margin: 0 0 15px 20px; color: #909399">注: 由于信息用于应聘岗位,所以请确保以下填写的信息真实可靠,否则后果自负</h3>
       <div v-show="typeValue==='club'">
         <el-form-item label="工作名称" style="width: 300px">
           <el-input v-model="clubAddData.name" placeholder="请填写"></el-input>

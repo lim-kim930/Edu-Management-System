@@ -100,26 +100,26 @@ export default {
       data.append("dataFile", this.file);
       // 此时默认公开部分信息
       this.loadText = "正在为您公开部分信息,此过程较慢,请耐心等待";
-      data.append("body", JSON.stringify({ "ShareItems": [{ "Path": ["profile", this.staffID, "Name"] }, { "Path": ["profile", this.staffID, "UnitName"] }, { "Path": ["profile", this.staffID, "MajorName"] }, { "Path": ["profile", this.staffID, "StaffID"] }, { "Path": ["profile", this.staffID, "MajorCode"] }, { "Path": ["profile", this.staffID, "UnitCode"] }] }));
+      data.append("body", JSON.stringify({ "ShareItems": [{ "Path": ["profile", this.staffID, "Name"] }, { "Path": ["profile", this.staffID, "UnitName"] }, { "Path": ["profile", this.staffID, "MajorName"] }, { "Path": ["profile", this.staffID, "StaffID"] }, { "Path": ["profile", this.staffID, "MajorCode"] }, { "Path": ["profile", this.staffID, "UnitCode"] }, { "Path": ["profile", this.staffID, "ClassCode"] }] }));
       this.axios({
         method: "put",
         url: "https://api.hduhelp.com/gormja_wrapper/expose/cache?topic=profile&staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
         headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
         data
       }).then(() => {
-        this.loading = false
+        this.loading = false;
         this.$confirm("学业文件将下载至浏览器默认下载位置,请前往查看并妥善保存", "提示", {
           confirmButtonText: "确定",
           showCancelButton: false,
           type: "success"
         }).then(() => {
-          this.$confirm("为帮助您更好地找到满意的工作,系统已为您自动公开姓名、学院和专业信息,您也可以前往“信息公开设置”栏自主公开更多的内容，使您更有竞争力！", "功能提示", {
+          this.$confirm("为帮助您更好地找到满意的工作,系统已为您自动公开姓名、学院和专业信息,您也可以前往“信息公开设置”栏自主公开更多的内容，使您更有竞争力!", "功能提示", {
             confirmButtonText: "去看看",
             cancelButtonText: "知道了",
             type: "warning",
           }).then(() => {
             this.$router.push("/infoDisclose");
-          })
+          });
         }).catch(() => {
           this.$confirm("为帮助您更好地找到满意的工作,系统已为您自动公开姓名、学院和专业信息,您也可以前往“信息公开设置”栏自主公开更多的内容，使您更有竞争力！", "功能提示", {
             confirmButtonText: "去看看",
@@ -127,8 +127,8 @@ export default {
             type: "warning",
           }).then(() => {
             this.$router.push("/infoDisclose");
-          })
-        })
+          });
+        });
       }).catch(() => {
         this.$message.error("公开信息出错啦,请稍后再试");
         this.loading = false;
@@ -140,7 +140,7 @@ export default {
       document.body.appendChild(eleLink);
       eleLink.click();
       document.body.removeChild(eleLink);
-      this.confirmed = true
+      this.confirmed = true;
       this.$emit("func2", this.confirmed);
     },
     // 确认学籍
@@ -169,40 +169,40 @@ export default {
             data
           }).then((response) => {
             // 整理交易详情信息,放到blockDataInfo[]
-            var block = response.data.data.TransactionDetail.detail.result[0]
-            var blockName = Object.keys(block)
+            var block = response.data.data.TransactionDetail.detail.result[0];
+            var blockName = Object.keys(block);
             const translation = {
               blockHash: "区块哈希",
               blockNumber: "交易号",
               blockTimestamp: "区块时间",
               blockWriteTime: "写入时间",
               hash: "交易内容"
-            }
+            };
             for (var i = 0; i < blockName.length; i++)
               this.blockDataInfo.push({
                 value: block[blockName[i]],
                 name: translation[blockName[i]]
-              })
+              });
             //最后更新页面中的全局file
             this.file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
             var Url = URL.createObjectURL(this.file);
-            this.$confirm("学籍信息确认成功！请务必下载并保存好您的学业文件,以免档案丢失将无法正常使用本系统", "提示", {
+            this.$confirm("学籍信息确认成功! 请务必下载并保存好您的学业文件,以免档案丢失将无法正常使用本系统", "提示", {
               confirmButtonText: "确定并下载",
               cancelButtonText: "查看此次交易详情",
               distinguishCancelAndClose: true,
               beforeClose: (action, instance, done) => {
                 if (action === "cancel")
-                  this.blockInfoDialogShow = true
+                  this.blockInfoDialogShow = true;
                 if (action === "confirm" || action === "close")
-                  done()
+                  done();
               },
               dangerouslyUseHTMLString: true,
               type: "success"
             }).then(() => {
-              this.$emit("func", this.file)
+              this.$emit("func", this.file);
               this.downloadFile(Url, "学业文件.enc");
             }).catch(() => {
-              this.$emit("func", this.file)
+              this.$emit("func", this.file);
               this.downloadFile(Url, "学业文件.enc");
             });
           }).catch(() => {

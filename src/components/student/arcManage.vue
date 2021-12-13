@@ -44,13 +44,13 @@ export default {
             staffID: JSON.parse(localStorage.getItem("jw_student_file")).staffID
           }
         })
-          .then((response) => {
+          .then(() => {
             this.axios({
               method: "post",
               url: "https://api.limkim.xyz/changeXj",
               data: { staffID: JSON.parse(localStorage.getItem("jw_student_file")).staffID, confirmed: false }
             })
-              .then((response) => {
+              .then(() => {
                 this.$message.success("重置成功");
                 location.reload();
               })
@@ -64,7 +64,7 @@ export default {
                 this.loading = false;
               });
           })
-          .catch(error => {
+          .catch(() => {
             this.$message.error("提交申请出错啦,请稍后重试");
             this.loading = false;
           });
