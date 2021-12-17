@@ -1,14 +1,15 @@
-if (location.search.split("?")[1] !== undefined) {
-    if (location.search.split("?")[1].split("=")[0] === "from")
-        sessionStorage.setItem("jw_from", "hduhelp");
-    const requestOptions = {
-        method: "GET",
-        redirect: "follow",
-        headers: { "Authorization": "token " + location.search.split("?")[1].split("&")[0].split("=")[1] }
-    };
-    return fetch("https://api.hduhelp.com/base/person/info", requestOptions)
-        .then(response => response.text())
-        .then(result => {
+(() => {
+    if (location.search.split("?")[1] !== undefined) {
+        if (location.search.split("?")[1].split("=")[0] === "from")
+            sessionStorage.setItem("jw_from", "hduhelp");
+        const requestOptions = {
+            method: "GET",
+            redirect: "follow",
+            headers: { "Authorization": "token " + location.search.split("?")[1].split("&")[0].split("=")[1] }
+        };
+        return fetch("https://api.hduhelp.com/base/person/info", requestOptions).then(response => {
+            response.text();
+        }).then(result => {
             if (JSON.parse(result).data.STAFFTYPE === "1") {
                 localStorage.setItem("jw_student_file", JSON.stringify({
                     token: location.search.split("?")[1].split("&")[0].split("=")[1],
@@ -31,11 +32,12 @@ if (location.search.split("?")[1] !== undefined) {
         }).catch(error => {
             alert(error);
         });
-}
-if (localStorage.getItem("jw_student_file") !== null)
-    return window.location.href = "https://edu.limkim.cn/student";
-if (localStorage.getItem("jw_ent_file") !== null)
-    return window.location.href = "https://edu.limkim.cn/company";
-if (localStorage.getItem("jw_manager_file") !== null)
-    return window.location.href = "https://edu.limkim.cn/manager";
-window.location.href = "https://edu.limkim.cn/sign";
+    }
+    if (localStorage.getItem("jw_student_file") !== null)
+        return window.location.href = "https://edu.limkim.cn/student";
+    if (localStorage.getItem("jw_ent_file") !== null)
+        return window.location.href = "https://edu.limkim.cn/company";
+    if (localStorage.getItem("jw_manager_file") !== null)
+        return window.location.href = "https://edu.limkim.cn/manager";
+    window.location.href = "https://edu.limkim.cn/sign";
+})();
