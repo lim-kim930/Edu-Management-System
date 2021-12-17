@@ -31,7 +31,6 @@
         <el-col :span="8" class="card">
           <el-card shadow="hover">
             <h5>学校: {{item.SchoolCode}}</h5>
-            <h5>应聘公司: {{item.TargetCompanyCode}}</h5>
             <h5>应聘岗位: {{item.TargetJobID}}</h5>
             <h5>过期时间: {{item.date}}</h5>
             <el-badge :hidden="item.Read" value="new" class="badge">
@@ -56,39 +55,39 @@ export default {
   },
   methods: {
     classifySwitch(command) {
-      this.classify = command
+      this.classify = command;
     },
     sortSwitch(command) {
       if (command !== this.sort) {
-        this.sort = command
+        this.sort = command;
         const temp = this.receivedMsgData;
-        this.receivedMsgData = []
+        this.receivedMsgData = [];
         for (let i = 0; i < temp.length; i++)
-          this.receivedMsgData[i] = temp[temp.length - i - 1]
+          this.receivedMsgData[i] = temp[temp.length - i - 1];
       }
     },
     goQuery(url) {
       this.$router.push({
         path: "/queryInfo",
         query: { url }
-      })
+      });
     }
   },
   mounted() {
-    this.loading = true
+    this.loading = true;
     // 通过sessionStorage得到信息
-    const data = JSON.parse(sessionStorage.getItem("message"))
+    const data = JSON.parse(sessionStorage.getItem("message"));
     for (let i = 0; i < data.length; i++) {
-      data[i].id = i + 1
-      data[i].sortDate = +new Date(data[i].ExpireAt)
-      data[i].date = new Date(+new Date(data[i].ExpireAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")
-      data[i].url = "https://api.hduhelp.com/gormja_wrapper/share/verify?fileID=" + data[i].FileID + "&encryptedK1S=" + data[i].EncryptedK1S
+      data[i].id = i + 1;
+      data[i].sortDate = +new Date(data[i].ExpireAt);
+      data[i].date = new Date(+new Date(data[i].ExpireAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
+      data[i].url = "https://api.hduhelp.com/gormja_wrapper/share/verify?fileID=" + data[i].FileID + "&encryptedK1S=" + data[i].EncryptedK1S;
     }
     const newData = data.sort((a, b) => {
-      return a.sortDate - b.sortDate
-    })
-    this.receivedMsgData = newData
-    this.loading = false
+      return a.sortDate - b.sortDate;
+    });
+    this.receivedMsgData = newData;
+    this.loading = false;
   }
 };
 </script>
@@ -116,7 +115,7 @@ export default {
 }
 /* 未读状态 */
 .badge {
-  width: 73px
+  width: 73px;
 }
 .badge .el-badge__content {
   margin-top: 8px;

@@ -142,63 +142,63 @@ export default {
     // 下载文件
     downloadFile(filename) {
       const Url = URL.createObjectURL(this.file);
-      const eleLink = document.createElement("a")
-      eleLink.download = filename
-      eleLink.style.display = "none"
-      eleLink.href = Url
-      document.body.appendChild(eleLink)
-      eleLink.click()
-      document.body.removeChild(eleLink)
+      const eleLink = document.createElement("a");
+      eleLink.download = filename;
+      eleLink.style.display = "none";
+      eleLink.href = Url;
+      document.body.appendChild(eleLink);
+      eleLink.click();
+      document.body.removeChild(eleLink);
       setTimeout(() => {
         this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
           confirmButtonText: "确定",
           showCancelButton: false,
           type: "success"
-        })
-      }, 400)
+        });
+      }, 400);
     },
     //拿到子组件传来的学业文件,全局存储在student页面
     getFile(file) {
-      this.file = file
+      this.file = file;
     },
     //拿到子组件传来的学籍确认状态,全局存储在student页面
     getConfirmed(confirmed) {
-      this.xjConfirmed = confirmed
+      this.xjConfirmed = confirmed;
     },
     //路由切换
     indexRouteSwitch(key) {
       switch (key) {
         case "1-1":
           this.$router.push("/infoConfirm/profileConfirm");
-          break
+          break;
         case "1-2":
           this.$router.push("/scoreChange");
-          break
+          break;
         case "1-3":
           this.$router.push("/arcManage");
-          break
+          break;
         case "2":
           this.$router.push("/infoShare");
-          break
+          break;
         case "3":
           this.$router.push("/infoSquare");
-          break
+          break;
         case "4":
           this.$router.push("/infoDisclose");
-          break
+          break;
         case "5":
           this.$router.push("/message/received");
-          break
+          break;
         case "6":
           this.$router.push("/accountManage");
-          break
+          break;
       }
     },
     //退出登录
     logOut() {
       if (this.uName === null) {
         //没有用户信息直接定向到登录
-        location.href = "https://edu.limkim.cn/sign"
+        location.href = "https://edu.limkim.cn/sign";
       }
       else {
         this.$confirm("确定要退出登录吗?" + (this.file === "" ? "" : "请确认您已经将最新的学业文件下载到了本地"), "提示", {
@@ -207,13 +207,13 @@ export default {
           type: "warning"
         }).then(() => {
           //清除localStorage里的用户信息,定向到登录
-          localStorage.removeItem("jw_student_file")
-          window.location.href = "https://edu.limkim.cn/sign"
+          localStorage.removeItem("jw_student_file");
+          window.location.href = "https://edu.limkim.cn/sign";
         }).catch(() => {
           if (this.file === "")
-            return
-          this.downloadFile("学业文件.enc")
-        })
+            return;
+          this.downloadFile("学业文件.enc");
+        });
       }
     },
     //根据路由匹配activeIndex
@@ -227,35 +227,35 @@ export default {
           case "/infoConfirm/intConfirm":
           case "/infoConfirm/rankConfirm":
             this.activeIndex = "1-1";
-            break
+            break;
           case "/scoreChange":
             this.activeIndex = "1-2";
-            break
+            break;
           case "/arcManage":
             this.activeIndex = "1-3";
-            break
+            break;
           case "/infoShare":
             this.activeIndex = "2";
-            break
+            break;
           case "/infoSquare":
             this.activeIndex = "3";
-            break
+            break;
           case "/infoDisclose":
             this.activeIndex = "4";
-            break
+            break;
           case "/message/received":
           case "/message/sent":
             this.activeIndex = "5";
-            break
+            break;
           case "/accountManage":
             this.activeIndex = "6";
-            break
+            break;
         }
       else
         switch (this.$route.path) {
           case "/infoConfirm/profileConfirm":
             this.activeIndex = "1-1";
-            break
+            break;
           default:
             setTimeout(() => {
               this.$confirm("您还没有确认学籍信息,请确认后再来吧", "提示", {
@@ -267,7 +267,7 @@ export default {
               }).catch(() => {
                 this.$router.push("/infoConfirm/profileConfirm");
               });
-            }, 100)
+            }, 100);
         }
     },
     windowHeight() {
@@ -277,7 +277,7 @@ export default {
   },
   watch: {
     $route() {
-      this.redirect()
+      this.redirect();
     }
   },
   mounted() {
@@ -294,8 +294,8 @@ export default {
           cancelButtonText: "已下载",
           type: "warning"
         }).then(() => {
-          this.downloadFile("学业文件.enc")
-        })
+          this.downloadFile("学业文件.enc");
+        });
       }
     };
     // 拿到屏幕高度
@@ -303,7 +303,7 @@ export default {
     document.querySelector(".el-main").style.height = this.wh - 80 + "px";
     window.onresize = () => {
       this.wh = this.windowHeight() < 650 ? 650 : this.windowHeight();
-    }
+    };
     // 判断是否登录
     if (localStorage.getItem("jw_student_file") === null)
       this.$confirm("您还未登录,请前往登录", "提示", {
@@ -311,20 +311,20 @@ export default {
         showCancelButton: false,
         type: "warning"
       }).then(() => {
-        window.location.href = "https://edu.limkim.cn/sign"
+        window.location.href = "https://edu.limkim.cn/sign";
       }).catch(() => {
-        window.location.href = "https://edu.limkim.cn/sign"
+        window.location.href = "https://edu.limkim.cn/sign";
       });
     else {
-      this.uName = JSON.parse(localStorage.getItem("jw_student_file")).staffID
-      this.loading = true
+      this.uName = JSON.parse(localStorage.getItem("jw_student_file")).staffID;
+      this.loading = true;
       // 拿学籍确认状态
       this.axios({
         method: "get",
         url: "https://api.hduhelp.com/gormja_wrapper/dataFile/getFileID",
         headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
       }).then((response) => {
-        this.xjConfirmed = response.data.data.FileID === "null" ? false : true
+        this.xjConfirmed = response.data.data.FileID === "null" ? false : true;
         this.redirect();
         if (this.xjConfirmed)
           this.axios({
@@ -334,31 +334,31 @@ export default {
             data: { "student": "any" }
           }).then((response) => {
             this.received = response.data.data.length;
-            sessionStorage.setItem("message", JSON.stringify(response.data.data))
+            sessionStorage.setItem("message", JSON.stringify(response.data.data));
             return this.axios({
               method: "post",
               url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForSelf",
               headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
               data: { "StaffID": JSON.parse(localStorage.getItem("jw_student_file")).staffID }
-            })
+            });
           }).then((response) => {
-            sessionStorage.setItem("sent", JSON.stringify(response.data.data))
-            this.loading = false
+            sessionStorage.setItem("sent", JSON.stringify(response.data.data));
+            this.loading = false;
           }).catch(() => {
             this.$message.error("获取站内信息出错啦,请稍后再试");
-            this.loading = false
+            this.loading = false;
           });
         else
-          this.loading = false
+          this.loading = false;
       }).catch(() => {
-        this.$message.error("获取学业文件状态出错啦,请稍后重试")
+        this.$message.error("获取学业文件状态出错啦,请稍后重试");
         this.redirect();
-        this.loading = false
+        this.loading = false;
       });
     }
   },
   destroyed() {
-    window.onbeforeunload = null
+    window.onbeforeunload = null;
   }
 };
 </script>

@@ -57,7 +57,7 @@
       <el-empty :image-size="200" v-show="tableData.length === 0" description="您还没有公开的信息"></el-empty>
     </div>
     <div class="disclose" v-show="dataFile !== ''">
-      <el-form-item label="要公开的学籍信息" required>
+      <el-form-item label="要公开的学籍信息">
         <el-checkbox
           :indeterminate="isIndeterminate"
           v-model="checkAll"
@@ -78,7 +78,7 @@
           >{{item.name}}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item label="gpa信息" required>
+      <el-form-item label="gpa信息">
         <el-table
           :data="rankData"
           tooltip-effect="dark"
@@ -87,10 +87,29 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="MajorName" label="专业"></el-table-column>
+          <el-table-column prop="StaffID" label="学号"></el-table-column>
           <el-table-column prop="GPA" label="绩点"></el-table-column>
           <el-table-column prop="Rank" label="排名"></el-table-column>
         </el-table>
+      </el-form-item>
+      <el-form-item label="综合素质信息">
+        <el-checkbox-group
+          v-show="rewardDataValue.length !== 0 || raceDataValue.length !== 0"
+          v-model="ruleForm.rewardType"
+          style="margin-left: 30px; width: 960px"
+        >
+          <el-checkbox v-show="rewardDataValue.length !== 0" label="reward">个人荣誉</el-checkbox>
+          <el-checkbox v-show="raceDataValue.length !== 0" label="race_reward">创新学分</el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
+      <el-form-item label="个人填写信息">
+        <el-checkbox-group
+          v-show="clubData.length !== 0"
+          v-model="ruleForm.intType"
+          style="margin-left: 30px; width: 960px"
+        >
+          <el-checkbox label="org_experience">班团工作情况</el-checkbox>
+        </el-checkbox-group>
       </el-form-item>
       <!-- <el-form-item label="课程成绩信息" required>
         <h4 v-show="scoreData.length === 0">暂无信息</h4>
@@ -196,10 +215,10 @@ export default {
         date: "",
         hr: "",
         profileType: [],
+        intType: [],
         scoreType: [],
         levelType: [],
-        rewardType: [],
-        raceType: []
+        rewardType: []
       },
       profileData: [],//学籍信息数据
       profileDataValue: [],//学籍全选辅助
@@ -208,6 +227,7 @@ export default {
       scoreDataValue: [],
       rewardData: [],
       rankData: [],
+      clubData: [],
       rewardDataValue: [],
       raceData: [],
       raceDataValue: [],
@@ -274,7 +294,7 @@ export default {
         scoreType: [],
         levelType: [],
         rewardType: [],
-        raceType: []
+        intType: []
       };
       this.isIndeterminate = false;
       this.checkAll = false;
@@ -315,6 +335,7 @@ export default {
         let rewardData = [];
         let raceData = [];
         let rankData = [];
+        let clubData = [];
         for (let i = 0; i < range.length; i++) {
           if (range[i] === "profile") {
             const translation = {
@@ -337,46 +358,46 @@ export default {
                 });
             }
           }
-          else if (range[i] === "score") {
-            let score = Object.keys(content.score);
-            for (let j = 0; j < score.length; j++) {
-              scoreData.push({
-                content: "最终成绩: " + content.score[score[j]].ScoreFinal + " / " + content.score[score[j]].SchoolYear + "第" + content.score[score[j]].Semester + "学期",
-                name: content.score[score[j]].CourseName,
-                type: "成绩信息"
-              });
-            }
-          }
-          else if (range[i] === "level_exam") {
-            let level = Object.keys(content.level_exam);
-            for (let j = 0; j < level.length; j++) {
-              levelData.push({
-                content: "成绩: " + content.level_exam[level[j]].Score + " / " + content.level_exam[level[j]].ExamDate,
-                name: content.level_exam[level[j]].ExamName,
-                type: "等级考试信息",
-              });
-            }
-          }
-          else if (range[i] === "reward") {
-            let reward = Object.keys(content.reward);
-            for (let j = 0; j < reward.length; j++) {
-              rewardData.push({
-                content: content.reward[reward[j]].Semester === 0 ? "第一学期" : "第二学期",
-                name: content.reward[reward[j]].RewardName,
-                type: "个人荣誉信息"
-              });
-            }
-          }
-          else if (range[i] === "race_reward") {
-            let race = Object.keys(content.race_reward);
-            for (let j = 0; j < race.length; j++) {
-              raceData.push({
-                content: "获奖类型: " + content.race_reward[race[j]].RaceLevel + "-" + content.race_reward[race[j]].RewardLevel + " / " + content.race_reward[race[j]].RewardDate,
-                name: content.race_reward[race[j]].RaceName,
-                type: "创新学分类型"
-              });
-            }
-          }
+          // else if (range[i] === "score") {
+          //   let score = Object.keys(content.score);
+          //   for (let j = 0; j < score.length; j++) {
+          //     scoreData.push({
+          //       content: "最终成绩: " + content.score[score[j]].ScoreFinal + " / " + content.score[score[j]].SchoolYear + "第" + content.score[score[j]].Semester + "学期",
+          //       name: content.score[score[j]].CourseName,
+          //       type: "成绩信息"
+          //     });
+          //   }
+          // }
+          // else if (range[i] === "level_exam") {
+          //   let level = Object.keys(content.level_exam);
+          //   for (let j = 0; j < level.length; j++) {
+          //     levelData.push({
+          //       content: "成绩: " + content.level_exam[level[j]].Score + " / " + content.level_exam[level[j]].ExamDate,
+          //       name: content.level_exam[level[j]].ExamName,
+          //       type: "等级考试信息",
+          //     });
+          //   }
+          // }
+          // else if (range[i] === "reward") {
+          //   let reward = Object.keys(content.reward);
+          //   for (let j = 0; j < reward.length; j++) {
+          //     rewardData.push({
+          //       content: content.reward[reward[j]].Semester === 0 ? "第一学期" : "第二学期",
+          //       name: content.reward[reward[j]].RewardName,
+          //       type: "个人荣誉信息"
+          //     });
+          //   }
+          // }
+          // else if (range[i] === "race_reward") {
+          //   let race = Object.keys(content.race_reward);
+          //   for (let j = 0; j < race.length; j++) {
+          //     raceData.push({
+          //       content: "获奖类型: " + content.race_reward[race[j]].RaceLevel + "-" + content.race_reward[race[j]].RewardLevel + " / " + content.race_reward[race[j]].RewardDate,
+          //       name: content.race_reward[race[j]].RaceName,
+          //       type: "创新学分类型"
+          //     });
+          //   }
+          // }
           else if (range[i] === "rank") {
             let rank = Object.keys(content.rank);
             for (let j = 0; j < rank.length; j++) {
@@ -387,8 +408,29 @@ export default {
               });
             }
           }
+          else if (range[i] === "org_experience") {
+            clubData.push({
+              content: "工作履历(只包含工作组织等级信息)",
+              name: "班团工作",
+              type: "个人填写信息"
+            });
+          }
+          else if (range[i] === "race_reward") {
+            raceData.push({
+              content: "竞赛履历(只包含竞赛等级信息)",
+              name: "创新学分",
+              type: "综合素质信息"
+            });
+          }
+          else if (range[i] === "reward") {
+            rewardData.push({
+              content: "奖学金获得情况(只包含奖学金等级信息)",
+              name: "个人荣誉",
+              type: "综合素质信息"
+            });
+          }
         }
-        this.tableData = [...profileData, ...scoreData, ...levelData, ...rewardData, ...raceData, ...rankData];
+        this.tableData = [...profileData, ...rewardData, ...raceData, ...rankData, ...clubData];
         this.loading = false;
       }).catch(() => {
         this.$message.error("出错啦,请稍后再试");
@@ -409,115 +451,123 @@ export default {
         url: "https://api.hduhelp.com/gormja_wrapper/dataFile/get?staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
         headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
         data,
-      })
-        .then((response) => {
-          this.content = response.data.data.Body.data_map;
-          var range = Object.keys(this.content);
-          for (var i = 0; i < range.length; i++) {
-            if (range[i] === "profile") {
-              const translation = {
-                ClassName: "班级名称",
-                SchoolCode: "学校代码",
-                StaffID: "学号",
-                UnitName: "学院名称",
-                MajorName: "专业名称",
-                Sex: "性别",
-                Name: "姓名",
-                Nation: "民族"
-              };
-              const sort = ["Name", "Sex", "Nation", "ClassName", "MajorName", "UnitName", "SchoolCode"];
-              const profile = Object.keys(this.content.profile[Object.keys(this.content.profile)]);
-              this.profileData = [];
-              this.profileDataValue = [];
-              for (let i = 0; i < sort.length; i++) {
-                if (profile.indexOf(sort[i])) {
-                  this.profileDataValue.push(sort[i]);
-                  this.profileData.push({
-                    value: sort[i],
-                    name: translation[sort[i]]
-                  });
-                }
-              }
-              // for (var j = 0; j < profile.length; j++) {
-              //   if (profile[j] !== "StaffID") {
-              //     this.profileDataValue.push(profile[j])
-              //     this.profileData.push({
-              //       value: profile[j],
-              //       name: translation[profile[j]]
-              //     })
-              //   }
-              // }
-            }
-            else if (range[i] === "score") {
-              this.scoreData = [];
-              this.scoreDataValue = [];
-              var score = Object.keys(this.content.score);
-              for (var j = 0; j < score.length; j++) {
-                this.scoreDataValue.push(score[j]);
-                this.scoreData.push({
-                  value: this.content.score[score[j]].CourseCode,
-                  name: this.content.score[score[j]].CourseName,
-                  gp: this.content.score[score[j]].GP,
+      }).then((response) => {
+        this.content = response.data.data.Body.data_map;
+        var range = Object.keys(this.content);
+        for (var i = 0; i < range.length; i++) {
+          if (range[i] === "profile") {
+            const translation = {
+              ClassName: "班级名称",
+              SchoolCode: "学校代码",
+              StaffID: "学号",
+              UnitName: "学院名称",
+              MajorName: "专业名称",
+              Sex: "性别",
+              Name: "姓名",
+              Nation: "民族"
+            };
+            const sort = ["Name", "Sex", "Nation", "ClassName", "MajorName", "UnitName", "SchoolCode"];
+            const profile = Object.keys(this.content.profile[Object.keys(this.content.profile)]);
+            this.profileData = [];
+            this.profileDataValue = [];
+            for (let i = 0; i < sort.length; i++) {
+              if (profile.indexOf(sort[i])) {
+                this.profileDataValue.push(sort[i]);
+                this.profileData.push({
+                  value: sort[i],
+                  name: translation[sort[i]]
                 });
               }
             }
-            else if (range[i] === "level_exam") {
-              this.levelData = [];
-              var level = Object.keys(this.content.level_exam);
-              for (var j = 0; j < level.length; j++) {
-                this.levelData.push({
-                  value: this.content.level_exam[level[j]].ExamDate,
-                  name: this.content.level_exam[level[j]].ExamName,
-                  key: level[j]
-                });
-              }
-            }
-            else if (range[i] === "reward") {
-              this.rewardData = [];
-              this.rewardDataValue = [];
-              var reward = Object.keys(this.content.reward);
-              for (var j = 0; j < reward.length; j++) {
-                this.rewardDataValue.push(reward[j]);
-                this.rewardData.push({
-                  yearValue: this.content.reward[reward[j]].SchoolYear,
-                  semValue: this.content.reward[reward[j]].Semester === 0 ? "第一学期" : "第二学期",
-                  name: this.content.reward[reward[j]].RewardName,
-                  key: reward[j]
-                });
-              }
-            }
-            else if (range[i] === "race_reward") {
-              this.raceData = [];
-              this.raceDataValue = [];
-              var race = Object.keys(this.content.race_reward);
-              for (var j = 0; j < race.length; j++) {
-                this.raceDataValue.push(race[j]);
-                this.raceData.push({
-                  value: this.content.race_reward[race[j]].RewardDate,
-                  name: this.content.race_reward[race[j]].RaceName,
-                  key: race[j]
-                });
-              }
-            }
-            else if (range[i] === "rank") {
-              const rank = this.content.rank[Object.keys(this.content.rank)[0]];
-              this.rankData = [{
-                GPA: rank.GPA,
-                MajorName: rank.MajorName,
-                Rank: rank.Rank
-              }];
+            // for (var j = 0; j < profile.length; j++) {
+            //   if (profile[j] !== "StaffID") {
+            //     this.profileDataValue.push(profile[j])
+            //     this.profileData.push({
+            //       value: profile[j],
+            //       name: translation[profile[j]]
+            //     })
+            //   }
+            // }
+          }
+          else if (range[i] === "score") {
+            this.scoreData = [];
+            this.scoreDataValue = [];
+            var score = Object.keys(this.content.score);
+            for (var j = 0; j < score.length; j++) {
+              this.scoreDataValue.push(score[j]);
+              this.scoreData.push({
+                value: this.content.score[score[j]].CourseCode,
+                name: this.content.score[score[j]].CourseName,
+                gp: this.content.score[score[j]].GP,
+              });
             }
           }
-          this.loading = false;
-        })
-        .catch((err) => {
-          if (err.response.data.msg === "file hash does not equal to chain")
-            this.$message.error("学业文件错误或者过期,请检查后再试");
-          else
-            this.$message.error("获取学业文件信息出错啦,请稍后再试");
-          this.dataFile = "";
-          this.loading = false;
-        });
+          else if (range[i] === "level_exam") {
+            this.levelData = [];
+            var level = Object.keys(this.content.level_exam);
+            for (var j = 0; j < level.length; j++) {
+              this.levelData.push({
+                value: this.content.level_exam[level[j]].ExamDate,
+                name: this.content.level_exam[level[j]].ExamName,
+                key: level[j]
+              });
+            }
+          }
+          else if (range[i] === "reward") {
+            this.rewardData = [];
+            this.rewardDataValue = [];
+            var reward = Object.keys(this.content.reward);
+            for (var j = 0; j < reward.length; j++) {
+              this.rewardDataValue.push(reward[j]);
+              this.rewardData.push({
+                yearValue: this.content.reward[reward[j]].SchoolYear,
+                semValue: this.content.reward[reward[j]].Semester === 0 ? "第一学期" : "第二学期",
+                name: this.content.reward[reward[j]].RewardName,
+                key: reward[j]
+              });
+            }
+          }
+          else if (range[i] === "race_reward") {
+            this.raceData = [];
+            this.raceDataValue = [];
+            var race = Object.keys(this.content.race_reward);
+            for (var j = 0; j < race.length; j++) {
+              this.raceDataValue.push(race[j]);
+              this.raceData.push({
+                value: this.content.race_reward[race[j]].RewardDate,
+                name: this.content.race_reward[race[j]].RaceName,
+                key: race[j]
+              });
+            }
+          }
+          else if (range[i] === "rank") {
+            const rank = this.content.rank[Object.keys(this.content.rank)[0]];
+            this.rankData = [{
+              GPA: rank.GPA,
+              MajorName: rank.MajorName,
+              Rank: rank.Rank
+            }];
+          }
+          else if (range[i] === "org_experience") {
+            const club = Object.keys(this.content.org_experience);
+            this.clubData = [];
+            for (let  i = 0; i < club.length; i++) {
+              this.clubData.push({
+                ID: this.content.org_experience[club[i]].ID,
+                title: club[i]
+              });
+            }
+          }
+        }
+        this.loading = false;
+      }).catch((err) => {
+        if (err.response.data.msg === "file hash does not equal to chain")
+          this.$message.error("学业文件错误或者过期,请检查后再试");
+        else
+          this.$message.error("获取学业文件信息出错啦,请稍后再试");
+        this.dataFile = "";
+        this.loading = false;
+      });
     },
     back() {
       this.upload = false;
@@ -552,6 +602,15 @@ export default {
         }
         if (this.gpa)
           ShareItems.push({ "Path": ["rank", Object.keys(this.content.profile)[0]] });
+        if (this.ruleForm.intType.indexOf("org_experience") !== -1)
+          for(let i = 0; i<this.clubData.length;i++)
+            ShareItems.push({ "Path": ["org_experience", this.clubData[i].title]});
+        if (this.ruleForm.rewardType.indexOf("race_reward") !== -1)
+          for(let i = 0; i<this.raceDataValue.length;i++)
+            ShareItems.push({ "Path": ["race_reward", this.raceDataValue[i]]});
+        if (this.ruleForm.rewardType.indexOf("reward") !== -1)
+          for(let i = 0; i<this.rewardDataValue.length;i++)
+            ShareItems.push({ "Path": ["reward", this.rewardDataValue[i]]});
         data.append("body", JSON.stringify({ "ShareItems": ShareItems }));
         this.axios({
           method: "put",

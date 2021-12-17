@@ -1,4 +1,6 @@
 if (location.search.split("?")[1] !== undefined) {
+    if (location.search.split("?")[1].split("=")[0] === "from")
+        sessionStorage.setItem("jw_from", "hduhelp");
     const requestOptions = {
         method: "GET",
         redirect: "follow",
@@ -12,7 +14,12 @@ if (location.search.split("?")[1] !== undefined) {
                     token: location.search.split("?")[1].split("&")[0].split("=")[1],
                     staffID: location.search.split("?")[1].split("&")[1].split("=")[1]
                 }));
-                window.location.href = "https://edu.limkim.cn/student";
+                if (sessionStorage.getItem("jw_from") && sessionStorage.getItem("jw_from") === "hduhelp") {
+                    sessionStorage.removeItem("jw_from");
+                    window.location.href = "https://edu.limkim.cn/student/infoShare";
+                }
+                else
+                    window.location.href = "https://edu.limkim.cn/student";
             }
             else if (JSON.parse(result).data.STAFFTYPE === "2") {
                 localStorage.setItem("jw_manager_file", JSON.stringify({

@@ -10,7 +10,7 @@
         <el-dropdown-item command="学校">学校</el-dropdown-item>
         <el-dropdown-item command="应聘岗位">应聘岗位</el-dropdown-item>
       </el-dropdown-menu>
-    </el-dropdown> -->
+    </el-dropdown>-->
     <el-dropdown @command="sortSwitch" style="cursor: pointer; margin: 10px 30px 10px 80%">
       <span class="el-dropdown-link">
         排序方式 : {{sort}}
@@ -26,14 +26,14 @@
         style="cursor: pointer;"
         v-for="item in receivedMsgData"
         v-bind:key="item.id"
-        @click="goQuery(item.CompanyCode)"
+        @click="goQuery(item.CompanyCode, item.JobID)"
       >
         <el-col :span="8" class="card">
           <el-card shadow="hover">
             <h5>请求公司: {{item.CompanyCode}}</h5>
             <h5>请求描述: {{item.Text}}</h5>
-            <!-- <h5>应聘岗位: {{item.TargetTargetJobID}}</h5>
-            <h5>过期时间: {{item.date}}</h5> -->
+            <h5>符合岗位: {{item.JobID}}</h5>
+            <h5>发起时间: {{item.CreatedAt}}</h5>
           </el-card>
         </el-col>
       </div>
@@ -45,43 +45,39 @@ export default {
   data() {
     return {
       loading: false,
-      sort: "时间▼",
+      sort: "时间▲",
       classify: "无",
       receivedMsgData: []// 
     };
   },
   methods: {
     classifySwitch(command) {
-      this.classify = command
+      this.classify = command;
     },
     sortSwitch(command) {
       if (command !== this.sort) {
-        this.sort = command
+        this.sort = command;
         const temp = this.receivedMsgData;
-        this.receivedMsgData = []
+        this.receivedMsgData = [];
         for (let i = 0; i < temp.length; i++)
-          this.receivedMsgData[i] = temp[temp.length - i - 1]
+          this.receivedMsgData[i] = temp[temp.length - i - 1];
       }
     },
-    goQuery(CompanyCode) {
+    goQuery(CompanyCode, JobID) {
       sessionStorage.setItem("com", JSON.stringify({
-        CompanyCode: CompanyCode,
+        CompanyCode,
         Name: "",
         job: "",
-        JobID: ""
-      }))
-      this.$router.push("/infoShare")
+        JobID
+      }));
+      this.$router.push("/infoShare");
     }
   },
   mounted() {
-    this.loading = true
+    this.loading = true;
     // 通过sessionStorage得到信息
-    const data = JSON.parse(sessionStorage.getItem("message"))
-    const newData = data.sort((a, b) => {
-      return a.sortDate - b.sortDate
-    })
-    this.receivedMsgData = newData
-    this.loading = false
+    this.receivedMsgData = JSON.parse(sessionStorage.getItem("message"));
+    this.loading = false;
   }
 };
 </script>
@@ -89,7 +85,7 @@ export default {
 <style scoped>
 .card {
   margin: 15px 5%;
-  height: 100px;
+  height: 110px;
   border-radius: 10px;
   width: 90%;
 }
@@ -100,7 +96,7 @@ export default {
   margin: 0;
 }
 .el-card {
-  height: 120px;
+  height: 130px;
   border-radius: 10px;
 }
 </style>

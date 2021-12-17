@@ -27,18 +27,18 @@
       <el-menu-item
         index="4"
         style="font-size: 18px"
-        :disabled="(route===null&&!confirmed)||(route!==null&&route!==3)"
-      >个性化确认</el-menu-item>
-      <el-menu-item
-        index="5"
-        style="font-size: 18px"
         :disabled="(route===null&&!confirmed)||(route!==null&&route!==4)"
       >排名确认</el-menu-item>
       <el-menu-item
-        index="6"
+        index="5"
         style="font-size: 18px"
         :disabled="(route===null&&!confirmed)||(route!==null&&route!==5)"
       >毕业确认</el-menu-item>
+      <el-menu-item
+        index="6"
+        style="font-size: 18px"
+        :disabled="(route===null&&!confirmed)||(route!==null&&route!==3)"
+      >个人填写</el-menu-item>
     </el-menu>
     <router-view
       @func="getFile"
@@ -63,63 +63,63 @@ export default {
   props: ["file", "xjConfirmed", "wh"],// 拿到student页面传来的数据
   methods: {
     getFile(file) {
-      this.$emit("func", file)
+      this.$emit("func", file);
     },
     getRoute(route) {
       this.route = route;
     },
     getConfirmed(confirmed) {
-      this.confirmed = confirmed
-      this.$emit("func2", confirmed)
+      this.confirmed = confirmed;
+      this.$emit("func2", confirmed);
     },
     indexRouteSwitch(key) {
       switch (key) {
         case "1":
           this.$router.push("/infoConfirm/profileConfirm");
-          break
+          break;
         case "2":
           this.$router.push("/infoConfirm/scoreConfirm");
-          break
+          break;
         case "3":
           this.$router.push("/infoConfirm/rewardConfirm");
-          break
+          break;
         case "4":
-          this.$router.push("/infoConfirm/intConfirm");
-          break
-        case "5":
           this.$router.push("/infoConfirm/rankConfirm");
           break;
-        case "6":
+        case "5":
           this.$router.push("/infoConfirm/gradConfirm");
-          break
+          break;
+        case "6":
+          this.$router.push("/infoConfirm/intConfirm");
+          break;
       }
     },
     redirect() {
       switch (this.$route.path) {
         case "/infoConfirm/profileConfirm":
           this.activeIndex = "1";
-          break
+          break;
         case "/infoConfirm/scoreConfirm":
           this.activeIndex = "2";
-          break
+          break;
         case "/infoConfirm/rewardConfirm":
           this.activeIndex = "3";
-          break
-        case "/infoConfirm/intConfirm":
-          this.activeIndex = "4";
-          break
+          break;
         case "/infoConfirm/rankConfirm":
-          this.activeIndex = "5";
-          break
+          this.activeIndex = "4";
+          break;
         case "/infoConfirm/gradConfirm":
+          this.activeIndex = "5";
+          break;
+        case "/infoConfirm/intConfirm":
           this.activeIndex = "6";
-          break
+          break;
       }
     },
   },
   watch: {
     $route() {
-      this.redirect()
+      this.redirect();
     },
     // 用来规避刷新时主路由并没有得到确认状态的延迟
     xjConfirmed: {

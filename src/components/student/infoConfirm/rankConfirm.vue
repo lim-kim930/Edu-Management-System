@@ -238,13 +238,13 @@ export default {
         this.data = {
           StaffID: value.StaffID,
           GPA: value.GPA,
-          Rank: { Value: value.Rank.Value, VisibleName: "学院排名" }
+          Rank: { Value: value.Rank.Value, VisibleName: "专业排名" }
         };
         if (StaffID)
           this.oldData = {
             StaffID: { Value: StaffID, VisibleName: "学号" },
             GPA: { Value: GPA, VisibleName: "GPA" },
-            Rank: { Value: Rank, VisibleName: "学院排名" },
+            Rank: { Value: Rank, VisibleName: "专业排名" },
           };
         sessionStorage.setItem("gpa", false);
         this.checkConfirm();//判断确认状态
