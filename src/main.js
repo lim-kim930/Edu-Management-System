@@ -6,14 +6,14 @@ import "element-ui/lib/theme-chalk/index.css";
 
 //导入组件
 // 导入自定义路由模块
-// import APP from "../src/components/Sign.vue"
-// import router from "./router_sign"
+import APP from "../src/components/Sign.vue";
+import router from "./router_sign";
 
 //剪切板组件
-import VueClipboard from "vue-clipboard2";
-import APP from "../src/components/Student.vue";
-import router from "./router_student";
-Vue.use(VueClipboard);
+// import VueClipboard from "vue-clipboard2";
+// import APP from "../src/components/Student.vue";
+// import router from "./router_student";
+// Vue.use(VueClipboard);
 
 // import APP from "../src/components/Company.vue";
 // import router from "./router_company";
