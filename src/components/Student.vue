@@ -97,6 +97,8 @@
           @func="getFile"
           @func2="getConfirmed"
           @func3="getReceived"
+          @func4="getFrequency"
+          :frequency="reqFrequency"
           :file="file"
           :xjConfirmed="xjConfirmed"
           :received="received"
@@ -117,6 +119,8 @@ export default {
       file: "",// 文件
       received: 0,// 收件箱数量
       xjConfirmed: "",// 学籍确认状态
+      reqFrequency: 300,
+      msgTimer: "",
       wh: ""// 屏幕高度
     };
   },
@@ -156,6 +160,14 @@ export default {
     },
     getReceived(received) {
       this.received = received;
+    },
+    getFrequency(frequency) {
+      this.reqFrequency = frequency;
+      clearInterval(this.msgTimer);
+      if (frequency !== 0)
+        this.msgTimer = setInterval(() => {
+          this.getMsg(JSON.parse(localStorage.getItem("jw_student_file")));
+        }, this.reqFrequency * 1000);
     },
     //路由切换
     indexRouteSwitch(key) {
@@ -262,6 +274,28 @@ export default {
             }, 100);
         }
     },
+    getMsg(userData) {
+      this.axios({
+        method: "post",
+        url: "/share/listFurtherShareRequestForReceiver",
+        headers: { "Authorization": "token " + userData.token },
+        data: { "student": "any" }
+      }).then((response) => {
+        this.received = response.data.data.length;
+        return this.axios({
+          method: "get",
+          url: "/campusTalk/lookupForSelf",
+          headers: { "Authorization": "token " + userData.token },
+          data: { "StaffID": userData.staffID }
+        });
+      }).then((response) => {
+        this.received += response.data.data.length;
+        this.loading = false;
+      }).catch(() => {
+        this.$message.error("获取站内信息出错啦,请稍后再试");
+        this.loading = false;
+      });
+    },
     windowHeight() {
       const de = document.documentElement;
       return self.innerHeight || (de && de.clientHeight) || document.body.clientHeight;
@@ -298,27 +332,12 @@ export default {
         userData.xjConfirmed = this.xjConfirmed;
         localStorage.setItem("jw_student_file", JSON.stringify(userData));
         this.redirect();
-        if (this.xjConfirmed)
-          this.axios({
-            method: "post",
-            url: "/share/listFurtherShareRequestForReceiver",
-            headers: { "Authorization": "token " + userData.token },
-            data: { "student": "any" }
-          }).then((response) => {
-            this.received = response.data.data.length;
-            return this.axios({
-              method: "get",
-              url: "/campusTalk/lookupForSelf",
-              headers: { "Authorization": "token " + userData.token },
-              data: { "StaffID": userData.staffID }
-            });
-          }).then((response) => {
-            this.received += response.data.data.length;
-            this.loading = false;
-          }).catch(() => {
-            this.$message.error("获取站内信息出错啦,请稍后再试");
-            this.loading = false;
-          });
+        if (this.xjConfirmed) {
+          this.getMsg(userData);
+          this.msgTimer = setInterval(() => {
+            this.getMsg(userData);
+          }, this.reqFrequency * 1000);
+        }
         else
           this.loading = false;
       }).catch(() => {
