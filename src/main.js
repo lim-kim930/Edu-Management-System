@@ -6,8 +6,8 @@ import "element-ui/lib/theme-chalk/index.css";
 
 //导入组件
 // 导入自定义路由模块
-import APP from "../src/components/Sign.vue";
-import router from "./router_sign";
+// import APP from "../src/components/Sign.vue";
+// import router from "./router_sign";
 
 //剪切板组件
 // import VueClipboard from "vue-clipboard2";
@@ -18,8 +18,8 @@ import router from "./router_sign";
 // import APP from "../src/components/Company.vue";
 // import router from "./router_company";
 
-// import APP from "../src/components/Manager.vue"
-// import router from "./router_manager"
+import APP from "../src/components/Manager.vue";
+import router from "./router_manager";
 
 // 安装路由
 Vue.use(VueRouter);
