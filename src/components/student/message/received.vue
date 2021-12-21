@@ -66,8 +66,8 @@
         <el-col :span="8" class="card">
           <el-card shadow="hover">
             <h5>发送公司: {{item.CompanyCode}}</h5>
-            <h5>发送时间: {{new Date(+new Date(item.CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")}}</h5>
-            <h5>宣讲时间: {{new Date(+new Date(item.CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")}}</h5>
+            <!-- <h5>发送时间: {{new Date(+new Date(item.CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")}}</h5> -->
+            <!-- <h5>宣讲时间: {{new Date(+new Date(item.CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")}}</h5> -->
             <h5>宣讲会描述: {{item.Text}}</h5>
           </el-card>
         </el-col>

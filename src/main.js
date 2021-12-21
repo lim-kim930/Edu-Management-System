@@ -39,3 +39,4 @@ new Vue({
   render: c => c(APP),
   router
 });
+

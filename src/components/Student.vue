@@ -7,15 +7,15 @@
       </div>
       <div class="user">
         <el-badge
-          title="消息中心"
           :value="received"
           :hidden="received === 0"
           class="item"
           style="width: 30px; height: 30px; margin-right: 20px; line-height: 30px !important"
         >
           <i
+            title="消息中心"
             class="el-icon-message el-dropdown-link"
-            style="font-size: 20px; color: #fff"
+            style="font-size: 20px; color: #fff; cursor: pointer;"
             @click="msgRouteSwitch('received')"
           ></i>
         </el-badge>
@@ -122,7 +122,8 @@ export default {
   },
   methods: {
     msgRouteSwitch(command) {
-      this.$router.push("/message/" + command);
+      if (this.xjConfirmed)
+        this.$router.push("/message/" + command);
     },
     // 下载文件
     downloadFile(filename) {
@@ -148,7 +149,10 @@ export default {
     },
     //拿到子组件传来的学籍确认状态,全局存储在student页面
     getConfirmed(confirmed) {
+      let userData = JSON.parse(localStorage.getItem("jw_student_file"));
       this.xjConfirmed = confirmed;
+      userData.xjConfirmed = this.xjConfirmed;
+      localStorage.setItem("jw_student_file", JSON.stringify(userData));
     },
     getReceived(received) {
       this.received = received;
@@ -206,7 +210,7 @@ export default {
     },
     //根据路由匹配activeIndex
     redirect() {
-      if (this.xjConfirmed === true)
+      if (this.xjConfirmed)
         switch (this.$route.path) {
           case "/infoConfirm/scoreConfirm":
           case "/infoConfirm/rewardConfirm":
@@ -281,29 +285,32 @@ export default {
         window.location.href = "https://edu.limkim.cn/sign";
       });
     else {
-      this.uName = JSON.parse(localStorage.getItem("jw_student_file")).staffID;
+      let userData = JSON.parse(localStorage.getItem("jw_student_file"));
+      this.uName = userData.staffID;
       this.loading = true;
       // 拿学籍确认状态
       this.axios({
         method: "get",
         url: "/dataFile/getFileID",
-        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+        headers: { "Authorization": "token " + userData.token },
       }).then((response) => {
         this.xjConfirmed = response.data.data.FileID === "null" ? false : true;
+        userData.xjConfirmed = this.xjConfirmed;
+        localStorage.setItem("jw_student_file", JSON.stringify(userData));
         this.redirect();
         if (this.xjConfirmed)
           this.axios({
             method: "post",
             url: "/share/listFurtherShareRequestForReceiver",
-            headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+            headers: { "Authorization": "token " + userData.token },
             data: { "student": "any" }
           }).then((response) => {
             this.received = response.data.data.length;
             return this.axios({
               method: "get",
               url: "/campusTalk/lookupForSelf",
-              headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
-              data: { "StaffID": JSON.parse(localStorage.getItem("jw_student_file")).staffID }
+              headers: { "Authorization": "token " + userData.token },
+              data: { "StaffID": userData.staffID }
             });
           }).then((response) => {
             this.received += response.data.data.length;
