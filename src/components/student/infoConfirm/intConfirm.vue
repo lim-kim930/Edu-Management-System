@@ -84,7 +84,7 @@
       v-model="content"
       :style="{'width': '99%', 'margin-top': '10px', 'height': this.wh - 300 + 'px'}"
     />
-    <el-form-item label="职位类别">
+    <el-form-item label="职位类别" v-show="typeValue==='intention'">
       <el-checkbox-group v-model="jobValue">
         <el-checkbox
           :label="item.Name"
