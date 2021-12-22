@@ -82,14 +82,20 @@
       @save="save"
       @change="change"
       v-model="content"
-      :style="{'width': '99%', 'margin-top': '10px', 'height': this.wh - 300 + 'px'}"
+      :style="{'width': '99%', 'margin-top': '10px', 'height': this.wh - 310 + 'px'}"
     />
-    <el-form-item label="职位类别" v-show="typeValue==='intention'">
-      <el-checkbox-group v-model="jobValue">
+    <el-form-item
+      :label="item.name"
+      v-for="(item, index) in translation"
+      v-bind:key="item.name"
+      v-show="typeValue==='intention'"
+    >
+      <el-checkbox-group v-model="jobValue[index]">
         <el-checkbox
+          :disabled="index !== 0 && jobValue[0].length !== 0"
           :label="item.Name"
           name="type"
-          v-for="item in jobOpitions"
+          v-for="item in jobOpitions[index]"
           v-bind:key="item.id"
         ></el-checkbox>
       </el-checkbox-group>
@@ -230,11 +236,11 @@ export default {
     return {
       holder: "请输入您的自我介绍，同样可以自由编辑样式(Markdown)",
       typeOptions: [{
-        value: "int",
-        label: "自我介绍"
-      }, {
         value: "intention",
         label: "就职意向"
+      }, {
+        value: "int",
+        label: "自我介绍"
       }, {
         value: "club",
         label: "班团经历"
@@ -245,9 +251,9 @@ export default {
         value: "volun",
         label: "志愿服务"
       }],
-      jobOpitions: [],
-      jobValue: [],
-      typeValue: "int",
+      jobOpitions: [[], [], [], [], []],
+      jobValue: [[], [], [], [], []],
+      typeValue: "intention",
       clubData: [],
       socialData: [],
       clubAddData: {
@@ -268,14 +274,14 @@ export default {
         bold: true, // 粗体
         italic: true, // 斜体
         header: true, // 标题
-        underline: true, // 下划线
+        underline: false, // 下划线
         mark: true, // 标记
         quote: true, // 引用
         ol: true, // 有序列表
         ul: true, // 无序列表
         fullscreen: false, // 全屏编辑
         readmodel: true, // 沉浸式阅读
-        help: true, // 帮助
+        help: false, // 帮助
         /* 1.3.5 */
         undo: true, // 上一步
         redo: true, // 下一步
@@ -291,6 +297,22 @@ export default {
         subfield: true, // 单双栏模式
         preview: true, // 预览
       },
+      translation: [{
+        name: "不限",
+        value: ["不限"]
+      }, {
+        name: "IT互联网",
+        value: ["编程/IT开发", "测试", "IT运维", "通信工程", "数字多媒体", "产品", "运营"]
+      }, {
+        name: "会计管理",
+        value: ["财务/会计", "金融", "审计", "出纳", "采购", "行政", "人力资源", "贸易/进出口", "质量管理", "项目管理", "项目实施"]
+      }, {
+        name: "设计制造",
+        value: ["工业设计", "工程设计", "平面设计", "室内设计", "生产/制造"]
+      }, {
+        name: "其他",
+        value: ["法务", "科研", "教师", "翻译", "编辑/文案", "培训", "其他"]
+      }],
       file: "",//学业文件
       loading: false,
       dialogTableVisible: false,//交易详情显示
@@ -392,10 +414,38 @@ export default {
         method: "get",
         url: "/job/type/list",
       }).then(response => {
-        this.jobOpitions = response.data.data;
+        const data = response.data.data;
+        this.jobOpitions = [[], [], [], [], []];
+        let other = null;
+        for (let i = 0; i < data.length; i++) {
+          for (let j = 0; j < 5; j++) {
+            if (this.translation[j].value.indexOf(data[i].Name) !== -1) {
+              switch (data[i].Name) {
+                case "编程/IT开发":
+                  this.jobOpitions[j].unshift(data[i]);
+                  break;
+                case "测试":
+                  if (this.jobOpitions[j][0].Name && this.jobOpitions[j][0].Name === "编程/IT开发")
+                    this.jobOpitions[j].splice(1, 0, data[i]);
+                  else
+                    this.jobOpitions[j].unshift(data[i]);
+                  break;
+                case "其他":
+                  other = data[i];
+                  break;
+                default:
+                  this.jobOpitions[j].push(data[i]);
+                  break;
+              }
+              break;
+            }
+          }
+        }
+        if (other)
+          this.jobOpitions[4].push(other);
         this.loading = false;
       }).catch(() => {
-        this.$message.error("获取岗位大类信息出错啦,请稍后再试");
+        this.$message.error("获取岗位信息出错啦,请稍后再试");
         this.loading = false;
       });
     },
@@ -478,9 +528,18 @@ export default {
         if (this.clubAddData.JobName.trim().length === 0 || this.clubAddData.OrgName.trim().length === 0 || this.clubAddData.OrgLevel.length === 0 || this.clubAddData.time.length === 0)
           return this.$message.error("请将表单填写完整");
       }
-      else if (this.typeValue === "int")
+      else if (this.typeValue === "int") {
         if (this.content.length === 0)
           return this.$message.error("请先填写你的自我介绍吧");
+      }
+      else if (this.typeValue === "intention") {
+        let count = 0;
+        for (let i = 0; i < 5; i++)
+          if (this.jobValue[i].length > 0)
+            count++;
+        if (count === 0)
+          return this.$message.error("请先勾选你的求职意向");
+      }
       this.$confirm("系统会为您保存，但不会写入学业文件，后续可以继续完善" + (this.typeValue === "int" ? "" : "但请确保信息真实可信"), "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -703,6 +762,20 @@ export default {
       });
     }
   },
+  watch: {
+    jobValue: {
+      handler() {
+        if (this.jobValue[0].length !== 0) {
+          let count = 0;
+          for (let i = 1; i < 5; i++)
+            if (this.jobValue[i].length > 0)
+              count++;
+          if (count !== 0)
+            this.jobValue = [["不限"], [], [], [], []];
+        }
+      },
+    }
+  },
   mounted() {
     this.file = this.globalFile;
     this.typeChange();
@@ -737,5 +810,21 @@ export default {
   width: 155px;
   height: 40px;
   line-height: 40px;
+}
+.form1 .el-form-item {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(204, 204, 204, 0.336);
+}
+.form1 .el-checkbox {
+  width: 100px;
+}
+</style>
+<style>
+.form1 .el-form-item__label {
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
 }
 </style>
