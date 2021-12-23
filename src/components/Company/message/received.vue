@@ -176,7 +176,7 @@ export default {
         data[i].TargetJob = jobTranslation[data[i].TargetJobID];
         data[i].MajorName = majorTranslation[data[i].MetaData.MajorCode];
         data[i].index = i;
-        data[i].date = new Date(+new Date(data[i].ExpireAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
+        data[i].date = new Date(+new Date(data[i].ExpireAt) + 16 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
         data[i].url = "/share/verify?fileID=" + data[i].FileID + "&encryptedK1S=" + data[i].EncryptedK1S;
       }
       this.$emit("func", this.received);
