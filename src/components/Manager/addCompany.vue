@@ -39,7 +39,7 @@
       <el-table-column label="公司名称" prop="Name"></el-table-column>
       <el-table-column label="公司账号" prop="CompanyCode"></el-table-column>
       <el-table-column label="创建时间" prop="CreatedAt" sortable></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="100px">
         <template slot-scope="scope">
           <el-button size="mini" type="danger" plain @click="handleEdit(scope.$index, scope.row)">删除</el-button>
         </template>

@@ -14,42 +14,42 @@
       <el-table
         v-show="jobList.length !== 0"
         :data="jobList"
-        style="width: 100%"
+        class="job"
         border
         :max-height="this.wh - 240"
       >
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="岗位名称">
+              <el-form-item label="岗位名称:">
                 <span>{{ props.row.Name }}</span>
               </el-form-item>
-              <el-form-item label="岗位大类">
+              <el-form-item label="岗位大类:">
                 <span>{{ props.row.JobType.Name }}</span>
               </el-form-item>
-              <el-form-item label="招聘人数">
+              <el-form-item label="招聘人数:">
                 <span>{{ props.row.RecruitCount }}</span>
               </el-form-item>
-              <el-form-item label="工作地点">
+              <el-form-item label="工作地点:">
                 <span>{{ props.row.WorkLocation }}</span>
               </el-form-item>
-              <el-form-item label="创建时间">
+              <el-form-item label="创建时间:">
                 <span>{{ props.row.CreatedAt }}</span>
               </el-form-item>
-              <el-form-item label="薪资类型">
+              <el-form-item label="薪资类型:">
                 <span>{{ props.row.SalaryMode + (props.row.SalaryCount?(" - " + props.row.SalaryCount + "薪"):"") }}</span>
               </el-form-item>
-              <el-form-item label="最低薪资" v-if="props.row.SalaryMode !== '面议'">
+              <el-form-item label="最低薪资:" v-if="props.row.SalaryMode !== '面议'">
                 <span>{{ props.row.MinSalary }}</span>
               </el-form-item>
-              <el-form-item label="最高薪资" v-if="props.row.SalaryMode !== '面议'">
+              <el-form-item label="最高薪资:" v-if="props.row.SalaryMode !== '面议'">
                 <span>{{ props.row.MaxSalary }}</span>
               </el-form-item>
-              <el-form-item label="岗位描述">
-                <span>{{ props.row.Description }}</span>
+              <el-form-item label="岗位描述:">
+                <span style="display: inline-block;">{{ props.row.Description }}</span>
               </el-form-item>
-              <el-form-item label="岗位要求">
-                <span>{{ props.row.Requirement }}</span>
+              <el-form-item label="岗位要求:">
+                <span style="display: inline-block;">{{ props.row.Requirement }}</span>
               </el-form-item>
             </el-form>
           </template>
@@ -70,6 +70,7 @@
       <el-form
         class="form"
         :model="form"
+        :rules="rules"
         label-width="90px"
         :style="{'max-height': this.wh - 105 + 'px'}"
       >
@@ -105,8 +106,14 @@
         <el-form-item label="岗位名称">
           <el-input v-model="form.name" style="width: 200px;" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="招聘人数">
-          <el-input v-model="form.num" type="number" style="width: 200px;" max="9999"></el-input>
+        <el-form-item label="招聘人数" prop="num">
+          <el-input
+            v-model.number="form.num"
+            type="number"
+            style="width: 200px;"
+            min="1"
+            max="9999"
+          ></el-input>
         </el-form-item>
         <el-form-item label="岗位描述">
           <el-input
@@ -161,19 +168,27 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="薪资范围" v-show="form.SalaryMode === '年薪' || form.SalaryMode === '月薪'">
+        <el-form-item
+          label="薪资范围"
+          v-show="form.SalaryMode === '年薪' || form.SalaryMode === '月薪'"
+          prop="salary"
+        >
           <el-input
-            style="width: 80px"
+            style="width: 100px"
             type="number"
+            min="1"
+            max="1000"
             v-model.number="form.salary[0]"
             placeholder="请填写"
-          ></el-input>k ~
+          ></el-input>&nbsp;k ~
           <el-input
-            style="width: 80px"
+            style="width: 100px"
             type="number"
+            min="1"
+            max="1000"
             v-model.number="form.salary[1]"
             placeholder="请填写"
-          ></el-input>k
+          ></el-input>&nbsp;k
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit" style="margin-top: 20px">点击录入</el-button>
@@ -187,6 +202,24 @@
 import { provinceAndCityData, CodeToText } from "element-china-area-data";
 export default {
   data() {
+    const validateNum = (rule, value, callback) => {
+      console.log(value);
+      console.log(!isNaN(value));
+      if (isNaN(value) || value <= 0 || value > 1000) {
+        this.form.num = "";
+        callback(new Error('请输入合法数字'));
+      }
+    };
+    const validateSalary = (rule, value, callback) => {
+      if (isNaN(value[0]) || value[0] <= 0 || value[0] > 1000) {
+        this.form.salary[0] = 10;
+        callback(new Error('请输入合法数字'));
+      }
+      if (isNaN(value[1]) || value[1] <= 0 || value[1] > 1000) {
+        this.form.salary[1] = 20;
+        callback(new Error('请输入合法数字'));
+      }
+    };
     return {
       step: 0,// 切换展示和添加两个页面
       nameHolder: JSON.parse(localStorage.getItem("jw_ent_file")).CompanyCode,// 添加企业时,企业名称输入框的placeholder
@@ -201,6 +234,14 @@ export default {
         num: "",
         jobReq: ""
       },
+      rules: {
+        num: [
+          { validator: validateNum, trigger: 'blur' }
+        ],
+        salary: [
+          { validator: validateSalary, trigger: 'blur' }
+        ]
+      },
       options: [{
         value: '年薪',
         label: '年薪'
@@ -213,7 +254,7 @@ export default {
       }],
       options2: [{
         value: 12,
-        label: '12'
+        label: '12薪'
       }, {
         value: 13,
         label: '13薪'
@@ -253,7 +294,7 @@ export default {
         value: ["工业设计", "工程设计", "平面设计", "室内设计", "生产/制造"]
       }, {
         name: "其他",
-        value: ["法务", "科研", "教师", "翻译", "编辑/文案", "培训", "其他"]
+        value: ["法务", "科研", "销售", "教师", "翻译", "编辑/文案", "培训", "其他"]
       }],
       jobList: [],// 发布的岗位数据
       locations: [],
@@ -345,6 +386,9 @@ export default {
                   else
                     this.typeOptions[j].unshift(data[i]);
                   break;
+                case "销售":
+                  this.typeOptions[j].unshift(data[i]);
+                  break;
                 case "其他":
                   other = data[i];
                   break;
@@ -407,7 +451,8 @@ export default {
     }
   },
   mounted() {
-    provinceAndCityData.unshift({
+    this.locations = provinceAndCityData;
+    this.locations.unshift({
       "value": "全国",
       "label": "全国"
     }, {
@@ -417,7 +462,6 @@ export default {
       "value": "不限",
       "label": "不限"
     });
-    this.locations = provinceAndCityData;
     this.getJobInfo();
   }
 };
@@ -449,6 +493,9 @@ export default {
   border-radius: 5px;
   border: 1px solid rgba(204, 204, 204, 0.336);
 }
+.job {
+  width: 100%
+}
 </style>
 <style>
 .cell {
@@ -467,5 +514,9 @@ export default {
 .type .el-form-item__label {
   font-size: 16px;
   text-align: center;
+}
+.job .el-form--inline .el-form-item__content {
+  text-indent: 2em;
+  padding-left: 20px;
 }
 </style>

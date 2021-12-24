@@ -69,35 +69,35 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand" label-width="80px">
-            <el-form-item label="公司名称">
+            <el-form-item label="公司名称:">
               <span>{{ props.row.Company.Name }}</span>
             </el-form-item>
-            <el-form-item label="公司简介">
-              <span>{{ props.row.Company.Description }}</span>
+            <el-form-item label="公司简介:">
+              <span style="display: inline-block;">{{ props.row.Company.Description }}</span>
             </el-form-item>
-            <el-form-item label="岗位名称">
+            <el-form-item label="岗位名称:">
               <span>{{ props.row.Name }}</span>
             </el-form-item>
-            <el-form-item label="薪资类型">
+            <el-form-item label="薪资类型:">
               <span>{{ props.row.SalaryMode + (props.row.SalaryCount?(" - " + props.row.SalaryCount + "薪"):"") }}</span>
             </el-form-item>
-            <el-form-item label="最低薪资" v-if="props.row.SalaryMode !== '面议'">
+            <el-form-item label="最低薪资:" v-if="props.row.SalaryMode !== '面议'">
               <span>{{ props.row.MinSalary }}</span>
             </el-form-item>
-            <el-form-item label="最高薪资" v-if="props.row.SalaryMode !== '面议'">
+            <el-form-item label="最高薪资:" v-if="props.row.SalaryMode !== '面议'">
               <span>{{ props.row.MaxSalary }}</span>
             </el-form-item>
-            <el-form-item label="发布时间">
+            <el-form-item label="发布时间:">
               <span>{{ new Date(+new Date(props.row.CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")}}</span>
             </el-form-item>
-            <el-form-item label="工作地点">
+            <el-form-item label="工作地点:">
               <span>{{ props.row.WorkLocation }}</span>
             </el-form-item>
-            <el-form-item label="岗位描述">
-              <span style="display: inline-block; width: 500px;">{{ props.row.Description }}</span>
+            <el-form-item label="岗位描述:">
+              <span style="display: inline-block;">{{ props.row.Description }}</span>
             </el-form-item>
-            <el-form-item label="岗位要求">
-              <span style="display: inline-block; width: 500px;">{{ props.row.Requirement }}</span>
+            <el-form-item label="岗位要求:">
+              <span style="display: inline-block;">{{ props.row.Requirement }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -357,5 +357,9 @@ export default {
 }
 .el-form--inline .el-form-item {
   margin-right: 0;
+}
+.form .el-form--inline .el-form-item__content {
+  text-indent: 2em;
+  padding-left: 20px;
 }
 </style>

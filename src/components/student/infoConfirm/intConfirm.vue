@@ -296,7 +296,7 @@
           <el-button @click="resetDialogForm()">重置</el-button>
         </el-form-item>
       </el-form>
-      <el-form v-show="typeValue==='volun'" label-width="140px">
+      <el-form v-show="typeValue==='volun'" label-width="140px" :model="volunAddData" :rules="rules">
         <el-form-item label="活动名称:" style="width: 300px">
           <el-input v-model="volunAddData.ActName" placeholder="请填写"></el-input>
         </el-form-item>
@@ -310,8 +310,14 @@
             ></el-date-picker>
           </el-col>
         </el-form-item>
-        <el-form-item label="志愿时长(小时):" style="width: 300px">
-          <el-input type="number" v-model.number="volunAddData.ActLength" placeholder="请填写"></el-input>
+        <el-form-item label="志愿时长(小时):" style="width: 300px" prop="ActLength">
+          <el-input
+            type="number"
+            min="0"
+            max="10000"
+            v-model.number="volunAddData.ActLength"
+            placeholder="请填写"
+          ></el-input>
         </el-form-item>
         <el-form-item label="活动内容" style="width: 500px">
           <el-input
@@ -348,6 +354,12 @@ let FormData = require("form-data");
 import { provinceAndCityData, CodeToText } from "element-china-area-data";
 export default {
   data() {
+    const validateNum = (rule, value, callback) => {
+      if (isNaN(value) || value <= 0 || value > 1000) {
+        this.volunAddData.ActLength = 0;
+        callback(new Error('请输入合法数字'));
+      }
+    };
     return {
       holder: "请输入您的自我介绍，同样可以自由编辑样式(Markdown)",
       typeOptions: [{
@@ -377,6 +389,11 @@ export default {
       intentionAddData: {
         jobFormated: [],
         locationFormated: []
+      },
+      rules: {
+        ActLength: [
+          { validator: validateNum, trigger: 'blur' }
+        ]
       },
       clubAddData: {
         JobName: "",
@@ -441,7 +458,7 @@ export default {
         value: ["工业设计", "工程设计", "平面设计", "室内设计", "生产/制造"]
       }, {
         name: "其他",
-        value: ["法务", "科研", "教师", "翻译", "编辑/文案", "培训", "其他"]
+        value: ["法务", "科研", "销售", "教师", "翻译", "编辑/文案", "培训", "其他"]
       }],
       file: "",//学业文件
       loading: false,
