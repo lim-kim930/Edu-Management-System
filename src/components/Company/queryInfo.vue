@@ -218,8 +218,6 @@
               <span class="title">注意事项</span>
               <div class="info_content">
                 <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
-                <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
-                <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
               </div>
               <div class="end_time">
                 <span>有效期至:</span>
@@ -420,7 +418,7 @@ export default {
         this.resetForm();
         // 先把过期时间拿出来放到profileData里
         const date = new Date(response.data.data.ShareFile.expired_at).toJSON();
-        this.profileData.expired_at = new Date(+new Date(date) + 16 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
+        this.profileData.expired_at = new Date(+new Date(date) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
         // 拿到交易信息放到blockData和blockDataArray
         const block = response.data.data.TransactionDetail.detail.result[0];
         const blockName = Object.keys(block);
@@ -562,7 +560,7 @@ export default {
         this.reward_height = count3 * 41 + "px";
         this.info_top = (count * 51 + (count2 + count3) * 41 + 240) + "px";
         // 设置水印
-        setWaterMark("仅供高校学业核验系统核验使用", "有效期至:" + this.profileData.expired_at, (500 + (count + count2 + count3) * 41));
+        setWaterMark("仅供高校学业核验系统核验使用", "有效期至:" + this.profileData.expired_at, (500 + count * 51 + (count2 + count3) * 41));
         this.createMySeal();
         this.title = "为您核验到以下信息: ";
         this.emptyShow = false;

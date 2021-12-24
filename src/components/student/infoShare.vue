@@ -434,8 +434,6 @@
             <span class="title">注意事项</span>
             <div class="info_content">
               <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
-              <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
-              <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
             </div>
             <div class="end_time">
               <span>有效期至:</span>
@@ -1040,7 +1038,7 @@ export default {
           let count4 = 2;
           let flag = 1;
           let date = new Date(JSON.parse(data.get("expireAtStr")).Time).toJSON();
-          this.profileValue.expired_at = new Date(+new Date(date) + 16 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
+          this.profileValue.expired_at = new Date(+new Date(date) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
           for (let i = 0; i < newdata.length; i++) {
             if (newdata[i].Path[0] === "profile") {
               if (newdata[i].Path[2] === "Photo")

@@ -25,9 +25,9 @@
           <el-dropdown-item command="发送时间▲">发送时间▲</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <div style="cursor: pointer; height: 150px" v-for="item in reqMsgData" v-bind:key="item.id">
+      <div style="height: 150px" v-for="item in reqMsgData" v-bind:key="item.id">
         <el-col :span="8" class="card">
-          <el-card shadow="hover">
+          <el-card shadow="hover" style="cursor: pointer;">
             <h5>发送时间: {{item.date}}</h5>
             <h5>请求内容: {{item.Text}}</h5>
           </el-card>
@@ -50,15 +50,11 @@
           <el-dropdown-item command="发送时间▲">发送时间▲</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <div
-        style="cursor: pointer; height: 150px"
-        v-for="item in noticeMsgData"
-        v-bind:key="item.id"
-      >
+      <div style="height: 150px" v-for="item in noticeMsgData" v-bind:key="item.id">
         <el-col :span="8" class="card">
-          <el-card shadow="hover">
+          <el-card shadow="hover" style="cursor: pointer;">
             <h5>宣讲会主题: {{item.Topic}}</h5>
-            <h5>宣讲时间: {{new Date(+new Date(item.StartAt) + 16 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")}}</h5>
+            <h5>宣讲时间: {{new Date(+new Date(item.StartAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")}}</h5>
             <h5>宣讲会描述: {{item.Detail}}</h5>
           </el-card>
         </el-col>
@@ -104,7 +100,7 @@ export default {
       const data = response.data.data;
       if (data) {
         for (let i = 0; i < data.length; i++) {
-          data[i].date = new Date(+new Date(data[i].CreatedAt) + 16 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
+          data[i].date = new Date(+new Date(data[i].CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
         }
         const newData = data.sort((a, b) => {
           return new Date(b.CreatedAt) - new Date(a.CreatedAt);
@@ -120,7 +116,7 @@ export default {
       const data = response.data.data;
       if (data) {
         for (let i = 0; i < data.length; i++) {
-          data[i].date = new Date(+new Date(data[i].StartAt) + 16 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
+          data[i].date = new Date(+new Date(data[i].StartAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
         }
         const newData = data.sort((a, b) => {
           return new Date(b.StartAt) - new Date(a.StartAt);

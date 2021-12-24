@@ -523,11 +523,11 @@ export default {
               pre = { "value": this.conditions[index[i]] };
               break;
             case "RaceLevel":
-              path = ["data_map", "race_reward", "*", "RaceLevel"];
+              path = ["data_map", "race_reward", "*", "RaceLevel.keyword"];
               pre = { "value": this.conditions[index[i]] };
               break;
             case "RewardLevel":
-              path = ["data_map", "reward", "*", "RewardLevel"];
+              path = ["data_map", "reward", "*", "RewardLevel.keyword"];
               pre = { "value": this.conditions[index[i]] };
               break;
             case "MajorCode":
@@ -609,7 +609,8 @@ export default {
       if (this.noticeForm.StartAt === "")
         return this.$message.error("请选择宣讲时间");
       this.loading = true;
-      const date = new Date(this.noticeForm.StartAt);
+      const date = new Date(+new Date(this.noticeForm.StartAt) + 8 * 3600 * 1000);
+      console.log(date);
       this.noticeForm.StartAt = date.toISOString().split(".")[0] + "+08:00";
       this.axios({
         method: "post",

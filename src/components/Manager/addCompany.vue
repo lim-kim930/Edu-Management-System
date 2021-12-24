@@ -150,7 +150,7 @@ export default {
         const data = response.data.data;
         this.total = data.length;
         for (let i = 0; i < this.total; i++) {
-          data[i].CreatedAt = new Date(+new Date(data[i].CreatedAt) + 16 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
+          data[i].CreatedAt = new Date(+new Date(data[i].CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
         }
         this.companyListData = data;
         this.loading = false;

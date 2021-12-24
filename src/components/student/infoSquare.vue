@@ -88,7 +88,7 @@
               <span>{{ props.row.MaxSalary }}</span>
             </el-form-item>
             <el-form-item label="发布时间">
-              <span>{{ new Date(+new Date(props.row.CreatedAt) + 16 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")}}</span>
+              <span>{{ new Date(+new Date(props.row.CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "")}}</span>
             </el-form-item>
             <el-form-item label="工作地点">
               <span>{{ props.row.WorkLocation }}</span>

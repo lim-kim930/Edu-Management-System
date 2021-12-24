@@ -313,7 +313,7 @@ export default {
         const type = Object.keys(response.data.data);
         for (let i = 0; i < type.length; i++)
           for (let j = 0; j < response.data.data[type[i]].length; j++) {
-            response.data.data[type[i]][j].CreatedAt = new Date(+new Date(response.data.data[type[i]][j].CreatedAt) + 16 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
+            response.data.data[type[i]][j].CreatedAt = new Date(+new Date(response.data.data[type[i]][j].CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
             this.jobList.push(response.data.data[type[i]][j]);
           }
         this.step = 0;

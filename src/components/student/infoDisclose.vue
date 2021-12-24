@@ -313,7 +313,7 @@ export default {
                 "data_map",
                 "profile",
                 "*",
-                "StaffID"
+                "StaffID.keyword"
               ],
               "RelationType": "must",
               "NodeType": "match",
@@ -598,8 +598,10 @@ export default {
           for (let i = 0; i < this.clubData.length; i++)
             ShareItems.push({ "Path": ["org_experience", this.clubData[i].title] });
         if (this.ruleForm.intType.indexOf("career_intent") !== -1)
-          for (let i = 0; i < this.intentData.length; i++)
-            ShareItems.push({ "Path": ["career_intent", this.intentData[i]] });
+          for (let i = 0; i < this.intentData.length; i++) {
+            ShareItems.push({ "Path": ["career_intent", this.intentData[i], "JobTypeIntent"] });
+            ShareItems.push({ "Path": ["career_intent", this.intentData[i], "LocationIntent"] });
+          }
         if (this.ruleForm.intType.indexOf("internship_experience") !== -1)
           for (let i = 0; i < this.internshipData.length; i++)
             ShareItems.push({ "Path": ["internship_experience", this.internshipData[i].title] });
