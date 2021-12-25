@@ -54,10 +54,21 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column label="岗位名称" prop="Name"></el-table-column>
-        <el-table-column label="岗位大类" prop="JobType.Name"></el-table-column>
-        <el-table-column label="招聘人数" prop="RecruitCount"></el-table-column>
-        <el-table-column label="工作地点" prop="WorkLocation"></el-table-column>
+        <el-table-column label="岗位名称" prop="Name" width="500"></el-table-column>
+        <el-table-column
+          label="岗位大类"
+          prop="JobType.Name"
+          :filters="jobTypeFilter"
+          :filter-method="filterHandler"
+        ></el-table-column>
+        <el-table-column label="招聘人数" prop="RecruitCount" width="130"></el-table-column>
+        <el-table-column
+          label="工作地点"
+          prop="WorkLocation"
+          width="160"
+          :filters="locationFilter"
+          :filter-method="filterHandler"
+        ></el-table-column>
         <el-table-column label="创建时间" prop="CreatedAt" sortable></el-table-column>
         <el-table-column label="操作" width="120">
           <template slot-scope="scope">
@@ -122,7 +133,7 @@
             :rows="4"
             resize="none"
             show-word-limit
-            maxlength="300"
+            maxlength="500"
             style="width: 400px;"
           ></el-input>
         </el-form-item>
@@ -134,7 +145,7 @@
             :rows="7"
             resize="none"
             show-word-limit
-            maxlength="500"
+            maxlength="1500"
             style="width: 400px;"
           ></el-input>
         </el-form-item>
@@ -234,6 +245,8 @@ export default {
         num: "",
         jobReq: ""
       },
+      jobTypeFilter: [],
+      locationFilter: [],
       rules: {
         num: [
           { validator: validateNum, trigger: 'blur' }
@@ -288,7 +301,7 @@ export default {
         value: ["编程/IT开发", "测试", "IT运维", "通信工程", "数字多媒体", "产品", "运营"]
       }, {
         name: "会计管理",
-        value: ["财务/会计", "金融", "审计", "出纳", "采购", "行政", "人力资源", "贸易/进出口", "质量管理", "项目管理", "项目实施"]
+        value: ["财务/会计", "金融", "审计", "出纳", "采购", "行政", "人力资源", "贸易/进出口", "质量管理", "项目管理", "项目实施", "管培生"]
       }, {
         name: "设计制造",
         value: ["工业设计", "工程设计", "平面设计", "室内设计", "生产/制造"]
@@ -322,6 +335,13 @@ export default {
         jobReq: ""
       };
     },
+    filterHandler(value, row, column) {
+      const property = column['property'];
+      if (property === "JobType.Name")
+        return row.JobType.Name === value;
+      else
+        return row[property] === value;
+    },
     deleteJob(row) {
       this.$confirm("删除该招聘信息后,求职者将无法再看到,是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -344,6 +364,8 @@ export default {
       });
     },
     getJobInfo() {
+      this.jobTypeFilter = [];
+      this.locationFilter = [];
       this.jobList = [];
       this.loading = true;
       this.axios({
@@ -351,12 +373,30 @@ export default {
         url: "/job/lookup",
         data: { "CompanyCode": JSON.parse(localStorage.getItem("jw_ent_file")).CompanyCode }
       }).then(response => {
-        const type = Object.keys(response.data.data);
-        for (let i = 0; i < type.length; i++)
-          for (let j = 0; j < response.data.data[type[i]].length; j++) {
-            response.data.data[type[i]][j].CreatedAt = new Date(+new Date(response.data.data[type[i]][j].CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
-            this.jobList.push(response.data.data[type[i]][j]);
+        const data = response.data.data;
+        const type = Object.keys(data);
+        let loaded = [];
+        let loaded2 = [];
+        for (let i = 0; i < type.length; i++) {
+          if (loaded.indexOf(type[i].replace(/[\r\n]/g,"")) === -1) {
+            this.jobTypeFilter.push({
+              text: type[i],
+              value: type[i]
+            });
+            loaded.push(type[i]);
           }
+          for (let j = 0; j < data[type[i]].length; j++) {
+            data[type[i]][j].CreatedAt = new Date(+new Date(data[type[i]][j].CreatedAt) + 8 * 3600 * 1000).toISOString().replace(/T/g, " ").replace(/\.[\d]{3}Z/, "");
+            this.jobList.push(data[type[i]][j]);
+            if (loaded2.indexOf(data[type[i]][j].WorkLocation) === -1) {
+              this.locationFilter.push({
+                text: data[type[i]][j].WorkLocation,
+                value: data[type[i]][j].WorkLocation
+              });
+              loaded2.push(data[type[i]][j].WorkLocation);
+            }
+          }
+        }
         this.step = 0;
         this.loading = false;
       }).catch(() => {
@@ -450,18 +490,21 @@ export default {
       });
     }
   },
-  mounted() {
+  created() {
     this.locations = provinceAndCityData;
-    this.locations.unshift({
-      "value": "全国",
-      "label": "全国"
-    }, {
-      "value": "海外",
-      "label": "海外"
-    }, {
-      "value": "不限",
-      "label": "不限"
-    });
+    if (this.locations[0] !== "全国")
+      this.locations.unshift({
+        "value": "全国",
+        "label": "全国"
+      }, {
+        "value": "海外",
+        "label": "海外"
+      }, {
+        "value": "不限",
+        "label": "不限"
+      });
+  },
+  mounted() {
     this.getJobInfo();
   }
 };
@@ -494,7 +537,7 @@ export default {
   border: 1px solid rgba(204, 204, 204, 0.336);
 }
 .job {
-  width: 100%
+  width: 100%;
 }
 </style>
 <style>

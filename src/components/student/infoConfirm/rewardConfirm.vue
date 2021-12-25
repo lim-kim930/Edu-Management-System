@@ -32,14 +32,14 @@
       v-show="file != ''"
       style="margin-left: 10px;"
     >删除文件</el-button>-->
-    <el-button
+    <!-- <el-button
       type="primary"
       plain
       icon="el-icon-download"
       @click="downloadFile('学业文件.enc')"
       v-show="file != ''"
       style="margin-left: 10px;"
-    >下载文件</el-button>
+    >下载文件</el-button> -->
     <span style="margin-left: calc(100% - 800px)">请选择类型:</span>
     <el-select
       v-model="typeValue"
@@ -221,6 +221,7 @@ export default {
       eleLink.click();
       document.body.removeChild(eleLink);
       setTimeout(() => {
+        this.$emit("func4", true);
         this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
           confirmButtonText: "确定",
           showCancelButton: false,
