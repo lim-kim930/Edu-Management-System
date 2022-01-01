@@ -171,12 +171,13 @@
       v-show="exposeData.length !== 0"
       style="width: 100%; margin-top: 20px"
       border
+      :row-key="selectGetId"
       :data="exposeData.slice(page*parseInt((wh - 440)/53), (page+1)*parseInt((wh - 440)/53))"
       :default-sort="{prop: 'id', order: 'descending'}"
       :max-height="this.wh - 270"
       @selection-change="selectionChange"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column type="selection" :reserve-selection="true" width="55"></el-table-column>
       <el-table-column label="姓名" prop="Name" width="120px"></el-table-column>
       <el-table-column
         label="年级"
@@ -465,6 +466,9 @@ export default {
   },
   props: ["wh"],
   methods: {
+    selectGetId(row) {
+      return row.FileID;
+    },
     filterHandler(value, row, column) {
       const property = column['property'];
       return row[property] === value;
@@ -564,8 +568,10 @@ export default {
               pre = { "value": this.conditions[index[i]][1] };
               break;
             case "JobTypeIntent":
+              if (this.conditions[index[i]][0] === "不限")
+                continue;
               path = ["data_map", "career_intent", "*", "JobTypeIntent"];
-              pre = { "value": this.conditions[index[i]][1] };
+              pre = { "value": this.conditions[index[i]][0] };
               break;
             default:
               path = ["data_map", "profile", "*", index[i]];

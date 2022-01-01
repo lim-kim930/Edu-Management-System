@@ -91,12 +91,13 @@
       v-show="typeValue==='score'"
       :data="Score.slice(page*parseInt((wh - 470)/53), (page+1)*parseInt((wh - 470)/53))"
       border
+      :row-key="selectGetId"
       style="width: 100%; margin-top: 0;"
       @selection-change="handleSelectionChange"
       @sort-change="sortChange"
       @filter-change="filterHandler"
     >
-      <el-table-column type="selection" width="55" :selectable="selectable"></el-table-column>
+      <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="selectable"></el-table-column>
       <el-table-column prop="Value.CourseName.Value" label="课程"></el-table-column>
       <el-table-column prop="Term" label="学期" width="150"></el-table-column>
       <el-table-column prop="Value.CourseCode.Value" label="课程号"></el-table-column>
@@ -225,6 +226,9 @@ export default {
   },
   props: ["globalFile", "wh"],//拿到infoConfirmed页面file
   methods: {
+    selectGetId(row) {
+      return row.Value.CourseCode.Value;
+    },
     selectable(row) {
       return row.Confirmed.value === "warning" ? true : false;
     },
