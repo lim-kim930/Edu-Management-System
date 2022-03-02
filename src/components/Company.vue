@@ -82,6 +82,7 @@
           :frequency="reqFrequency"
           :sent="sent"
           :wh="wh"
+          :uName="uName"
         ></router-view>
       </el-main>
     </el-container>
@@ -206,7 +207,15 @@ export default {
         window.location.href = "https://edu.limkim.cn/sign";
       });
     else {
-      this.uName = JSON.parse(localStorage.getItem("jw_ent_file")).CompanyCode;
+      this.axios({
+      method: "get",
+      url: "/company/get",
+      params: {
+          companyCode: JSON.parse(localStorage.getItem("jw_ent_file")).CompanyCode
+        }
+    }).then((response) => {
+      this.uName = response.data.data.Name;
+    });
       this.getMsg();
       this.msgTimer = setInterval(() => {
         this.getMsg();

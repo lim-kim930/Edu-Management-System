@@ -1,5 +1,4 @@
 (() => {
-    
     if (location.search.split("?")[1] !== undefined) {
         if (location.search.split("?")[1].split("=")[0] === "type") {
             sessionStorage.setItem("jw_from", "hduhelp");

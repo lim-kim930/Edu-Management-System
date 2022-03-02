@@ -46,7 +46,7 @@
           <span style="font-size: 16px">请选择筛选条件:</span>
           <el-button type="primary" @click.stop="getInfo()" style="margin: 0 0 0 10px">点击筛选</el-button>
           <el-button type="primary" plain @click.stop="resetConditions()" style>清空</el-button>
-          <span style="width: 50%; text-align: center">{{"点击" + title + "条件"}}</span>
+          <span style="width: 50%; text-align: center; user-select: none;">{{"点击" + title + "条件"}}</span>
         </template>
         <el-form class="coditions" label-width="110px" style="user-select: none;">
           <el-form-item label="匹配规则">
@@ -598,17 +598,21 @@ export default {
         for (let i = 0; i < result.length; i++) {
           this.total++;
           // 把FileID也放进去
-          let data = result[i].Source.data_map.profile[result[i].FileID];
-          if (data.Name) {
-            if (data.Name.length === 2)
-              data.Name = data.Name.substr(0, 1) + "*";
-            else {
-              let name = data.Name.substr(0, 1);
-              for (let i = 0; i < (data.Name.length - 2); i++)
-                name += "*";
-              data.Name = name + data.Name.substr(data.Name.length - 1);
-            }
-          }
+          let data = {};
+          if (result[i].Source.data_map)
+            data = result[i].Source.data_map.profile[result[i].FileID];
+          else if (result[i].Source.profile)
+            data = result[i].Source.profile[result[i].FileID];
+          // if (data.Name) {
+          //   if (data.Name.length === 2)
+          //     data.Name = data.Name.substr(0, 1) + "*";
+          //   else {
+          //     let name = data.Name.substr(0, 1);
+          //     for (let i = 0; i < (data.Name.length - 2); i++)
+          //       name += "*";
+          //     data.Name = name + data.Name.substr(data.Name.length - 1);
+          //   }
+          // }
           if (data.ClassCode)
             data.Grade = "20" + data.ClassCode.substr(0, 2);
           else
@@ -616,9 +620,6 @@ export default {
           data.FileID = result[i].FileID;
           this.exposeData.push(data);
         }
-        this.loading = false;
-      }).catch(() => {
-        this.$message.error("获取公开信息出错啦,请稍后再试");
         this.loading = false;
       });
     },

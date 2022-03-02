@@ -322,7 +322,7 @@ export default {
       }).catch(() => {
         this.$message({ type: "info", message: "操作已取消", });
       });
-    }
+    },
   },
   mounted() {
     if (JSON.parse(localStorage.getItem("jw_student_file")).staffID !== null) {
