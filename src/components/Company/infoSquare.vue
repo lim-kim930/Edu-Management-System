@@ -518,6 +518,8 @@ export default {
     batchRequest() {
       this.loading = true;
       let methods = [];
+      if (this.selectedFileID.length > 10)
+        return this.$message.error("选中的人太多啦,减少点试试吧");
       for (let i = 0; i < this.selectedFileID.length; i++) {
         methods.push(this.askRequest(this.selectedFileID[i]));
       }
