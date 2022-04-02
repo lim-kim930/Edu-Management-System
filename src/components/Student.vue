@@ -473,9 +473,9 @@ export default {
 
 <style scoped>
 .el-header {
-  background: url(../img/logo.png) no-repeat;
+  background: url(../img/logo2.png) no-repeat;
   background-position: 20px;
-  background-size: 300px;
+  background-size: 100px;
   background-color: #468dba;
   box-shadow: 0 2px 4px 1px var(--cb-color-shadow, rgba(0, 0, 0, 0.13));
   z-index: 99;
@@ -567,7 +567,7 @@ export default {
   width: 240px;
   height: 80px;
   line-height: 80px;
-  margin-left: 330px;
+  margin-left: 100px;
   font-size: 26px;
   color: #fff;
   font-weight: 700;

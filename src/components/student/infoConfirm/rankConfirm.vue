@@ -52,8 +52,9 @@
     <span v-show="loading2" class="loadmask">
       <i style="dispaly: block" class="el-icon-loading"></i>
       <span>正在为您努力计算排名,请稍等</span>
+      <br>
       <el-progress
-        style="width: 300px; margin-bottom: 10px; display: inline-block"
+        style="width: 300px; margin: 0 0 10px 30px; display: inline-block"
         :stroke-width="10"
         :percentage="percentage"
       ></el-progress>
@@ -87,8 +88,8 @@
       <h4>请联系教务处修改后返回系统，检查无误后继续完成排名确认</h4>
       <h4>教务处联系信息:</h4>
       <div class="content">
-        <span>电话: 0571-86915011</span>
-        <span>邮箱地址: hdujwc@hdu.edu.cn</span>
+        <span>电话: 0571-8691****</span>
+        <span>邮箱地址:***jwc@***.edu.cn</span>
         <span>地址: 行政楼</span>
       </div>
       <el-button @click="$refs.drawer.closeDrawer()" style="margin: 20px 0 0 50px; width: 100px">确 定</el-button>
@@ -210,9 +211,9 @@ export default {
       this.percentage = 0;
       let timer = setInterval(() => {
         if (this.percentage < 90)
-          this.percentage += parseInt(10 * Math.random());
+          this.percentage += parseInt(8 * Math.random());
         else if (this.percentage < 97)
-          this.percentage += parseInt(3 * Math.random());
+          this.percentage += parseInt(2 * Math.random());
         else {
           this.percentage = 99;
           clearInterval(timer);

@@ -42,7 +42,7 @@
         @click="byHDU()"
         style="color: #1890ff; margin-left: calc(95% - 140px)"
         :underline="false"
-      >数字杭电登录</el-link>
+      >学校账号登录</el-link>
     </div>
   </el-form>
 </template>
