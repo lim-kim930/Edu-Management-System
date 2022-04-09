@@ -472,6 +472,16 @@ export default {
 </script>
 
 <style scoped>
+.title {
+  float: left;
+  width: 240px;
+  height: 80px;
+  line-height: 80px;
+  margin-left: 330px;
+  font-size: 26px;
+  color: #fff;
+  font-weight: 700;
+}
 .el-header {
   background: url(../img/logo.png) no-repeat;
   background-position: 20px;
@@ -561,16 +571,6 @@ export default {
 }
 .item .el-badge__content {
   line-height: 16px;
-}
-.title {
-  float: left;
-  width: 240px;
-  height: 80px;
-  line-height: 80px;
-  margin-left: 330px;
-  font-size: 26px;
-  color: #fff;
-  font-weight: 700;
 }
 .el-badge .is-dot {
   border: none;
