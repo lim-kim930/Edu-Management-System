@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import axios from "axios";
+// import axios from "axios";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 
@@ -26,9 +26,9 @@ Vue.use(VueRouter);
 // element ui
 Vue.use(ElementUI);
 //axios cookies配置
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "https://api.hduhelp.com/gormja_wrapper";
-Vue.prototype.axios = axios;
+// axios.defaults.withCredentials = true;
+// axios.defaults.baseURL = "https://api.hduhelp.com/gormja_wrapper";
+// Vue.prototype.axios = axios;
 
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
