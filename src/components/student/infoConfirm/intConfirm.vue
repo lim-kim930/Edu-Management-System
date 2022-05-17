@@ -516,12 +516,11 @@ export default {
           data: formdata,
           headers: { 'Content-Type': 'multipart/form-data' },
       }).then((response) => {
-        console.log(filename);
-          // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
-          const oldImg = "![image." + file.type.split("/")[1] + "]" + "(" + filename + ")";
-          const newImg = oldImg.replace("(" + filename + ")", "(" + "https://api.limkim.xyz/data/eduPic/" + response.data.data.fileName + ")");
-          this.content = this.content.replace(oldImg, newImg);
-          // mavonEditor.methods.$img2Url(filename, response.data.data.fileName);
+        // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
+        const oldImg = "![image." + file.type.split("/")[1] + "]" + "(" + filename + ")";
+        const newImg = oldImg.replace("(" + filename + ")", "(" + "https://api.limkim.xyz/data/eduPic/" + response.data.data.fileName + ")");
+        this.content = this.content.replace(oldImg, newImg);
+        // mavonEditor.methods.$img2Url(filename, response.data.data.fileName);
       });
     },
     resetDialogForm() {

@@ -21,6 +21,24 @@
           ></i>
         </el-badge>
         <el-badge
+          :hidden="true"
+          class="item"
+          style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important"
+        >
+          <el-upload
+            ref="file-upload"
+            class="upload"
+            action="#"
+            :http-request="uploadFile"
+            :limit="1"
+            accept=".enc"
+            :show-file-list="false"
+            v-show="file === ''"
+          >
+            <i class="el-icon-upload2" title="上传学业文件" style="color: #fff; font-size:20px"></i>
+          </el-upload>
+        </el-badge>
+        <el-badge
           :value="received"
           :hidden="received === 0"
           class="item"
@@ -49,16 +67,6 @@
     <el-container>
       <!-- 侧边栏 -->
       <el-aside :style="{ 'height': wh - 100 + 'px', 'width': isCollapse?'64px':'240px' }">
-        <span
-          @click="isCollapse = !isCollapse"
-          :title="isCollapse?'展开':'收起'"
-          class="collapse"
-          :style="{'width': isCollapse?'64px':'240px'}"
-        >
-          <i style="font-size: 14px" :class="isCollapse?'el-icon-arrow-right':'el-icon-arrow-left'">
-            <span :style="{'font-size': isCollapse?'0':'14px'}">{{isCollapse?"":"点击收起"}}</span>
-          </i>
-        </span>
         <el-row class="tac">
           <el-col :span="24">
             <el-menu
@@ -113,6 +121,16 @@
             </el-menu>
           </el-col>
         </el-row>
+        <span
+          @click="isCollapse = !isCollapse"
+          :title="isCollapse?'展开':'收起'"
+          class="collapse"
+          :style="{'width': isCollapse?'64px':'240px'}"
+        >
+          <i style="font-size: 14px" :class="isCollapse?'el-icon-arrow-right':'el-icon-arrow-left'">
+            <span :style="{'font-size': isCollapse?'0':'14px'}">{{isCollapse?"":"点击收起"}}</span>
+          </i>
+        </span>
       </el-aside>
       <!-- 内容 -->
       <el-main :style="{'height': this.wh - 80 + 'px'}">
@@ -226,6 +244,28 @@ export default {
       if (this.file !== "")
         this.downloaded = false;
       this.file = file;
+    },
+    uploadFile(params) {
+      this.loading = true;
+      let data = new FormData();
+      data.append("dataFile", params.file);
+      this.axios({
+        method: "post",
+        url: "/dataFile/get?staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
+        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+        data
+      }).then(() => {
+        this.loading = false;
+        this.file = params.file;
+      }).catch((err) => {
+        if (err.response.data.msg === "file hash does not equal to chain")
+          this.$message.error("学业文件错误或者过期,请检查后再试");
+        else
+          this.$message.error("获取学业文件信息出错啦,请稍后再试");
+        this.loading = false;
+        this.$refs["file-upload"].clearFiles();
+        this.file = "";
+      });
     },
     //拿到子组件传来的学籍确认状态,全局存储在student页面
     getConfirmed(confirmed) {
@@ -522,6 +562,7 @@ export default {
   margin: 10px;
   border-radius: 10px;
   transition: all 0.5s;
+  position: relative;
 }
 .el-aside .collapse {
   cursor: pointer;
@@ -531,6 +572,10 @@ export default {
   line-height: 30px;
   transition: all 0.5s;
   color: #909399;
+  position: absolute;
+  bottom: 0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 .el-aside .collapse span {
   transition: all 0.3s;
@@ -548,6 +593,15 @@ export default {
 .aside .el-menu-item {
   height: 60px !important;
   line-height: 60px !important;
+  padding-left: 10px;
+}
+.el-menu--collapse .el-menu .el-submenu, .el-menu--popup {
+  width: 100px !important;
+  min-width: 100px !important;
+}
+.el-menu--popup li {
+  padding-left: 0 !important;
+  text-align: center;
 }
 .el-avatar {
   vertical-align: middle !important;

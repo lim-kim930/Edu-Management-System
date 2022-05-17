@@ -8,7 +8,7 @@
     >
       <i class="el-icon-success"></i> 学业文件已上传
     </el-tag>
-    <el-tag type="info" style="margin: 10px 0 0 0" v-show="file === ''" :disable-transitions="true">
+    <!-- <el-tag type="info" style="margin: 10px 0 0 0" v-show="file === ''" :disable-transitions="true">
       <i class="el-icon-error"></i> 学业文件未上传
     </el-tag>
     <el-upload
@@ -24,7 +24,7 @@
     >
       点击上传学业文件
       <i class="el-icon-upload"></i>
-    </el-upload>
+    </el-upload> -->
     <!-- <el-button
       type="primary"
       plain
