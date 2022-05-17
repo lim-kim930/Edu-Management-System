@@ -87,7 +87,7 @@ export default {
   created() {
     this.axios({
       method: "get",
-      url: "https://api.limkim.xyz/user/getPubKey",
+      url: "https://api.limkim.xyz/ipconfig",
     });
   },
   mounted() {
