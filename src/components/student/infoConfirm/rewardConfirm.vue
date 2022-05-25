@@ -1,6 +1,6 @@
 <template>
   <el-form ref="form" class="form1" v-loading="loading" element-loading-text="拼命加载中">
-    <el-tag
+    <!-- <el-tag
       style="margin: 10px 0 0 0"
       type="success"
       v-show="file != ''"
@@ -10,8 +10,8 @@
     </el-tag>
     <el-tag style="margin: 10px 0 0 0" type="info" v-show="file === ''" :disable-transitions="true">
       <i class="el-icon-error"></i> 学业文件未上传
-    </el-tag>
-    <el-upload
+    </el-tag> -->
+    <!-- <el-upload
       ref="file-upload"
       class="upload"
       action="#"
@@ -23,7 +23,7 @@
     >
       点击上传学业文件
       <i class="el-icon-upload"></i>
-    </el-upload>
+    </el-upload> -->
     <!-- <el-button
       type="primary"
       plain
@@ -40,11 +40,11 @@
       v-show="file != ''"
       style="margin-left: 10px;"
     >下载文件</el-button>-->
-    <span style="margin-left: calc(100% - 800px)">请选择类型:</span>
+    <span>请选择类型:</span>
     <el-select
       v-model="typeValue"
       placeholder="请选择"
-      style="width: 150px; margin: 10px;"
+      style="width: 150px; margin: 15px;"
       @change="getInfo()"
     >
       <el-option
@@ -184,12 +184,6 @@ export default {
   },
   props: ["globalFile"],//拿到infoConfirmed页面file
   methods: {
-    //文件上传成功后
-    getFile(params) {
-      this.file = params.file;
-      this.$emit("func", params.file);
-      this.getFileInfo();
-    },
     //删除文件
     reupload() {
       this.$refs["file-upload"].clearFiles();

@@ -33,7 +33,7 @@
       v-show="file != ''"
       style="margin-left: 10px;"
     >下载文件</el-button>-->
-    <br />
+    <!-- <br /> -->
     <span>请选择类型:</span>
     <el-select
       v-model="typeValue"
@@ -275,11 +275,11 @@ export default {
       this.total = this.Score.length;
     },
     //文件上传成功后
-    getFile(params) {
-      this.file = params.file;
-      this.$emit("func", params.file);
-      this.getScore();
-    },
+    // getFile(params) {
+    //   this.file = params.file;
+    //   this.$emit("func", params.file);
+    //   this.getScore();
+    // },
     //删除文件
     reupload() {
       this.$refs["file-upload"].clearFiles();
@@ -291,11 +291,11 @@ export default {
       this.levelBtnDisabled = true;
       this.$emit("func", "");
     },
-    change() {
-      sessionStorage.removeItem("score");
-      sessionStorage.removeItem("level_exam");
-      sessionStorage.removeItem("hj");
-    },
+    // change() {
+    //   sessionStorage.removeItem("score");
+    //   sessionStorage.removeItem("level_exam");
+    //   sessionStorage.removeItem("hj");
+    // },
     dataURLtoFile(dataurl, filename) {
       let arr = dataurl.split(","),
         bstr = atob(arr[0]),
@@ -452,7 +452,6 @@ export default {
             }).catch((err) => {
               if (err.response.data.msg === "file hash does not equal to chain") {
                 this.$message.error("学业文件错误或者过期,请检查后再试");
-                this.reupload();
               }
               else
                 this.$message.error("获取学业文件信息出错啦,请稍后再试");

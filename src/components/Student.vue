@@ -7,11 +7,11 @@
       </div>
       <div class="user">
         <el-badge
-          v-show="file !== ''"
+          v-if="file !== ''"
           is-dot
           :hidden="downloaded"
           class="item"
-          style="width: 30px; height: 30px; margin-right: 20px; line-height: 30px !important"
+          style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important"
         >
           <i
             :title="downloaded?'下载学业文件':'新的学业文件未下载'"
@@ -21,6 +21,7 @@
           ></i>
         </el-badge>
         <el-badge
+          v-if="file === ''"
           :hidden="true"
           class="item"
           style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important"
@@ -33,7 +34,6 @@
             :limit="1"
             accept=".enc"
             :show-file-list="false"
-            v-show="file === ''"
           >
             <i class="el-icon-upload2" title="上传学业文件" style="color: #fff; font-size:20px"></i>
           </el-upload>
@@ -169,7 +169,7 @@
         <div style="padding: 20px 10px; color: #303133">
           <h3 style="text-indent: 1em">1.首次进入系统后,也就是在你关闭这个须知以后, 会被强制进入进行第一步————学籍确认</h3>
           <h3>检查信息无误并点击确认后, 会进入加载状态, 这个过程会有点慢, 但只会进行这一次, 所以还请耐心等待加载完毕</h3>
-          <h3>然后请并务必按照提示下载和保存好一个叫做学业文件.enc的东东, 它存储了你的所有信息</h3>
+          <h3>然后请并务必按照提示下载和保存好一个叫做学业文件.enc的文件, 它存储了你的所有信息</h3>
           <h3>因此它是你完整使用这个系统的前提, 并且一旦丢失将无法找回, 你写入的信息也将随之丢失</h3>
           <el-divider>我是分割线</el-divider>
           <h3 style="text-indent: 1em">2.在每确认/写入一次文件后, 系统内保存的文件内容都会更新, 你可以根据提示选择是否下载新的文件到本地</h3>
@@ -252,7 +252,7 @@ export default {
       this.axios({
         method: "post",
         url: "/dataFile/get?staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
-        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token, 'Content-Type': 'multipart/form-data' },
         data
       }).then(() => {
         this.loading = false;
@@ -428,6 +428,9 @@ export default {
     windowHeight() {
       const de = document.documentElement;
       return self.innerHeight || (de && de.clientHeight) || document.body.clientHeight;
+    },
+    ddd() {
+      console.log(666);
     }
   },
   watch: {
@@ -465,6 +468,16 @@ export default {
         localStorage.setItem("jw_student_file", JSON.stringify(userData));
         this.redirect();
         if (this.xjConfirmed) {
+          if(localStorage.getItem("new_upload_notice") === null){
+            this.$notify({
+              type: "warning",
+              title: '提示',
+              message: '学业文件上传按钮已统一移至右上角',
+              duration: 0,
+              offset: 100,
+              onClose: ()=>{localStorage.setItem("new_upload_notice", true);}
+            });
+          }
           this.getMsg(userData);
           this.msgTimer = setInterval(() => {
             this.getMsg(userData);

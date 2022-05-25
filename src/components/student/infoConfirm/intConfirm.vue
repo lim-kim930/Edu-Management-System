@@ -6,7 +6,7 @@
     element-loading-text="拼命加载中"
     label-width="80px"
   >
-    <el-tag
+    <!-- <el-tag
       type="success"
       style="margin: 10px 0 0 0"
       v-show="file != ''"
@@ -29,7 +29,7 @@
     >
       点击上传学业文件
       <i class="el-icon-upload"></i>
-    </el-upload>
+    </el-upload> -->
     <!-- <el-button
       type="primary"
       plain
@@ -46,7 +46,7 @@
       v-show="file != ''"
       style="margin-left: 10px;"
     >下载文件</el-button>-->
-    <span style="margin-left: 10px">请选择类型:</span>
+    <span>请选择类型:</span>
     <el-select
       v-model="typeValue"
       placeholder="请选择"
@@ -61,12 +61,12 @@
       ></el-option>
     </el-select>
     <el-button
-      :style="{'margin': '10px 0 0 calc(100% - 840px)'}"
+      style="margin: 10px 0 0 calc(100% - 470px)"
       v-show="typeValue === 'club' || typeValue === 'social'|| typeValue === 'volun'"
       @click="addDialogShow = true;"
     >添加经历</el-button>
     <el-button
-      :style="{'margin': '10px 0 0 calc(100% - 840px)'}"
+      style="margin: 10px 0 0 calc(100% - 470px)"
       v-show="typeValue === 'int' || typeValue === 'intention'"
       @click="save()"
     >暂时保存</el-button>

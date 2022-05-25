@@ -1,6 +1,6 @@
 <template>
   <el-form ref="form" class="form1" v-loading="loading" element-loading-text="拼命加载中">
-    <el-tag
+    <!-- <el-tag
       style="margin: 10px 0 10px 0"
       type="success"
       v-show="file != ''"
@@ -24,7 +24,7 @@
     >
       点击上传学业文件
       <i class="el-icon-upload"></i>
-    </el-upload>
+    </el-upload> -->
     <!-- <el-button
       type="primary"
       plain
@@ -33,22 +33,7 @@
       v-show="file != ''"
       style="margin: 0 0 10px 10px;"
     >下载文件</el-button>-->
-    <el-button
-      type="primary"
-      @click="submit()"
-      plain
-      v-show="!confirmed&&JSON.stringify(data) !== '{}'"
-      :disabled="file===''"
-      style="margin: 10px 0 0 calc(100% - 550px)"
-    >确认信息</el-button>
-    <!-- 使用typeValue、Confirmed和Data.length来判断按钮是否显示和禁用 -->
-    <el-button
-      type="info"
-      @click="dialog = true;"
-      plain
-      v-show="!confirmed&&JSON.stringify(data) !== '{}'"
-    >错误反馈</el-button>
-    <br />
+    <br>
     <span v-show="loading2" class="loadmask">
       <i style="dispaly: block" class="el-icon-loading"></i>
       <span>正在为您努力计算排名,请稍等</span>
@@ -73,6 +58,21 @@
         {{item.Value}}
       </el-descriptions-item>
     </el-descriptions>
+    <el-button
+      type="primary"
+      @click="submit()"
+      plain
+      v-show="!confirmed&&JSON.stringify(data) !== '{}'"
+      :disabled="file===''"
+      style="margin: 10px 0 0 calc(100% - 210px)"
+    >确认信息</el-button>
+    <!-- 使用typeValue、Confirmed和Data.length来判断按钮是否显示和禁用 -->
+    <el-button
+      type="info"
+      @click="dialog = true;"
+      plain
+      v-show="!confirmed&&JSON.stringify(data) !== '{}'"
+    >错误反馈</el-button>
     <el-empty :image-size="150" v-show="JSON.stringify(data) === '{}'" description="未查询到您的排名信息"></el-empty>
     <el-result icon="success" title="排名信息已确认" v-show="confirmed"></el-result>
     <el-drawer
