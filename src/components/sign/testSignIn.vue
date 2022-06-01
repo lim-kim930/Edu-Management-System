@@ -61,15 +61,15 @@ export default {
       window.location.href = "/oauth/request";
     },
     onSubmit() {
-      this.btnLoad = true
+      this.btnLoad = true;
       if (this.uName.length === 0 || this.uName.length === 0) {
         this.$message.error("请正确输入账号和密码");
-        return
+        return;
       }
       else {
-        localStorage.setItem("jw_manager_file", JSON.stringify({ "name": this.uName }))
+        localStorage.setItem("jw_manager_file", JSON.stringify({ "name": this.uName }));
       }
-      window.location.href = "https://edu.limkim.cn/manager"
+      window.location.href = "https://edu.limkim.cn/manager";
     },
   },
 };

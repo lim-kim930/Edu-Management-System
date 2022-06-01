@@ -84,7 +84,7 @@ export default {
     var validateUname = (rule, value, callback) => {
       if (this.uname === "")
         return false;
-      var newUname = this.uname.replace(/\s/g, "")
+      var newUname = this.uname.replace(/\s/g, "");
       if (newUname.length <= 1) {
         callback(new Error("用户名长度为2~10位，不能包含空格"));
         this.uname = "";
@@ -97,11 +97,11 @@ export default {
       //   return false;
       // }
       callback();
-    }
+    };
     var validatePwd = (rule, value, callback) => {
       if (this.password === "")
         return false;
-      var newpassword = this.password.replace(/\s/g, "")
+      var newpassword = this.password.replace(/\s/g, "");
       if (newpassword.length <= 5) {
         callback(new Error("密码长度为6~14位，不能包含空格"));
         this.password = "";
@@ -116,22 +116,22 @@ export default {
         }
       }
       callback();
-    }
+    };
     var validateAdd = (rule, value, callback) => {
       if (this.eAddress === "")
         return false;
-      var neweAddress = this.eAddress.replace(/\s/g, "")
+      var neweAddress = this.eAddress.replace(/\s/g, "");
       if (neweAddress.length === 0 || neweAddress.length != this.eAddress.length) {
         callback(new Error("请输入正确邮箱"));
         this.eAddress = "";
         return false;
       }
       callback();
-    }
+    };
     var validateCode = (rule, value, callback) => {
       if (this.code === "")
         return false;
-      var newcode = this.code.replace(/\s/g, "")
+      var newcode = this.code.replace(/\s/g, "");
       if (newcode.length != 6) {
         callback(new Error("验证码为6位数字"));
         this.code = "";
@@ -143,7 +143,7 @@ export default {
         this.code = "";
       }
       callback();
-    }
+    };
     return {
       com: "",
       uname: "",
@@ -185,8 +185,7 @@ export default {
         return false;
       }
       this.disabled1 = true;
-      this.btnLoad1 = true
-      var that = this
+      this.btnLoad1 = true;
       this.axios({
         method: "post",
         url: "https://api.limkim.xyz/sendCode",
@@ -194,38 +193,38 @@ export default {
           eAddress: this.eAddress + this.com
         },
       })
-        .then(function (response) {
+        .then((response)=> {
           if (response.data.status === "OK") {
-            that.$message({
+            this.$message({
               message: "验证码发送成功,请注意查收",
               type: "success"
             });
-            var count = 59
-            var countDown = setInterval(function () {
-              that.placeholder = count + "s后重发"
+            var count = 59;
+            var countDown = setInterval(() =>{
+              this.placeholder = count + "s后重发";
               count = count - 1;
               if (count === -1) {
-                that.placeholder = "发送验证码";
-                that.disabled1 = false;
+                this.placeholder = "发送验证码";
+                this.disabled1 = false;
                 clearInterval(countDown);
               }
-            }, 1000)
+            }, 1000);
           }
           else if (response.data.status === "Wrong eAddress") {
-            that.$message.error("邮箱已经注册过啦，换个试试吧");
-            that.disabled1 = false;
+            this.$message.error("邮箱已经注册过啦，换个试试吧");
+            this.disabled1 = false;
           }
-          that.btnLoad1 = false;
+          this.btnLoad1 = false;
         })
         .catch((error) => {
           if (error.response.data.status === "Email Error")
-            that.$message.error("出错啦,请检查邮箱地址后再试,或点击遇到问题联系站长");
+            this.$message.error("出错啦,请检查邮箱地址后再试,或点击遇到问题联系站长");
           if (error.response.data.status === "Ip Error")
-            that.$message.error("非法请求");
+            this.$message.error("非法请求");
           else
-            that.$message.error("出错啦,请稍后再试,或点击遇到问题联系站长");
-          that.btnLoad1 = false;
-          that.disabled1 = false;
+            this.$message.error("出错啦,请稍后再试,或点击遇到问题联系站长");
+          this.btnLoad1 = false;
+          this.disabled1 = false;
         });
     },
     onSubmit() {
@@ -233,8 +232,7 @@ export default {
         this.$message.error("请将表单填写完成,不要偷懒哦");
         return false;
       }
-      var that = this
-      this.btnLoad2 = true
+      this.btnLoad2 = true;
       this.disabled2 = true;
       this.axios({
         method: "put",
@@ -245,37 +243,36 @@ export default {
           Passphrase: this.password
         },
       })
-        .then(function (response) {
-
-          that.$message({
+        .then(()=> {
+          this.$message({
             message: "注册成功！",
             type: "success"
           });
-          setTimeout(function () {
-            that.disabled2 = false;
-            that.$router.push("/signIn");
-          }, 1000)
+          setTimeout(()=> {
+            this.disabled2 = false;
+            this.$router.push("/signIn");
+          }, 1000);
           // else if(response.data.status === "Wrong Uname"){
-          //   that.disabled2 = false;
-          //   that.$message.error("用户名已存在，换个试试吧");
+          //   this.disabled2 = false;
+          //   this.$message.error("用户名已存在，换个试试吧");
           // }
           // else if(response.data.status === "Wrong Code"){
-          //   that.disabled2 = false;
-          //   that.$message.error("验证码错误,请核对后再试");
+          //   this.disabled2 = false;
+          //   this.$message.error("验证码错误,请核对后再试");
           // }
           // else if(response.data.status === "Wrong eAddress"){
-          //   that.disabled2 = false;
-          //   that.$message.error("邮箱已经注册过啦，换个试试吧");
+          //   this.disabled2 = false;
+          //   this.$message.error("邮箱已经注册过啦，换个试试吧");
           // }
-          that.btnLoad2 = false;
+          this.btnLoad2 = false;
         })
-        .catch((error) => {
+        .catch(() => {
           // if(error.response.data.status === "Ip Error")
-          //   that.$message.error("非法请求");
+          //   this.$message.error("非法请求");
           // else
-          that.$message.error("出错啦,请稍后再试");
-          that.btnLoad2 = false;
-          that.disabled2 = false;
+          this.$message.error("出错啦,请稍后再试");
+          this.btnLoad2 = false;
+          this.disabled2 = false;
         });
     },
   },
