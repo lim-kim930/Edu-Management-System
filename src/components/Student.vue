@@ -486,6 +486,7 @@ export default {
           this.noticeShow = true;
         }
       }).catch((err) => {
+        this.loading = false;
         if(err.response.data.msg === "unauthorized"){
           return this.$confirm("您还未登录,请前往登录", "提示", {
             confirmButtonText: "去登录",
@@ -500,7 +501,6 @@ export default {
         }
         this.$message.error("获取学业文件状态出错啦,请稍后重试");
         this.redirect();
-        this.loading = false;
       });
     }
   },

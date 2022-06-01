@@ -15,10 +15,10 @@
       type="primary"
       @click="submit()"
       plain
-      v-show="!confirmed"
+      v-show="!confirmed && Object.keys(data).length !== 0"
       :disabled="btnDisabled"
     >确认信息</el-button>
-    <el-button type="info" plain @click="feedbackDialogShow = true" v-show="!confirmed">错误反馈</el-button>
+    <el-button type="info" plain @click="feedbackDialogShow = true" v-show="!confirmed && Object.keys(data).length !== 0">错误反馈</el-button>
     <el-drawer
       title="学籍信息错误反馈提示"
       :visible.sync="feedbackDialogShow"
