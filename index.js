@@ -10,7 +10,6 @@
             headers: { "Authorization": "token " + location.search.split("?")[1].split("&")[0].split("=")[1] }
         };
         return fetch("https://api.hduhelp.com/salmon_base/person/info", requestOptions).then(response => response.text()).then(result => {
-            console.log(result);
             const data = JSON.parse(result).data;
             if (data.staffType)
                 data.STAFFTYPE = data.staffType;
