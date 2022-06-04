@@ -95,11 +95,11 @@ export default {
     window.onresize = () => {
       this.wh = this.windowHeight() < 600 ? 600 : this.windowHeight();
     };
-    this.redirect();
-    if (localStorage.getItem("jw_student_file") !== null && localStorage.getItem("jw_ent_file") === null)
-      window.location.href = "https://edu.limkim.cn/student";
-    else if (localStorage.getItem("jw_student_file") === null && localStorage.getItem("jw_ent_file") !== null)
-      window.location.href = "https://edu.limkim.cn/company";
+    // this.redirect();
+    // if (localStorage.getItem("jw_student_file") !== null && localStorage.getItem("jw_ent_file") === null)
+    //   window.location.href = "https://edu.limkim.cn/student";
+    // else if (localStorage.getItem("jw_student_file") === null && localStorage.getItem("jw_ent_file") !== null)
+    //   window.location.href = "https://edu.limkim.cn/company";
   }
 };
 </script>
