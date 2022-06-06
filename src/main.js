@@ -8,22 +8,22 @@ import "element-ui/lib/theme-chalk/index.css";
 // 导入自定义路由模块
 
 // 首页,需要把其余的不相干模块全部注释掉
-// import APP from "./components/Homepage.vue";
+// import APP from "./components/HomepageApp.vue";
 // const router = null;
 
-// import APP from "./components/Sign.vue";
+// import APP from "./components/SignApp.vue";
 // import router from "./router/router_sign";
 
 //剪切板组件
 import VueClipboard from "vue-clipboard2";
-import APP from "./components/Student.vue";
+import APP from "./components/StudentApp.vue";
 import router from "./router/router_student";
 Vue.use(VueClipboard);
 
-// import APP from "./components/Company.vue";
+// import APP from "./components/CompanyApp.vue";
 // import router from "./router/router_company";
 
-// import APP from "./components/Manager.vue";
+// import APP from "./components/ManagerApp.vue";
 // import router from "./router/router_manager";
 
 // 安装路由

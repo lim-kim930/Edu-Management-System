@@ -3,9 +3,9 @@ import queryInfo from "../components/company/queryInfo.vue";
 import infoSquare from "../components/company/infoSquare.vue";
 import infoEntry from "../components/company/infoEntry.vue";
 import internCert from "../components/company/internCert.vue";
-import comMessage from "../components/company/message.vue";
-import received from "../components/company/message/received.vue";
-import sent from "../components/company/message/sent.vue";
+import comMessage from "../components/company/privateMessage.vue";
+import received from "../components/company/message/msgReceived.vue";
+import sent from "../components/company/message/msgSent.vue";
 import comAccountManage from "../components/company/accountManage.vue";
 
 const router = new VueRouter({

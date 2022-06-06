@@ -10,9 +10,9 @@ import scoreChange from "../components/student/scoreChange.vue";
 import arcManage from "../components/student/arcManage.vue";
 import infoShare from "../components/student/infoShare.vue";
 import infoSquare from "../components/student/infoSquare.vue";
-import message from "../components/student/message.vue";
-import received from "../components/student/message/received.vue";
-import sent from "../components/student/message/sent.vue";
+import message from "../components/student/privateMessage.vue";
+import received from "../components/student/message/msgReceived.vue";
+import sent from "../components/student/message/msgSent.vue";
 import infoDisclose from "../components/student/infoDisclose.vue";
 import accountManage from "../components/student/accountManage.vue";
 

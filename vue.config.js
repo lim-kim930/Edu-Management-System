@@ -5,5 +5,10 @@ module.exports = {
     // outputDir: "dist/manager",
     // outputDir: "dist/company",
     // outputDir: "dist",
-    productionSourceMap: true
+    productionSourceMap: true,
+    devServer: {
+        host: "localhost",
+        port: 8080,
+        open: true
+    }
 };
