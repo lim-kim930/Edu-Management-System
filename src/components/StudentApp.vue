@@ -546,7 +546,7 @@ export default {
   font-weight: 700;
 }
 .el-header {
-  background: url(../img/logo.png) no-repeat;
+  background: url(../assets/img/logo.png) no-repeat;
   background-position: 20px;
   background-size: 300px;
   background-color: #468dba;

@@ -235,7 +235,7 @@ export default {
 
 <style scoped>
 .el-header {
-  background: url(../img/logo2.png) no-repeat;
+  background: url(../assets/img/logo2.png) no-repeat;
   background-position: 20px;
   background-size: 100px;
   background-color: #468dba;

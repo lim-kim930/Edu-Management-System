@@ -106,7 +106,7 @@ export default {
 
 <style scoped>
 .el-header {
-  background: url(../img/logo2.png) no-repeat;
+  background: url(../assets/img/logo2.png) no-repeat;
   background-size: 90px;
   background-position: 10px 0;
   background-color: #fff;
@@ -136,7 +136,7 @@ export default {
   max-width: 560px;
   height: 460px;
   margin: 150px 0 0 17%;
-  background: url(../img/login_icon.png) no-repeat;
+  background: url(../assets/img/login_icon.png) no-repeat;
   background-size: 75%;
   background-position: 50px 100px;
 }
