@@ -8,32 +8,6 @@
     >
       <i class="el-icon-success"></i> 学业文件已上传
     </el-tag>
-    <!-- <el-tag type="info" style="margin: 10px 0 0 0" v-show="file === ''" :disable-transitions="true">
-      <i class="el-icon-error"></i> 学业文件未上传
-    </el-tag>
-    <el-upload
-      ref="file-upload"
-      class="upload"
-      action="#"
-      :http-request="getFile"
-      :limit="1"
-      :on-change="change"
-      accept=".enc"
-      :show-file-list="false"
-      v-show="file === ''"
-    >
-      点击上传学业文件
-      <i class="el-icon-upload"></i>
-    </el-upload> -->
-    <!-- <el-button
-      type="primary"
-      plain
-      icon="el-icon-download"
-      @click="downloadFile('学业文件.enc')"
-      v-show="file != ''"
-      style="margin-left: 10px;"
-    >下载文件</el-button>-->
-    <!-- <br /> -->
     <span>请选择类型:</span>
     <el-select
       v-model="typeValue"

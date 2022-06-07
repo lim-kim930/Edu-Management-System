@@ -6,46 +6,6 @@
     element-loading-text="拼命加载中"
     label-width="80px"
   >
-    <!-- <el-tag
-      type="success"
-      style="margin: 10px 0 0 0"
-      v-show="file != ''"
-      :disable-transitions="true"
-    >
-      <i class="el-icon-success"></i> 学业文件已上传
-    </el-tag>
-    <el-tag type="info" style="margin: 10px 0 0 0" v-show="file === ''" :disable-transitions="true">
-      <i class="el-icon-error"></i> 学业文件未上传
-    </el-tag>
-    <el-upload
-      ref="file-upload"
-      class="upload"
-      action="#"
-      :http-request="getFile"
-      :limit="1"
-      accept=".enc"
-      :show-file-list="false"
-      v-show="file === ''"
-    >
-      点击上传学业文件
-      <i class="el-icon-upload"></i>
-    </el-upload> -->
-    <!-- <el-button
-      type="primary"
-      plain
-      icon="el-icon-delete-solid"
-      @click="reupload()"
-      v-show="file != ''"
-      style="margin-left: 10px;"
-    >删除文件</el-button>-->
-    <!-- <el-button
-      type="primary"
-      plain
-      icon="el-icon-download"
-      @click="downloadFile('学业文件.enc')"
-      v-show="file != ''"
-      style="margin-left: 10px;"
-    >下载文件</el-button>-->
     <span>请选择类型:</span>
     <el-select
       v-model="typeValue"
@@ -550,39 +510,6 @@ export default {
         };
       }
 
-    },
-    getFile(params) {
-      this.loading = true;
-      let data = new FormData();
-      data.append("dataFile", params.file);
-      this.axios({
-        method: "post",
-        url: "/dataFile/get?staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
-        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
-        data
-      }).then(() => {
-        this.loading = false;
-        this.file = params.file;
-        this.$emit("func", params.file);
-      }).catch((err) => {
-        if (err.response.data.msg === "file hash does not equal to chain")
-          this.$message.error("学业文件错误或者过期,请检查后再试");
-        else
-          this.$message.error("获取学业文件信息出错啦,请稍后再试");
-        this.loading = false;
-        this.reupload();
-      });
-    },
-    //删除文件
-    reupload() {
-      this.$refs["file-upload"].clearFiles();
-      this.file = "";
-      this.$emit("func", "");
-      sessionStorage.removeItem("score");
-      sessionStorage.removeItem("level_exam");
-      sessionStorage.removeItem("hj");
-      this.honorConfirmed = false;
-      this.innovConfirmed = false;
     },
     dataURLtoFile(dataurl, filename) {
       let arr = dataurl.split(","),

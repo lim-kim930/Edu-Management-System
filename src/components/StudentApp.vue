@@ -607,12 +607,6 @@ export default {
 .el-aside .collapse:hover {
   background-color: #ccc;
 }
-.option-tittle {
-  text-align: center;
-}
-.header-nav {
-  margin-left: 220px !important;
-}
 .aside .el-menu-item {
   height: 60px !important;
   line-height: 60px !important;

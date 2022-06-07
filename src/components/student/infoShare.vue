@@ -603,7 +603,7 @@ export default {
             return;
           that.axios({
             method: "post",
-            url: "https://api.hduhelp.com/gormja_wrapper/job/lookup",
+            url: "/job/lookup",
             // headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
             data: {
               "CompanyCode": data.value
@@ -652,7 +652,6 @@ export default {
       val.forEach(item => {
         this.ruleForm.levelType.push(item.key);
       });
-
     },
     handleSelectionChange3(val) {
       this.ruleForm.rewardType = [];
@@ -757,14 +756,14 @@ export default {
       data.append("dataFile", this.dataFile);
       this.axios({
         method: "post",
-        url: "https://api.hduhelp.com/gormja_wrapper/dataFile/get?staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
+        url: "/dataFile/get?staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
         headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
         data
       }).then((response) => {
         this.content = response.data.data.Body.data_map;
         this.axios({
           method: "get",
-          url: "https://api.hduhelp.com/gormja_wrapper/company/lookup",
+          url: "/company/lookup",
         }).then((response) => {
           for (let i = 0; i < response.data.data.length; i++)
             this.options.push({
@@ -1161,14 +1160,14 @@ export default {
       this.previewVisible = false;
       this.axios({
         method: "post",
-        url: "https://api.hduhelp.com/gormja_wrapper/share/share?topic=profile&staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
+        url: "/share/share?topic=profile&staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
         headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
         data: this.data
       }).then((response) => {
-        this.shareLink = "https://api.hduhelp.com/gormja_wrapper/share/verify?fileID=" + response.data.data.Body.FileID + "&encryptedK1S=" + response.data.data.Body.EncryptedK1S;
+        this.shareLink = "/share/verify?fileID=" + response.data.data.Body.FileID + "&encryptedK1S=" + response.data.data.Body.EncryptedK1S;
         this.axios({
           method: "post",
-          url: "https://api.hduhelp.com/gormja_wrapper/share/lookupShareLinkForSelf",
+          url: "/share/lookupShareLinkForSelf",
           headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
           data: { "StaffID": JSON.parse(localStorage.getItem("jw_student_file")).staffID }
         }).then((response) => {
@@ -1223,7 +1222,6 @@ export default {
   width: 300px;
   margin-right: 20px;
 }
-
 .el-dialog span:nth-child(2) {
   display: inline-block;
 }
@@ -1387,7 +1385,6 @@ export default {
   top: 180px;
   left: 738px;
 }
-
 .score {
   top: 240px;
 }
@@ -1560,7 +1557,6 @@ export default {
   overflow: hidden;
   box-sizing: content-box;
 }
-
 .level_value .level_year_value,
 .reward_value .reward_year_value {
   border-right: none;

@@ -245,9 +245,6 @@ export default {
   },
   props: ["wh", "file"],
   methods: {
-    filterType(value, row) {
-      return row.type === value;
-    },
     switcher() {
       if (!this.disclose) {
         this.resetForm();

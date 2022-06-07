@@ -1,39 +1,5 @@
 <template>
   <el-form ref="form" class="form1" v-loading="loading" element-loading-text="拼命加载中">
-    <!-- <el-tag
-      style="margin: 10px 0 10px 0"
-      type="success"
-      v-show="file != ''"
-      :disable-transitions="true"
-    >
-      <i class="el-icon-success"></i> 学业文件已上传
-    </el-tag>
-    <el-tag style="margin: 10px 0 0 0" type="info" v-show="file === ''" :disable-transitions="true">
-      <i class="el-icon-error"></i> 学业文件未上传
-    </el-tag>
-    <el-upload
-      style="margin-bottom: 10px;"
-      ref="file-upload"
-      class="upload"
-      action="#"
-      :http-request="getFile"
-      :limit="1"
-      accept=".enc"
-      :show-file-list="false"
-      v-show="file === ''"
-    >
-      点击上传学业文件
-      <i class="el-icon-upload"></i>
-    </el-upload> -->
-    <!-- <el-button
-      type="primary"
-      plain
-      icon="el-icon-download"
-      @click="downloadFile('学业文件.enc')"
-      v-show="file != ''"
-      style="margin: 0 0 10px 10px;"
-    >下载文件</el-button>-->
-    <br>
     <span v-show="loading2" class="loadmask">
       <i style="dispaly: block" class="el-icon-loading"></i>
       <span>正在为您努力计算排名,请稍等</span>
@@ -123,20 +89,6 @@ export default {
   },
   props: ["globalFile"],//拿到infoConfirmed页面file
   methods: {
-    //文件上传成功后
-    getFile(params) {
-      this.file = params.file;
-      this.$emit("func", params.file);
-      this.getFileInfo();
-    },
-    //删除文件
-    reupload() {
-      this.$refs["file-upload"].clearFiles();
-      this.file = "";
-      this.$emit("func", "");
-      sessionStorage.removeItem("gpa");
-      this.confirmed = false;
-    },
     dataURLtoFile(dataurl, filename) {
       let arr = dataurl.split(","),
         bstr = atob(arr[0]),

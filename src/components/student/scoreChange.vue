@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-form label-width="140px" v-loading="loading" element-loading-text="拼命加载中" class="form">
+    <!-- <el-form label-width="140px" v-loading="loading" element-loading-text="拼命加载中" class="form"> -->
+    <el-form label-width="140px" class="form">
       <!-- <el-form-item label="课程代码(课程号)" required>
         <el-input v-model="form.course" style="width: 200px"></el-input>
       </el-form-item>
@@ -54,21 +55,21 @@
 export default {
   data() {
     return {
-      form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: ""
-      },
-      dialogVisible: true,
-      loading: false,
-      uploaded: false,
-      fileList: [],
-      file: "",
+      // form: {
+      //   name: "",
+      //   region: "",
+      //   date1: "",
+      //   date2: "",
+      //   delivery: false,
+      //   type: [],
+      //   resource: "",
+      //   desc: ""
+      // },
+      // dialogVisible: true,
+      // loading: false,
+      // uploaded: false,
+      // fileList: [],
+      // file: "",
     };
   },
   methods: {
@@ -85,7 +86,6 @@ export default {
       this.uploaded = true;
     },
     onSubmit() {
-      var that = this;
       this.$confirm(
         "请确认您已经联系教务处,并成功修改了错误成绩,否则申请将会失败, 是否继续确认?",
         "提示",
@@ -95,27 +95,25 @@ export default {
           type: "warning",
         }).then(() => {
           this.loading = true;
-          this.axios({
-            method: "get",
-            url: "https://api.limkim.xyz/xy",
-          }).then(function (response) {
-            if (response.data === "OK") {
-              that.$message({
-                message: "成绩更改成功!",
-                type: "success",
-              });
-            }
-            that.loading = false;
-            that.confirmed = true;
-          }).catch(() => {
-            that.$message.error("出错啦,请稍后再试");
-            that.loading = false;
-          });
+          // this.axios({
+          //   method: "get",
+          //   url: "https://api.limkim.xyz/xy",
+          // }).then(function (response) {
+          //   if (response.data === "OK") {
+          //     this.$message({
+          //       message: "成绩更改成功!",
+          //       type: "success",
+          //     });
+          //   }
+          //   this.loading = false;
+          //   this.confirmed = true;
+          // }).catch(() => {
+          //   this.$message.error("出错啦,请稍后再试");
+          //   this.loading = false;
+          // });
         });
     }
-  },
-  mounted() {
-  },
+  }
 };
 </script>
 
@@ -131,20 +129,6 @@ export default {
   border-radius: 10px;
   max-height: 750px;
 }
-.upload {
-  display: inline-block;
-  width: 170px;
-  height: 40px;
-  margin-left: 150px;
-  line-height: 40px;
-  text-align: center;
-  border: 1px solid #b3d8ff;
-  background-color: #ecf5ff;
-  font-size: 14px;
-  color: #409eff;
-  border-radius: 5px;
-}
-
 .content span {
   margin: 20px;
   display: block;

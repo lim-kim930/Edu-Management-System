@@ -2,13 +2,7 @@
   <div class="pwd">
     <h4>提交档案重置申请</h4>
     <el-divider></el-divider>
-    <el-form
-      status-icon
-      ref="ruleForm"
-      class="demo-ruleForm"
-      v-loading="loading"
-      element-loading-text="拼命加载中"
-    >
+    <el-form status-icon ref="ruleForm" class="demo-ruleForm" v-loading="loading" element-loading-text="拼命加载中">
       <!-- <el-alert type="info" :closable="false" style="margin-bottom: 10px">
         <h5>提示:</h5>
         <h5>如果档案丢失,无法使用系统,可以在这里向管理员提交档案状态重置的申请</h5>
@@ -19,11 +13,9 @@
         <h5>如果档案丢失,无法使用系统,可以在QQ答疑群向管理员发出档案状态重置的申请</h5>
         <h5>重置后,之前确认的信息将需要重新确认,所以请在文件确实丢失的情况下提交</h5>
       </el-alert>
-      <el-link
-        type="primary"
-        target="_blank"
-        href="https://qm.qq.com/cgi-bin/qm/qr?k=Ci04wLsNSUcKO6UpX61kBoypUmHYzkWJ&jump_from=webapi"
-      >点击加入QQ答疑群: 346258287</el-link>
+      <el-link type="primary" target="_blank"
+        href="https://qm.qq.com/cgi-bin/qm/qr?k=Ci04wLsNSUcKO6UpX61kBoypUmHYzkWJ&jump_from=webapi">点击加入QQ答疑群: 346258287
+      </el-link>
       <!-- <el-form-item>
         <el-button type="primary" @click="submitForm()">确认提交</el-button>
       </el-form-item> -->
@@ -52,35 +44,14 @@ export default {
           data: {
             staffID: JSON.parse(localStorage.getItem("jw_student_file")).staffID
           }
-        })
-          .then(() => {
-            this.axios({
-              method: "post",
-              url: "https://api.limkim.xyz/changeXj",
-              data: { staffID: JSON.parse(localStorage.getItem("jw_student_file")).staffID, confirmed: false }
-            })
-              .then(() => {
-                this.$message.success("重置成功");
-                location.reload();
-              })
-              .catch(error => {
-                if (error.response.data.status === "staffID Required")
-                  this.$message.error("您还未登录或登陆出错,请重新登录后重试");
-                else if (error.response.data.status === "Error")
-                  this.$message.error("服务器出错");
-                else
-                  this.$message.error("出错啦,请稍后重试");
-                this.loading = false;
-              });
-          })
-          .catch(() => {
-            this.$message.error("提交申请出错啦,请稍后重试");
-            this.loading = false;
-          });
-      })
-        .catch(() => {
-
+        }).then(() => {
+          this.$message.success("重置成功");
+          location.reload();
+        }).catch(() => {
+          this.$message.error("提交申请出错啦,请稍后重试");
+          this.loading = false;
         });
+      });
     }
   }
 };

@@ -40,7 +40,6 @@ export default {
         url: "/oauth/request"
       }).then((res) => {
         const _redirect = decodeURI(res.data.redirect);
-        // console.log(_redirect);
         window.location.href = _redirect;
       }).catch(() => {
         this.$message.error("登录请求出错啦,请稍后再试");
@@ -60,7 +59,6 @@ export default {
   padding: 5px 5px;
   background-color: rgba(255, 255, 255, 0);
 }
-
 .footer {
   user-select: none;
 }

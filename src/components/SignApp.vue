@@ -95,11 +95,11 @@ export default {
     window.onresize = () => {
       this.wh = this.windowHeight() < 600 ? 600 : this.windowHeight();
     };
-    // this.redirect();
-    // if (localStorage.getItem("jw_student_file") !== null && localStorage.getItem("jw_ent_file") === null)
-    //   window.location.href = "https://edu.limkim.cn/student";
-    // else if (localStorage.getItem("jw_student_file") === null && localStorage.getItem("jw_ent_file") !== null)
-    //   window.location.href = "https://edu.limkim.cn/company";
+    this.redirect();
+    if (localStorage.getItem("jw_student_file") !== null && localStorage.getItem("jw_ent_file") === null)
+      window.location.href = "https://edu.limkim.cn/student";
+    else if (localStorage.getItem("jw_student_file") === null && localStorage.getItem("jw_ent_file") !== null)
+      window.location.href = "https://edu.limkim.cn/company";
   }
 };
 </script>
@@ -166,17 +166,6 @@ export default {
 }
 #signUp {
   border-right: 1px solid #ccc;
-}
-.else {
-  position: absolute;
-  height: 44px;
-  bottom: 0;
-  width: 100%;
-  border-top: 1px solid #ccc;
-  color: #5eacf0;
-  cursor: pointer;
-  text-align: center;
-  line-height: 44px;
 }
 .el-divider--horizontal {
   margin: 10px 0 !important;

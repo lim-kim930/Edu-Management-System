@@ -227,9 +227,6 @@ export default {
         cb(results);
       });
     },
-    // handleSelect(item) {
-    //   this.CompanyCode = item.CompanyCode
-    // },
     currentChange(v) {
       this.page = v - 1;
     },

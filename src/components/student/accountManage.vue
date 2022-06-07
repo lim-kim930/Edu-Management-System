@@ -52,15 +52,12 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     }
-  },
-  mounted() {
-  },
+  }
 };
 </script>
 
 <style scoped>
-.pwd,
-.chain {
+.pwd {
   overflow: auto;
   margin: 10px;
   width: calc(100% - 20px);
