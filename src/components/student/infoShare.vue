@@ -1,34 +1,14 @@
 <template>
   <div>
-    <el-form
-      :model="ruleForm"
-      v-loading="loading"
-      element-loading-text="拼命加载中"
-      ref="ruleForm"
-      label-width="150px"
-      :style="{'max-height': this.wh - 105 + 'px'}"
-    >
-      <el-steps
-        :active="stepActive"
-        align-center
-        finish-status="success"
-        style="height: 70px; margin-bottom: 30px"
-      >
+    <el-form :model="ruleForm" v-loading="loading" element-loading-text="拼命加载中" ref="ruleForm" label-width="150px"
+      :style="{ 'max-height': this.wh - 105 + 'px' }">
+      <el-steps :active="stepActive" align-center finish-status="success" style="height: 70px; margin-bottom: 30px">
         <el-step title="步骤 1" description="请上传您之前生成的学业文件" icon="el-icon-user"></el-step>
         <el-step title="步骤 2" description="请确定此次分享的各项信息" icon="el-icon-edit"></el-step>
       </el-steps>
-      <div v-show="stepActive===0">
-        <el-upload
-          class="upload"
-          action="#"
-          :http-request="getFile"
-          :limit="1"
-          :on-change="change"
-          :on-remove="remove"
-          :file-list="fileList"
-          accept=".enc"
-          drag
-        >
+      <div v-show="stepActive === 0">
+        <el-upload class="upload" action="#" :http-request="getFile" :limit="1" :on-change="change" :on-remove="remove"
+          :file-list="fileList" accept=".enc" drag>
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">
             将文件拖到此处，或
@@ -38,45 +18,20 @@
         </el-upload>
         <el-button class="next" type="primary" plain v-show="btnShow" @click="next()">下一步</el-button>
       </div>
-      <div
-        v-show="stepActive===1"
-        class="info-select"
-        :style="{overflow: 'auto', 'max-height': this.wh-280+'px'}"
-      >
+      <div v-show="stepActive === 1" class="info-select" :style="{ overflow: 'auto', 'max-height': this.wh - 280 + 'px' }">
         <el-form-item label="要分享的学籍信息">
-          <el-checkbox
-            :indeterminate="isIndeterminate"
-            v-model="checkAll"
-            @change="CheckAllChange($event, 1)"
-            border
-            v-show="profileData.length !== 0"
-            style="width: 80px"
-          >全选</el-checkbox>
-          <el-checkbox-group
-            v-model="ruleForm.profileType"
-            style="margin-left: 30px; width: 80%"
-            @change="CheckedChange($event, 1)"
-          >
-            <el-checkbox
-              v-for="item in profileData"
-              v-bind:key="item.value"
-              :label="item.value"
-              style="width: 150px"
-            >{{item.name}}</el-checkbox>
+          <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="CheckAllChange($event, 1)" border
+            v-show="profileData.length !== 0" style="width: 80px">全选</el-checkbox>
+          <el-checkbox-group v-model="ruleForm.profileType" style="margin-left: 30px; width: 80%"
+            @change="CheckedChange($event, 1)">
+            <el-checkbox v-for="item in profileData" v-bind:key="item.value" :label="item.value" style="width: 150px">
+              {{ item.name }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="课程成绩信息">
           <h4 v-show="scoreData.length === 0">暂无信息</h4>
-          <el-table
-            ref="multipleTable"
-            border
-            :data="scoreData"
-            v-show="scoreData.length !== 0"
-            tooltip-effect="dark"
-            style="width: 90%"
-            @selection-change="handleSelectionChange1"
-            :max-height="500"
-          >
+          <el-table ref="multipleTable" border :data="scoreData" v-show="scoreData.length !== 0" tooltip-effect="dark"
+            style="width: 90%" @selection-change="handleSelectionChange1" :max-height="500">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="name" label="课程名"></el-table-column>
             <el-table-column prop="value" label="选课号"></el-table-column>
@@ -85,15 +40,8 @@
         </el-form-item>
         <el-form-item label="等级考试信息">
           <h4 v-show="levelData.length === 0">暂无信息</h4>
-          <el-table
-            ref="multipleTable"
-            border
-            :data="levelData"
-            v-show="levelData.length !== 0"
-            tooltip-effect="dark"
-            style="width: 90%"
-            @selection-change="handleSelectionChange2"
-          >
+          <el-table ref="multipleTable" border :data="levelData" v-show="levelData.length !== 0" tooltip-effect="dark"
+            style="width: 90%" @selection-change="handleSelectionChange2">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column label="考试名称">
               <template slot-scope="scope">{{ scope.row.name }}</template>
@@ -103,15 +51,8 @@
         </el-form-item>
         <el-form-item label="个人荣誉信息">
           <h4 v-show="rewardData.length === 0">暂无信息</h4>
-          <el-table
-            ref="multipleTable"
-            border
-            :data="rewardData"
-            v-show="rewardData.length !== 0"
-            tooltip-effect="dark"
-            style="width: 90%"
-            @selection-change="handleSelectionChange3"
-          >
+          <el-table ref="multipleTable" border :data="rewardData" v-show="rewardData.length !== 0" tooltip-effect="dark"
+            style="width: 90%" @selection-change="handleSelectionChange3">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column label="项目名称">
               <template slot-scope="scope">{{ scope.row.name }}</template>
@@ -122,15 +63,8 @@
         </el-form-item>
         <el-form-item label="创新学分信息">
           <h4 v-show="raceData.length === 0">暂无信息</h4>
-          <el-table
-            ref="multipleTable"
-            border
-            :data="raceData"
-            v-show="raceData.length !== 0"
-            tooltip-effect="dark"
-            style="width: 90%"
-            @selection-change="handleSelectionChange4"
-          >
+          <el-table ref="multipleTable" border :data="raceData" v-show="raceData.length !== 0" tooltip-effect="dark"
+            style="width: 90%" @selection-change="handleSelectionChange4">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column label="项目名称">
               <template slot-scope="scope">{{ scope.row.name }}</template>
@@ -141,26 +75,14 @@
         <el-form-item class="md" label="自我介绍">
           <h4 v-show="!selfData[0].md">暂无信息</h4>
           <el-checkbox v-show="selfData[0].md" v-model="ruleForm.selfChecked">选择</el-checkbox>
-          <mavonEditor
-            :toolbars="toolbars"
-            :autofocus="false"
-            defaultOpen="preview"
-            :editable="false"
-            v-show="selfData[0].md"
-            v-model="selfData[0].md"
-            :style="{'width': '90%', 'margin-top': '10px', 'height': this.wh - 300 + 'px'}"
-          />
+          <mavonEditor :toolbars="toolbars" :autofocus="false" defaultOpen="preview" :editable="false"
+            v-show="selfData[0].md" v-model="selfData[0].md"
+            :style="{ 'width': '90%', 'margin-top': '10px', 'height': this.wh - 300 + 'px' }" />
         </el-form-item>
         <el-form-item label="班团经历">
           <h4 v-show="clubData.length === 0">暂无信息</h4>
-          <el-table
-            :data="clubData"
-            tooltip-effect="dark"
-            style="width: 90%"
-            border
-            v-show="clubData.length !== 0"
-            @selection-change="clubSelectionChange"
-          >
+          <el-table :data="clubData" tooltip-effect="dark" style="width: 90%" border v-show="clubData.length !== 0"
+            @selection-change="clubSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="JobName" label="工作名称"></el-table-column>
             <el-table-column prop="OrgName" label="组织名称"></el-table-column>
@@ -169,14 +91,8 @@
         </el-form-item>
         <el-form-item label="志愿经历">
           <h4 v-show="volunData.length === 0">暂无信息</h4>
-          <el-table
-            :data="volunData"
-            tooltip-effect="dark"
-            style="width: 90%"
-            border
-            v-show="volunData.length !== 0"
-            @selection-change="volunSelectionChange"
-          >
+          <el-table :data="volunData" tooltip-effect="dark" style="width: 90%" border v-show="volunData.length !== 0"
+            @selection-change="volunSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="ActName" label="活动名称"></el-table-column>
             <el-table-column prop="ActDate" label="活动日期"></el-table-column>
@@ -185,14 +101,8 @@
         </el-form-item>
         <el-form-item label="实习经历">
           <h4 v-show="internshipData.length === 0">暂无信息</h4>
-          <el-table
-            :data="internshipData"
-            tooltip-effect="dark"
-            style="width: 90%"
-            border
-            v-show="internshipData.length !== 0"
-            @selection-change="internshipSelectionChange"
-          >
+          <el-table :data="internshipData" tooltip-effect="dark" style="width: 90%" border
+            v-show="internshipData.length !== 0" @selection-change="internshipSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="JobName" label="岗位名称"></el-table-column>
             <el-table-column prop="CompanyName" label="公司名称"></el-table-column>
@@ -202,291 +112,225 @@
         </el-form-item>
         <el-form-item label="排名信息">
           <h4 v-show="rankData.length === 0">暂无信息</h4>
-          <el-table
-            :data="rankData"
-            tooltip-effect="dark"
-            style="width: 90%"
-            border
-            v-show="rankData.length !== 0"
-            @selection-change="handleSelectionChange"
-          >
+          <el-table :data="rankData" tooltip-effect="dark" style="width: 90%" border v-show="rankData.length !== 0"
+            @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="GPA" label="绩点"></el-table-column>
             <el-table-column prop="Rank" label="专业排名"></el-table-column>
           </el-table>
         </el-form-item>
         <el-form-item label="目的企业和岗位">
-          <span
-            v-show="target_show"
-            style="color: #67C23A; background-color: #f0f9eb; padding: 10px; border-radius: 5px;"
-          >{{ target }}</span>
+          <span v-show="target_show"
+            style="color: #67C23A; background-color: #f0f9eb; padding: 10px; border-radius: 5px;">{{ target }}</span>
           <br v-show="target_show" />
-          <el-cascader
-            style=" margin-top: 5px"
-            v-model="ruleForm.hr"
-            :options="options"
-            :props="props"
-            collapse-tags
-            clearable
-          ></el-cascader>
+          <el-cascader style=" margin-top: 5px" v-model="ruleForm.hr" :options="options" :props="props" collapse-tags
+            clearable></el-cascader>
         </el-form-item>
-        <el-form-item
-          label="有效时间"
-          prop="date"
-          :rules="[
-            { type: 'number', message: '有效日期须为数字', trigger: 'change'},
-            { type: 'number', max: 9999, message: '数值过大', trigger: 'change'}
-          ]"
-        >
+        <el-form-item label="有效时间" prop="date" :rules="[
+          { type: 'number', message: '有效日期须为数字', trigger: 'change' },
+          { type: 'number', max: 9999, message: '数值过大', trigger: 'change' }
+        ]">
           <el-input v-model.number="ruleForm.date" style="width: 150px" placeholder="默认为10天"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button
-            type="primary"
-            @click="submitForm()"
-            style="margin: 0 0 30px 50px; width: 150px"
-          >预览</el-button>
+          <el-button type="primary" @click="submitForm()" style="margin: 0 0 30px 50px; width: 150px">预览</el-button>
           <!-- <el-button type="primary" @click="stepActive = 0" style="width: 100px">上一步</el-button> -->
         </el-form-item>
       </div>
     </el-form>
     <el-dialog :visible.sync="previewVisible">
       <span style="font-size: 18px; font-weight: 700; margin-left: 10px">分享预览,请确认无误后点击分享</span>
-      <el-button
-        type="primary"
-        plain
-        @click="dialogSwitch()"
+      <el-button type="primary" plain @click="dialogSwitch()"
         :disabled="!this.ruleForm.selfChecked && this.clubValue.length === 0 && this.volunValue.length === 0 && this.internshipValue.length === 0"
-        style="width: 150px; margin-bottom: 10px; margin-left: calc(100% - 630px)"
-      >{{(this.ruleForm.selfChecked || this.clubValue.length !== 0 || this.volunValue.length !== 0 || this.internshipData.length !== 0)?(this.switch === 1?"查看个人填写预览":"返回"):"未选择个人信息"}}</el-button>
-      <el-button
-        type="primary"
-        @click="confirm()"
-        style="width: 150px; margin-bottom: 10px; margin-left: 10px"
-      >立即分享</el-button>
+        style="width: 150px; margin-bottom: 10px; margin-left: calc(100% - 630px)">{{ (this.ruleForm.selfChecked ||
+            this.clubValue.length !== 0 || this.volunValue.length !== 0 || this.internshipData.length !== 0) ? (this.switch
+              === 1 ? "查看个人填写预览" : "返回") : "未选择个人信息"
+        }}</el-button>
+      <el-button type="primary" @click="confirm()" style="width: 150px; margin-bottom: 10px; margin-left: 10px">立即分享
+      </el-button>
       <div v-show="this.switch === 1">
-        <div
-          id="mycanvas"
-          v-show="!tableShow"
-          :style="{background: 'url('+ url +') no-repeat', height: table_height}"
-          @contextmenu.prevent
-        ></div>
-        <div
-          class="table"
-          v-show="tableShow"
-          :style="{height: table_height}"
-          style="width: 1166px;"
-        >
+        <div id="mycanvas" v-show="!tableShow" :style="{ background: 'url(' + url + ') no-repeat', height: table_height }"
+          @contextmenu.prevent></div>
+        <div class="table" v-show="tableShow" :style="{ height: table_height }" style="width: 1166px;">
           <div class="hash">
             <span class="title">交易哈希</span>
-            <span
-              id="hash_content"
-            >0x****************************************************************</span>
+            <span id="hash_content">0x****************************************************************</span>
           </div>
           <div class="name">
             <span class="title">姓名</span>
-            <span class="content">{{profileValue.Name}}</span>
+            <span class="content">{{ profileValue.Name }}</span>
           </div>
           <div class="sex">
             <span class="title">性别</span>
-            <span class="content">{{profileValue.Sex}}</span>
+            <span class="content">{{ profileValue.Sex }}</span>
           </div>
           <div class="nation">
             <span class="title">民族</span>
-            <span class="content">{{profileValue.Nation}}</span>
+            <span class="content">{{ profileValue.Nation }}</span>
           </div>
           <div class="classCode">
             <span class="title">GPA</span>
-            <span class="content">{{rankValue.GPA}}</span>
+            <span class="content">{{ rankValue.GPA }}</span>
           </div>
           <div class="className">
             <span class="title">班级名称</span>
-            <span class="content">{{profileValue.ClassName}}</span>
+            <span class="content">{{ profileValue.ClassName }}</span>
           </div>
-          <div class="pic" :style="{background: 'url('+ profileValue.Photo +') no-repeat' }"></div>
+          <div class="pic" :style="{ background: 'url(' + profileValue.Photo + ') no-repeat' }"></div>
 
           <div class="schoolCode">
             <span class="title">学校代码</span>
-            <span class="content">{{profileValue.SchoolCode}}</span>
+            <span class="content">{{ profileValue.SchoolCode }}</span>
           </div>
           <div class="staffID">
             <span class="title">学号</span>
-            <span class="content">{{profileValue.StaffID}}</span>
+            <span class="content">{{ profileValue.StaffID }}</span>
           </div>
           <div class="unitCode">
             <span class="title">学院代码</span>
-            <span class="content">{{profileValue.UnitCode}}</span>
+            <span class="content">{{ profileValue.UnitCode }}</span>
           </div>
           <div class="unitName">
             <span class="title">学院名称</span>
-            <span class="content">{{profileValue.UnitName}}</span>
+            <span class="content">{{ profileValue.UnitName }}</span>
           </div>
           <div class="majorCode">
             <span class="title">GPA排名</span>
-            <span class="content">{{rankValue.Rank}}</span>
+            <span class="content">{{ rankValue.Rank }}</span>
           </div>
           <div class="majorName">
             <span class="title">专业名称</span>
-            <span class="content">{{profileValue.MajorName}}</span>
+            <span class="content">{{ profileValue.MajorName }}</span>
           </div>
-          <div class="score" :style="{height: score_height}">
-            <span class="title" :style="{height: score_height, paddingTop: title_paddingTop}">成绩单</span>
-            <div class="score_content" :style="{height: score_height}">
-              <div class="part1" :style="{height: score_height}">
+          <div class="score" :style="{ height: score_height }">
+            <span class="title" :style="{ height: score_height, paddingTop: title_paddingTop }">成绩单</span>
+            <div class="score_content" :style="{ height: score_height }">
+              <div class="part1" :style="{ height: score_height }">
                 <span class="course_name">课程名</span>
                 <span class="course_score">成绩</span>
                 <span class="course_gp">绩点</span>
                 <span class="score_value" v-for="item in scoreDataPart1" :key="item.id">
-                  <span
-                    class="course_name_value"
-                    :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}"
-                    :title="item.name"
-                  >{{item.name}}</span>
-                  <span class="course_score_value">{{item.score}}</span>
-                  <span class="course_gp_value">{{item.gp}}</span>
+                  <span class="course_name_value"
+                    :style="{ lineHeight: item.name.length <= 8 ? '50px' : item.name.length <= 16 ? '25px' : '16px' }"
+                    :title="item.name">{{ item.name }}</span>
+                  <span class="course_score_value">{{ item.score }}</span>
+                  <span class="course_gp_value">{{ item.gp }}</span>
                 </span>
               </div>
-              <div class="part2" :style="{height: score_height}">
+              <div class="part2" :style="{ height: score_height }">
                 <span class="course_name">课程名</span>
                 <span class="course_score">成绩</span>
                 <span class="course_gp">绩点</span>
                 <span class="score_value" v-for="item in scoreDataPart2" :key="item.id">
-                  <span
-                    class="course_name_value"
-                    :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}"
-                    :title="item.name"
-                  >{{item.name}}</span>
-                  <span class="course_score_value">{{item.score}}</span>
-                  <span class="course_gp_value">{{item.gp}}</span>
+                  <span class="course_name_value"
+                    :style="{ lineHeight: item.name.length <= 8 ? '50px' : item.name.length <= 16 ? '25px' : '16px' }"
+                    :title="item.name">{{ item.name }}</span>
+                  <span class="course_score_value">{{ item.score }}</span>
+                  <span class="course_gp_value">{{ item.gp }}</span>
                 </span>
               </div>
-              <div class="part3" :style="{height: score_height}">
+              <div class="part3" :style="{ height: score_height }">
                 <span class="course_name">课程名</span>
                 <span class="course_score">成绩</span>
                 <span class="course_gp">绩点</span>
                 <span class="score_value" v-for="item in scoreDataPart3" :key="item.id">
-                  <span
-                    class="course_name_value"
-                    :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}"
-                    :title="item.name"
-                  >{{item.name}}</span>
-                  <span class="course_score_value">{{item.score}}</span>
-                  <span class="course_gp_value">{{item.gp}}</span>
+                  <span class="course_name_value"
+                    :style="{ lineHeight: item.name.length <= 8 ? '50px' : item.name.length <= 16 ? '25px' : '16px' }"
+                    :title="item.name">{{ item.name }}</span>
+                  <span class="course_score_value">{{ item.score }}</span>
+                  <span class="course_gp_value">{{ item.gp }}</span>
                 </span>
               </div>
-              <div class="part4" :style="{height: score_height}">
+              <div class="part4" :style="{ height: score_height }">
                 <span class="course_name">课程名</span>
                 <span class="course_score">成绩</span>
                 <span class="course_gp">绩点</span>
                 <span class="score_value" v-for="item in scoreDataPart4" :key="item.id">
-                  <span
-                    class="course_name_value"
-                    :style="{lineHeight: item.name.length<=8?'50px':item.name.length<=16?'25px':'16px'}"
-                    :title="item.name"
-                  >{{item.name}}</span>
-                  <span class="course_score_value">{{item.score}}</span>
-                  <span class="course_gp_value">{{item.gp}}</span>
+                  <span class="course_name_value"
+                    :style="{ lineHeight: item.name.length <= 8 ? '50px' : item.name.length <= 16 ? '25px' : '16px' }"
+                    :title="item.name">{{ item.name }}</span>
+                  <span class="course_score_value">{{ item.score }}</span>
+                  <span class="course_gp_value">{{ item.gp }}</span>
                 </span>
               </div>
             </div>
           </div>
-          <div class="level" :style="{top: level_top, height: level_height}">
-            <span class="title" :style="{height: level_height, paddingTop: level_paddingTop}">等级考试</span>
-            <div class="level_content" :style="{height: level_height}">
+          <div class="level" :style="{ top: level_top, height: level_height }">
+            <span class="title" :style="{ height: level_height, paddingTop: level_paddingTop }">等级考试</span>
+            <div class="level_content" :style="{ height: level_height }">
               <span class="level_name">考试名称</span>
               <span class="level_score">考试成绩</span>
               <span class="level_year">考试时间</span>
               <span class="level_value" v-for="item in levelValue" :key="item.id">
-                <span class="level_name_value">{{item.name}}</span>
-                <span class="level_score_value">{{item.score}}</span>
-                <span class="level_year_value">{{item.date}}</span>
+                <span class="level_name_value">{{ item.name }}</span>
+                <span class="level_score_value">{{ item.score }}</span>
+                <span class="level_year_value">{{ item.date }}</span>
               </span>
             </div>
           </div>
-          <div class="reward" :style="{top: reward_top, height: reward_height}">
-            <span class="title" :style="{height: reward_height, paddingTop: reward_paddingTop}">综合素质</span>
-            <div class="reward_content" :style="{height: reward_height}">
-              <div class="rewardPart" :style="{height: reward_height}">
+          <div class="reward" :style="{ top: reward_top, height: reward_height }">
+            <span class="title" :style="{ height: reward_height, paddingTop: reward_paddingTop }">综合素质</span>
+            <div class="reward_content" :style="{ height: reward_height }">
+              <div class="rewardPart" :style="{ height: reward_height }">
                 <h4>个人荣誉</h4>
                 <span class="reward_name">奖项名称</span>
                 <span class="reward_level">奖项等级</span>
                 <span class="reward_year">获奖年份</span>
                 <span class="reward_value" v-for="item in rewardValue" :key="item.id">
-                  <span class="reward_name_value">{{item.name}}</span>
-                  <span class="reward_level_value">{{item.level}}</span>
-                  <span class="reward_year_value">{{item.date}}</span>
+                  <span class="reward_name_value">{{ item.name }}</span>
+                  <span class="reward_level_value">{{ item.level }}</span>
+                  <span class="reward_year_value">{{ item.date }}</span>
                 </span>
               </div>
-              <div class="racePart" :style="{height: reward_height}">
+              <div class="racePart" :style="{ height: reward_height }">
                 <h4>创新学分</h4>
                 <span class="race_name">项目名称</span>
                 <span class="race_level">奖项等级</span>
                 <span class="race_year">获奖时间</span>
                 <span class="race_value" v-for="item in raceValue" :key="item.id">
-                  <span class="race_name_value">{{item.name}}</span>
-                  <span class="race_level_value">{{item.level}}</span>
-                  <span class="race_year_value">{{item.date}}</span>
+                  <span class="race_name_value">{{ item.name }}</span>
+                  <span class="race_level_value">{{ item.level }}</span>
+                  <span class="race_year_value">{{ item.date }}</span>
                 </span>
               </div>
             </div>
           </div>
-          <div class="info" :style="{top: info_top}">
+          <div class="info" :style="{ top: info_top }">
             <span class="title">注意事项</span>
             <div class="info_content">
               <span>1.该信息仅供高校学业核验系统核验使用,禁止他用</span>
             </div>
             <div class="end_time">
               <span>有效期至:</span>
-              <span>{{profileValue.expired_at}}</span>
+              <span>{{ profileValue.expired_at }}</span>
             </div>
           </div>
         </div>
       </div>
-      <h3 style="margin-left: 5%" v-show="this.switch===2 && selfValue.md">自我介绍</h3>
-      <mavonEditor
-        :toolbars="toolbars"
-        :autofocus="false"
-        defaultOpen="preview"
-        :editable="false"
-        v-show="this.switch===2 && selfValue.md"
-        v-model="selfValue.md"
-        :style="{'width': '90%', 'margin': ' 10px 5%', 'height': this.wh - 300 + 'px'}"
-      />
-      <h3 style="margin-left: 5%" v-show="this.switch===2 && clubValue.length !== 0">班团经历</h3>
-      <el-table
-        :data="clubValue"
-        tooltip-effect="dark"
-        :style="{'width': '90%', 'margin': ' 10px 5%'}"
-        border
-        v-show="this.switch===2 && clubValue.length !== 0"
-      >
+      <h3 style="margin-left: 5%" v-show="this.switch === 2 && selfValue.md">自我介绍</h3>
+      <mavonEditor :toolbars="toolbars" :autofocus="false" defaultOpen="preview" :editable="false"
+        v-show="this.switch === 2 && selfValue.md" v-model="selfValue.md"
+        :style="{ 'width': '90%', 'margin': ' 10px 5%', 'height': this.wh - 300 + 'px' }" />
+      <h3 style="margin-left: 5%" v-show="this.switch === 2 && clubValue.length !== 0">班团经历</h3>
+      <el-table :data="clubValue" tooltip-effect="dark" :style="{ 'width': '90%', 'margin': ' 10px 5%' }" border
+        v-show="this.switch === 2 && clubValue.length !== 0">
         <el-table-column prop="JobName" label="工作名称"></el-table-column>
         <el-table-column prop="OrgName" label="组织名称"></el-table-column>
         <el-table-column prop="OrgLevel" label="组织等级"></el-table-column>
         <el-table-column prop="StartAt" label="开始时间"></el-table-column>
         <el-table-column prop="EndAt" label="结束时间"></el-table-column>
       </el-table>
-      <h3 style="margin-left: 5%" v-show="this.switch===2 && volunValue.length !== 0">志愿经历</h3>
-      <el-table
-        :data="volunValue"
-        tooltip-effect="dark"
-        :style="{'width': '90%', 'margin': ' 10px 5%'}"
-        border
-        v-show="this.switch===2 && volunValue.length !== 0"
-      >
+      <h3 style="margin-left: 5%" v-show="this.switch === 2 && volunValue.length !== 0">志愿经历</h3>
+      <el-table :data="volunValue" tooltip-effect="dark" :style="{ 'width': '90%', 'margin': ' 10px 5%' }" border
+        v-show="this.switch === 2 && volunValue.length !== 0">
         <el-table-column prop="ActName" label="活动名称"></el-table-column>
         <el-table-column prop="Content" label="活动内容"></el-table-column>
         <el-table-column prop="ActDate" label="活动日期"></el-table-column>
         <el-table-column prop="ActLength" label="志愿时长"></el-table-column>
       </el-table>
-      <h3 style="margin-left: 5%" v-show="this.switch===2 && internshipValue.length !== 0">实习经历</h3>
-      <el-table
-        :data="internshipValue"
-        tooltip-effect="dark"
-        :style="{'width': '90%', 'margin': ' 10px 5%'}"
-        border
-        v-show="this.switch === 2 && internshipValue.length !== 0"
-      >
+      <h3 style="margin-left: 5%" v-show="this.switch === 2 && internshipValue.length !== 0">实习经历</h3>
+      <el-table :data="internshipValue" tooltip-effect="dark" :style="{ 'width': '90%', 'margin': ' 10px 5%' }" border
+        v-show="this.switch === 2 && internshipValue.length !== 0">
         <el-table-column prop="JobName" label="岗位名称"></el-table-column>
         <el-table-column prop="CompanyName" label="公司名称"></el-table-column>
         <el-table-column prop="WorkLocation" label="实习地点"></el-table-column>
@@ -501,14 +345,10 @@
       </span>
       <span>
         <el-popover placement="bottom" width="500" trigger="hover" :content="shareLink">
-          <i id="shareLink" slot="reference">{{shareLink}}</i>
+          <i id="shareLink" slot="reference">{{ shareLink }}</i>
         </el-popover>
         <el-tooltip class="item" effect="dark" content="复制" placement="right">
-          <el-button
-            v-clipboard:copy="shareLink"
-            v-clipboard:success="onCopy"
-            v-clipboard:error="onCopyError"
-          >
+          <el-button @click="ddddd">
             <i class="el-icon-document-copy"></i>
           </el-button>
         </el-tooltip>
@@ -635,6 +475,20 @@ export default {
   props: ["wh", "file"],
   components: { mavonEditor },
   methods: {
+    ddddd() {
+      navigator.clipboard.writeText("ddddddd").then(() => {
+        this.$notify({
+          title: "成功",
+          message: "复制成功,快去分享吧",
+          type: "success"
+        });
+      }, () => {
+        this.$notify.error({
+          title: "错误",
+          message: "复制失败,请手动选中复制"
+        });
+      });
+    },
     handleSelectionChange(val) {
       this.ruleForm.rankType = [];
       val.forEach(item => {
@@ -690,21 +544,6 @@ export default {
     CheckedChange(val) {
       this.checkAll = val.length === this.profileDataValue.length;
       this.isIndeterminate = val.length > 0 && val.length < this.profileDataValue.length;
-    },
-    //复制成功提示
-    onCopy() {
-      this.$notify({
-        title: "成功",
-        message: "复制成功,快去分享吧",
-        type: "success"
-      });
-    },
-    //复制失败提示
-    onCopyError() {
-      this.$notify.error({
-        title: "错误",
-        message: "复制失败,请手动选中复制"
-      });
     },
     //关闭分享成功的dialog
     closeDialog() {
@@ -1206,32 +1045,40 @@ export default {
   border-radius: 10px;
   overflow: hidden;
 }
+
 .upload,
 .next {
   margin: 30px 0 0 calc(50% - 180px);
   width: 360px;
 }
+
 .info-select {
   margin: 40px;
 }
+
 .line {
   text-align: center;
   margin-top: 50px;
 }
+
 .el-checkbox {
   width: 300px;
   margin-right: 20px;
 }
+
 .el-dialog span:nth-child(2) {
   display: inline-block;
 }
+
 .el-dialog span:nth-child(2) span {
   display: inline-block;
   margin: 0;
 }
+
 .el-dialog span i:nth-child(2) {
   cursor: pointer;
 }
+
 .el-dialog span .el-button:nth-child(2) {
   vertical-align: text-top;
   border: none;
@@ -1241,6 +1088,7 @@ export default {
   text-align: center;
   line-height: 14px;
 }
+
 #shareLink {
   display: inline-block;
   cursor: pointer;
@@ -1255,6 +1103,7 @@ export default {
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
 }
+
 .table {
   margin: 0 1%;
   border: 1px solid rgb(221, 221, 221);
@@ -1264,10 +1113,12 @@ export default {
   border-collapse: collapse;
   box-sizing: border-box;
 }
+
 .table div {
   position: absolute;
   box-sizing: border-box;
 }
+
 .title {
   display: inline-block;
   margin: 0;
@@ -1283,6 +1134,7 @@ export default {
   border-collapse: collapse;
   box-sizing: border-box;
 }
+
 #hash_content {
   display: inline-block;
   width: 810px;
@@ -1292,19 +1144,18 @@ export default {
   text-align: center;
   border-bottom: 1px solid #ccc;
   box-sizing: border-box;
-  background: linear-gradient(
-    -45deg,
-    rgba(212, 212, 212, 0.5) 0,
-    rgba(212, 212, 212, 0.5) 25%,
-    transparent 25%,
-    transparent 50%,
-    rgba(212, 212, 212, 0.5) 50%,
-    rgba(212, 212, 212, 0.5) 75%,
-    transparent 75%,
-    transparent
-  );
+  background: linear-gradient(-45deg,
+      rgba(212, 212, 212, 0.5) 0,
+      rgba(212, 212, 212, 0.5) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(212, 212, 212, 0.5) 50%,
+      rgba(212, 212, 212, 0.5) 75%,
+      transparent 75%,
+      transparent);
   background-size: 30px 30px;
 }
+
 .content {
   display: inline-block;
   width: 158px;
@@ -1315,30 +1166,37 @@ export default {
   box-sizing: border-box;
   border-right: 1px solid #ccc;
 }
+
 .hash .title {
   width: 174px;
 }
+
 .name {
   height: 60px;
   top: 60px;
 }
+
 .sex {
   top: 60px;
   left: 246px;
 }
+
 .nation {
   top: 60px;
   left: 492px;
 }
+
 .staffID {
   left: 738px;
   top: 60px;
 }
+
 .staffID .content,
 .majorName .content,
 .schoolCode .content {
   border-right: none;
 }
+
 .pic {
   left: 984px;
   width: 180px;
@@ -1346,48 +1204,60 @@ export default {
   border-left: 1px solid #ccc;
   background-size: 180px !important;
 }
+
 .className {
   top: 120px;
 }
+
 .classCode {
   top: 120px;
   left: 246px;
 }
+
 .majorCode {
   top: 120px;
   left: 492px;
 }
+
 .majorName {
   top: 120px;
   left: 738px;
 }
+
 .unitCode {
   top: 180px;
 }
+
 .unitCode .content,
 .unitCode .title,
 .schoolCode .content,
 .schoolCode .title {
   border-bottom: none;
 }
+
 .unitName {
   top: 180px;
   left: 246px;
 }
+
 .unitName .title {
   border-bottom: none;
 }
+
 .unitName .content {
   width: 404px;
   border-bottom: none;
 }
+
 .schoolCode {
   top: 180px;
   left: 738px;
 }
+
 .score {
   top: 240px;
 }
+
 .score .title {
   width: 100px;
   /* height: 500px; */
@@ -1397,6 +1267,7 @@ export default {
   padding: 0 40px;
   margin-top: 0;
 }
+
 .score .score_content {
   position: relative;
   width: 1064px;
@@ -1406,6 +1277,7 @@ export default {
   border-bottom: 1px solid #ccc;
   box-sizing: border-box;
 }
+
 /* .score_content {
   display:flex !important;
   align-items:center;
@@ -1423,10 +1295,12 @@ export default {
   background-color: rgb(249, 249, 249);
   box-sizing: content-box;
 }
+
 .score_content .course_name {
   border-left: none;
   width: 101px;
 }
+
 .score_content .course_name_value,
 .score_content .course_score_value,
 .score_content .course_gp_value {
@@ -1446,6 +1320,7 @@ export default {
   -o-text-overflow: ellipsis; */
   margin: 0;
 }
+
 .score_content .course_name_value {
   text-indent: 3px;
   cursor: pointer;
@@ -1454,6 +1329,7 @@ export default {
   font-size: 10px;
   width: 101px;
 }
+
 .score_content .score_value {
   /* overflow: auto; */
   background-color: #fff;
@@ -1463,6 +1339,7 @@ export default {
   border: none;
   margin: 0;
 }
+
 .part1,
 .part2,
 .part3,
@@ -1471,16 +1348,20 @@ export default {
   border-right: 1px solid rgb(134, 134, 134) !important;
   width: 266px;
 }
+
 .part2 {
   margin-left: 266px !important;
 }
+
 .part3 {
   margin-left: 532px !important;
 }
+
 .part4 {
   border-right: none !important;
   margin-left: 798px !important;
 }
+
 .level .title,
 .reward .title {
   width: 100px;
@@ -1489,6 +1370,7 @@ export default {
   text-align: center;
   padding: 0 40px;
 }
+
 .level .level_content,
 .reward .reward_content {
   position: relative;
@@ -1499,6 +1381,7 @@ export default {
   border-bottom: 1px solid rgb(230, 230, 230);
   box-sizing: border-box;
 }
+
 .level .level_name,
 .level .level_score,
 .level .level_year,
@@ -1519,6 +1402,7 @@ export default {
   background-color: rgb(249, 249, 249);
   box-sizing: content-box;
 }
+
 .reward .reward_name,
 .reward .reward_level,
 .reward .reward_year,
@@ -1527,10 +1411,12 @@ export default {
 .reward .race_year {
   width: 176px;
 }
+
 .level .level_year,
 .reward .reward_year {
   border-right: none;
 }
+
 .level .level_value,
 .reward .reward_value,
 .reward .race_value {
@@ -1540,10 +1426,12 @@ export default {
   height: 41px;
   border-bottom: 1px solid rgb(230, 230, 230) !important;
 }
+
 .reward .reward_value,
 .reward .race_value {
   width: 532px;
 }
+
 .level_value span,
 .reward_value span,
 .race_value span {
@@ -1557,21 +1445,26 @@ export default {
   overflow: hidden;
   box-sizing: content-box;
 }
+
 .level_value .level_year_value,
 .reward_value .reward_year_value {
   border-right: none;
 }
+
 .rewardPart,
 .racePart {
   width: 532px;
   font-size: 13px;
 }
+
 .rewardPart {
   border-right: 1px solid rgb(134, 134, 134);
 }
+
 .racePart {
   margin-left: 532px;
 }
+
 .reward h4 {
   margin: 0;
   display: inline-block;
@@ -1582,12 +1475,14 @@ export default {
   background-color: rgb(249, 249, 249);
   border-bottom: 1px solid #ccc;
 }
+
 .reward .reward_name,
 .reward .reward_name_value,
 .reward .race_name,
 .reward .race_name_value {
   width: 269px;
 }
+
 .reward .reward_level,
 .reward .reward_year,
 .reward .reward_level_value,
@@ -1598,30 +1493,36 @@ export default {
 .reward .race_year_value {
   width: 130px;
 }
+
 .reward .race_year,
 .reward .race_year_value {
   width: 131px;
   border-right: none;
 }
+
 .info {
   top: 740px;
   width: 100%;
   height: 259px;
 }
+
 .info .title {
   width: 100px;
   height: 259px;
   border-bottom: none;
   padding: 10px 40px;
 }
+
 .info_content {
   margin: 70px 120px;
 }
+
 .end_time {
   width: 200px;
   height: 200px;
   margin: 100px 0 0 900px;
 }
+
 .info_content span,
 .end_time span {
   display: block;
@@ -1630,9 +1531,11 @@ export default {
   margin: 10px 0px;
   font-weight: 700;
 }
+
 .end_time span {
   color: #ff0000;
 }
+
 #mycanvas {
   width: 1166px;
   margin: 0 5%;
@@ -1643,23 +1546,29 @@ export default {
 .el-dialog {
   width: 1200px;
 }
+
 .el-dialog__body {
   padding: 10px 0;
 }
+
 .el-form-item .el-form-item__label {
   width: 150px;
 }
+
 .message_box_confirm {
   word-break: break-all;
 }
+
 .share .el-dialog {
   min-width: 598px;
 }
+
 .share .el-dialog__body {
   min-width: 480px;
   font-size: 18px;
   padding: 10px 30px;
 }
+
 .share .el-dialog__body span {
   display: block;
   height: 30px;
@@ -1670,6 +1579,7 @@ export default {
 .el-dialog .v-note-edit {
   display: none !important;
 }
+
 .md .v-note-show,
 .el-dialog .v-note-show {
   flex-basis: 100% !important;

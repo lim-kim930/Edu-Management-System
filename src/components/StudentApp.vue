@@ -6,59 +6,27 @@
         <span>教务—学业分享系统</span>
       </div>
       <div class="user">
-        <el-badge
-          v-if="file !== ''"
-          is-dot
-          :hidden="downloaded"
-          class="item"
-          style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important"
-        >
-          <i
-            :title="downloaded?'下载学业文件':'新的学业文件未下载'"
-            class="el-icon-download"
-            style="font-size: 20px; color: #fff; cursor: pointer;"
-            @click="downloadFile('学业文件.enc')"
-          ></i>
+        <el-badge v-if="file !== ''" is-dot :hidden="downloaded" class="item"
+          style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important">
+          <i :title="downloaded ? '下载学业文件' : '新的学业文件未下载'" class="el-icon-download"
+            style="font-size: 20px; color: #fff; cursor: pointer;" @click="downloadFile('学业文件.enc')"></i>
         </el-badge>
-        <el-badge
-          v-if="file === ''"
-          :hidden="true"
-          class="item"
-          style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important"
-        >
-          <el-upload
-            ref="file-upload"
-            class="upload"
-            action="#"
-            :http-request="uploadFile"
-            :limit="1"
-            accept=".enc"
-            :show-file-list="false"
-          >
+        <el-badge v-if="file === ''" :hidden="true" class="item"
+          style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important">
+          <el-upload ref="file-upload" class="upload" action="#" :http-request="uploadFile" :limit="1" accept=".enc"
+            :show-file-list="false">
             <i class="el-icon-upload2" title="上传学业文件" style="color: #fff; font-size:20px"></i>
           </el-upload>
         </el-badge>
-        <el-badge
-          :value="received"
-          :hidden="received === 0"
-          class="item"
-          style="width: 30px; height: 30px; margin-right: 20px; line-height: 30px !important"
-        >
-          <i
-            title="消息中心"
-            class="el-icon-message el-dropdown-link"
-            style="font-size: 20px; color: #fff; cursor: pointer;"
-            @click="msgRouteSwitch('received')"
-          ></i>
+        <el-badge :value="received" :hidden="received === 0" class="item"
+          style="width: 30px; height: 30px; margin-right: 20px; line-height: 30px !important">
+          <i title="消息中心" class="el-icon-message el-dropdown-link"
+            style="font-size: 20px; color: #fff; cursor: pointer;" @click="msgRouteSwitch('received')"></i>
         </el-badge>
         <el-avatar :size="25" :src="circleUrl"></el-avatar>
-        <span style="color: #fff;" id="uname">{{uName === null?"":uName + " |"}}</span>
-        <el-link
-          :underline="false"
-          @click="logOut()"
-          style="font-size: 15px; color: #fff; margin-top: -4px"
-        >
-          {{uName === null?"登录":"退出登录"}}
+        <span style="color: #fff;" id="uname">{{ uName === null ? "" : uName + " |" }}</span>
+        <el-link :underline="false" @click="logOut()" style="font-size: 15px; color: #fff; margin-top: -4px">
+          {{ uName === null ? "登录" : "退出登录" }}
           <i class="el-icon-caret-right"></i>
         </el-link>
       </div>
@@ -66,37 +34,21 @@
     <!-- 主体 -->
     <el-container>
       <!-- 侧边栏 -->
-      <el-aside :style="{ 'height': wh - 100 + 'px', 'width': isCollapse?'64px':'240px' }">
+      <el-aside :style="{ 'height': vh - 100 + 'px', 'width': isCollapse ? '64px' : '240px' }">
         <el-row class="tac">
           <el-col :span="24">
-            <el-menu
-              :default-active="activeIndex"
-              @select="indexRouteSwitch"
-              :collapse="isCollapse"
-              background-color="#fff"
-              text-color="#3a4b56"
-              active-text-color="#409eff"
-              class="aside"
-            >
+            <el-menu :default-active="activeIndex" @select="indexRouteSwitch" :collapse="isCollapse"
+              background-color="#fff" text-color="#3a4b56" active-text-color="#409eff" class="aside">
               <el-submenu index="1">
                 <template slot="title">
                   <i class="el-icon-s-grid"></i>
                   <span style="font-size: 20px">信息管理</span>
                 </template>
-                <el-menu-item
-                  index="1-1"
-                  style="padding:0 0 0 80px; font-size: 18px !important"
-                >信息确认</el-menu-item>
-                <el-menu-item
-                  index="1-2"
-                  style="padding:0 0 0 80px; font-size: 18px !important"
-                  :disabled="!xjConfirmed"
-                >成绩更改</el-menu-item>
-                <el-menu-item
-                  index="1-3"
-                  style="padding:0 0 0 80px; font-size: 18px !important"
-                  :disabled="!xjConfirmed"
-                >档案重置</el-menu-item>
+                <el-menu-item index="1-1" style="padding:0 0 0 80px; font-size: 18px !important">信息确认</el-menu-item>
+                <el-menu-item index="1-2" style="padding:0 0 0 80px; font-size: 18px !important"
+                  :disabled="!xjConfirmed">成绩更改</el-menu-item>
+                <el-menu-item index="1-3" style="padding:0 0 0 80px; font-size: 18px !important"
+                  :disabled="!xjConfirmed">档案重置</el-menu-item>
               </el-submenu>
               <el-menu-item index="2" :disabled="!xjConfirmed">
                 <i class="el-icon-share"></i>
@@ -121,73 +73,52 @@
             </el-menu>
           </el-col>
         </el-row>
-        <span
-          @click="isCollapse = !isCollapse"
-          :title="isCollapse?'展开':'收起'"
-          class="collapse"
-          :style="{'width': isCollapse?'64px':'240px'}"
-        >
-          <i style="font-size: 14px" :class="isCollapse?'el-icon-arrow-right':'el-icon-arrow-left'">
-            <span :style="{'font-size': isCollapse?'0':'14px'}">{{isCollapse?"":"点击收起"}}</span>
+        <span @click="isCollapse = !isCollapse" :title="isCollapse ? '展开' : '收起'" class="collapse"
+          :style="{ 'width': isCollapse ? '64px' : '240px' }">
+          <i style="font-size: 14px" :class="isCollapse ? 'el-icon-arrow-right' : 'el-icon-arrow-left'">
+            <span :style="{ 'font-size': isCollapse ? '0' : '14px' }">{{ isCollapse ? "" : "点击收起" }}</span>
           </i>
         </span>
       </el-aside>
       <!-- 内容 -->
-      <el-main :style="{'height': this.wh - 80 + 'px'}">
-        <router-view
-          v-loading="loading"
-          element-loading-text="拼命加载中"
-          @func="getFile"
-          @func2="getConfirmed"
-          @func3="getReceived"
-          @func4="getFrequency"
-          @func5="getDownloaded"
-          :frequency="reqFrequency"
-          :file="file"
-          :xjConfirmed="xjConfirmed"
-          :received="received"
-          :wh="wh"
-        ></router-view>
+      <el-main :style="{ 'height': this.vh - 80 + 'px' }">
+        <router-view v-loading="loading" element-loading-text="拼命加载中" @func="getFile" @func2="getConfirmed"
+          @func3="getReceived" @func4="getFrequency" @func5="getDownloaded" :frequency="reqFrequency" :file="file"
+          :xjConfirmed="xjConfirmed" :received="received" :wh="vh"></router-view>
       </el-main>
-      <el-drawer
-        :show-close="false"
-        :with-header="false"
-        :visible.sync="noticeShow"
-        direction="rtl"
-        size="50%"
-        :before-close="beforeClose"
-      >
+      <el-drawer :show-close="false" :with-header="false" :visible="noticeShow" direction="rtl" size="50%">
         <h2 style="text-align: center; padding: 10px; user-select: none;">首次使用须知! ! ! !</h2>
-        <el-alert
-          style="font-size: 16px"
-          title="内容不多, 但为了避免影响使用体验, 请仔细阅读哦"
-          type="warning"
-          :wrapperClosable="false"
-          show-icon
-          :closable="false"
-        ></el-alert>
+        <el-alert style="font-size: 16px" title="内容不多, 但为了避免影响使用体验, 请仔细阅读哦" type="warning" :wrapperClosable="false"
+          show-icon :closable="false"></el-alert>
         <div style="padding: 20px 10px; color: #303133">
-          <h3 style="text-indent: 1em">1.首次进入系统后,也就是在你关闭这个须知以后, 会被强制进入进行第一步————学籍确认</h3>
-          <h3>检查信息无误并点击确认后, 会进入加载状态, 这个过程会有点慢, 但只会进行这一次, 所以还请耐心等待加载完毕</h3>
-          <h3>然后请并务必按照提示下载和保存好一个叫做学业文件.enc的文件, 它存储了你的所有信息</h3>
-          <h3>因此它是你完整使用这个系统的前提, 并且一旦丢失将无法找回, 你写入的信息也将随之丢失</h3>
-          <el-divider>我是分割线</el-divider>
+          <h3 style="text-indent: 1em">1.首次进入系统后, 会被强制进行第一步————学籍确认, 在完成之前你将不能使用其他功能。</h3>
+          <h3>在检查信息无误并点击确认后, 会进入有点漫长的加载状态, 但只会进行这一次, 所以还请耐心等待加载完毕。</h3>
+          <h3>然后请并务必按照提示, 下载和保存好一个叫做"学业文件.enc"的文件, 它存储了你以后确认和写入的所有信息</h3>
+          <h3>因此它是你完整使用这个系统的前提, 并且一旦丢失将无法找回, 你写入的信息也将随之丢失。</h3>
+          <el-divider>~</el-divider>
           <h3 style="text-indent: 1em">2.在每确认/写入一次文件后, 系统内保存的文件内容都会更新, 你可以根据提示选择是否下载新的文件到本地</h3>
-          <h3>如果选择下载, 因为浏览器或设置的不同, 请根据自己的情况保存好新的文件, 旧的文件就失效了, 可以直接替换掉</h3>
-          <h3>如果选择不下载, 可以点击弹框外任意位置来关闭, 然后继续进行其他操作, 但请不要忘记你还有新的文件没有下载, 在页面右上角也会有红点提示</h3>
-          <h3>如果你未下载最新的文件, 但尝试退出登录、刷新、关闭标签页或者浏览器时, 会收到浏览器的提示, 此时请取消退出操作然后点击下载按钮进行下载</h3>
-          <el-divider>我是分割线</el-divider>
-          <h3
-            style="text-indent: 1em"
-          >3.使用2k等高分辨率屏幕的小伙伴往往会调大显示的缩放比例, 而这样你就会发现页面出奇的'大'和'怪', 有各种各样的滚动条</h3>
-          <h3>所以为了不影响使用, 请使用 ctrl(command)+鼠标滚轮下滑 或 运算符'-', 缩小浏览器页面的缩放比例, 使得当前这个页面不出现滚动条为最佳</h3>
+          <h3>如果选择下载, 因为浏览器或设置的不同, 请根据自己的情况保存好新的文件, 旧的文件也就失效了, 可以直接替换掉</h3>
+          <h3>如果选择不下载, 可以关闭提示弹窗, 然后继续进行其他操作, 但请不要忘记你还有新的文件没有下载, 在页面右上角也会有红点提示</h3>
+          <h3>如果你未下载最新的文件, 在尝试退出登录、刷新、关闭标签页或者浏览器时, 会收到浏览器的提示, 此时请取消退出操作, 然后点击下载按钮进行下载</h3>
+          <el-divider>~</el-divider>
+          <h3 style="text-indent: 1em">3.使用2k等高分辨率屏幕的小伙伴往往会调大系统显示的缩放比例, 而这样你可能就会发现页面显得'大'和'怪', 有各种各样的滚动条</h3>
+          <h3>所以为了不影响使用体验, 请缩小浏览器页面的缩放比例(
+            <el-link target="_blank" type="primary" href="https://support.apple.com/zh-cn/guide/safari/cpsh003/mac">Mac:
+              Safari</el-link>,
+            <el-link target="_blank" type="primary"
+              href="https://support.microsoft.com/zh-cn/microsoft-edge/microsoft-edge-%E4%B8%AD%E7%9A%84%E8%BE%85%E5%8A%A9%E5%8A%9F%E8%83%BD-4c696192-338e-9465-b2cd-bd9b698ad19a">
+              Win: Edge/Chrome</el-link>),
+            使得当前这个页面不出现滚动条为最佳
+          </h3>
         </div>
-        <el-button style="margin: 20px 0 20px 20px" plain type="primary" @click="closeDrawer">我知道啦</el-button>
+        <el-button style="margin: 20px 0 20px 20px" plain type="primary" @click="noticeShow = false;">我知道啦</el-button>
       </el-drawer>
     </el-container>
   </el-container>
 </template>
 <script>
+import getOrigionWindowHeight from '../util/viewHeight';
+import { mapState, mapGetters, mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -202,25 +133,26 @@ export default {
       msgTimer: "",
       known: false,
       isCollapse: false,
-      noticeShow: false,
+      noticeShow: true,
       downloaded: true,
-      wh: ""// 屏幕高度
     };
   },
   methods: {
-    beforeClose(done) {
-      if (this.known)
-        done();
+    ...mapMutations({
+      setViewHeight: "view/setHeight"
+    }),
+    // 页面自适应屏幕高度
+    adaptiveHeight() {
+      // 拿到屏幕高度
+      const height = getOrigionWindowHeight();
+      this.setViewHeight(height);
     },
-    closeDrawer() {
-      this.known = true;
-      this.noticeShow = false;
-    },
+    // 前往消息中心
     msgRouteSwitch(command) {
       if (this.xjConfirmed)
         this.$router.push("/message/" + command);
     },
-    // 下载文件
+    // 右上角按钮下载文件
     downloadFile(filename) {
       const Url = URL.createObjectURL(this.file);
       const eleLink = document.createElement("a");
@@ -424,11 +356,16 @@ export default {
         this.$message.error("获取站内信息出错啦,请稍后再试");
         this.loading = false;
       });
-    },
-    windowHeight() {
-      const de = document.documentElement;
-      return self.innerHeight || (de && de.clientHeight) || document.body.clientHeight;
     }
+  },
+  computed: {
+    ...mapState([
+      "view",
+      "xj"
+    ]),
+    ...mapGetters({
+      vh: "view/afterCompared"
+    })
   },
   watch: {
     $route() {
@@ -466,14 +403,14 @@ export default {
         localStorage.setItem("jw_student_file", JSON.stringify(userData));
         this.redirect();
         if (this.xjConfirmed) {
-          if(localStorage.getItem("new_upload_notice") === null){
+          if (localStorage.getItem("new_upload_notice") === null) {
             this.$notify({
               type: "warning",
               title: '提示',
               message: '学业文件上传按钮已统一移至右上角',
               duration: 0,
               offset: 100,
-              onClose: ()=>{localStorage.setItem("new_upload_notice", true);}
+              onClose: () => { localStorage.setItem("new_upload_notice", true); }
             });
           }
           this.getMsg(userData);
@@ -487,7 +424,7 @@ export default {
         }
       }).catch((err) => {
         this.loading = false;
-        if(err.response.data.msg === "unauthorized"){
+        if (err.response.data.msg === "unauthorized") {
           return this.$confirm("您还未登录,请前往登录", "提示", {
             confirmButtonText: "去登录",
             showCancelButton: false,
@@ -521,12 +458,8 @@ export default {
         });
       }
     };
-    // 拿到屏幕高度
-    this.wh = this.windowHeight() < 650 ? 650 : this.windowHeight();
-    document.querySelector(".el-main").style.height = this.wh - 80 + "px";
-    window.onresize = () => {
-      this.wh = this.windowHeight() < 650 ? 650 : this.windowHeight();
-    };
+    this.adaptiveHeight();
+    window.onresize = () => this.adaptiveHeight();
   },
   destroyed() {
     window.onbeforeunload = null;
@@ -545,6 +478,7 @@ export default {
   color: #fff;
   font-weight: 700;
 }
+
 .el-header {
   background: url(../assets/img/logo.png) no-repeat;
   background-position: 20px;
@@ -555,6 +489,7 @@ export default {
   height: 80px !important;
   min-width: 1500px;
 }
+
 .user {
   float: right;
   width: 300px;
@@ -563,22 +498,27 @@ export default {
   text-align: center;
   line-height: 80px;
 }
+
 #uname {
   display: inline-block;
   margin: 0 5px;
 }
+
 .el-container {
   background-color: rgba(224, 224, 224, 0.685);
   min-width: 1500px !important;
 }
+
 .el-main {
   padding: 0 !important;
   background-size: 100%;
   height: 800px;
 }
+
 .el-header .el-menu-item {
   padding: 0 30px !important;
 }
+
 .el-aside {
   margin-top: 1px;
   background-color: #fff;
@@ -587,6 +527,7 @@ export default {
   transition: all 0.5s;
   position: relative;
 }
+
 .el-aside .collapse {
   cursor: pointer;
   text-align: center;
@@ -600,32 +541,41 @@ export default {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
+
 .el-aside .collapse span {
   transition: all 0.3s;
   user-select: none;
 }
+
 .el-aside .collapse:hover {
   background-color: #ccc;
 }
+
 .aside .el-menu-item {
   height: 60px !important;
   line-height: 60px !important;
   padding-left: 10px;
 }
-.el-menu--collapse .el-menu .el-submenu, .el-menu--popup {
+
+.el-menu--collapse .el-menu .el-submenu,
+.el-menu--popup {
   width: 100px !important;
   min-width: 100px !important;
 }
+
 .el-menu--popup li {
   padding-left: 0 !important;
   text-align: center;
 }
+
 .el-avatar {
   vertical-align: middle !important;
 }
+
 .el-aside ul {
   border: none;
 }
+
 .el-drawer h3 {
   padding: 5px;
   line-height: 25px;
@@ -640,9 +590,11 @@ export default {
   outline: none;
   box-sizing: border-box;
 }
+
 .item .el-badge__content {
   line-height: 16px;
 }
+
 .el-badge .is-dot {
   border: none;
 }

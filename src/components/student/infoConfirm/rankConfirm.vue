@@ -1,5 +1,6 @@
 <template>
   <el-form ref="form" class="form1" v-loading="loading" element-loading-text="拼命加载中">
+    <br>
     <span v-show="loading2" class="loadmask">
       <i style="dispaly: block" class="el-icon-loading"></i>
       <span>正在为您努力计算排名,请稍等</span>
