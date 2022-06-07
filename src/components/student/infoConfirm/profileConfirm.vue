@@ -2,32 +2,21 @@
   <el-form ref="form" v-loading="loading" :element-loading-text="loadText" class="form1">
     <el-descriptions class="margin-top" :column="3" border v-if="data">
       <el-descriptions-item v-for="item in data" v-bind:key="item.id">
-        <template slot="label">{{item.VisibleName}}</template>
-        {{item.Value}}
+        <template slot="label">{{ item.VisibleName }}</template>
+        {{ item.Value }}
       </el-descriptions-item>
       <el-descriptions-item v-if="pic.VisibleName">
-        <template slot="label">{{pic.VisibleName}}</template>
-        <img :src="'data:image/png;base64,'+pic.Value" alt="照片" style="width: 100px;" />
+        <template slot="label">{{ pic.VisibleName }}</template>
+        <img :src="'data:image/png;base64,' + pic.Value" alt="照片" style="width: 100px;" />
       </el-descriptions-item>
     </el-descriptions>
-    <el-result icon="success" title="学籍信息已确认" v-show="confirmed"></el-result>
-    <el-button
-      type="primary"
-      @click="submit()"
-      plain
-      v-show="!confirmed && Object.keys(data).length !== 0"
-      :disabled="btnDisabled"
-    >确认信息</el-button>
-    <el-button type="info" plain @click="feedbackDialogShow = true" v-show="!confirmed && Object.keys(data).length !== 0">错误反馈</el-button>
-    <el-drawer
-      title="学籍信息错误反馈提示"
-      :visible.sync="feedbackDialogShow"
-      direction="rtl"
-      custom-class="demo-drawer"
-      ref="drawer"
-      :show-close="false"
-      :close-on-press-escape="false"
-    >
+    <el-result icon="success" title="学籍信息已确认" v-if="confirmed"></el-result>
+    <el-button type="primary" @click="submit()" plain v-show="!confirmed && Object.keys(data).length !== 0"
+      :disabled="btnDisabled">确认信息</el-button>
+    <el-button type="info" plain @click="feedbackDialogShow = true"
+      v-show="!confirmed && Object.keys(data).length !== 0">错误反馈</el-button>
+    <el-drawer title="学籍信息错误反馈提示" :visible.sync="feedbackDialogShow" direction="rtl" custom-class="demo-drawer"
+      ref="drawer" :show-close="false" :close-on-press-escape="false">
       <h4>请联系教务处修改后返回系统，检查无误后继续完成学籍确认</h4>
       <h4>教务处联系信息:</h4>
       <div class="content">
@@ -49,6 +38,7 @@
   </el-form>
 </template>
 <script>
+import { mapGetters, mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -56,7 +46,6 @@ export default {
       staffID: "",
       feedbackDialogShow: false,// 错误反馈显示
       loading: false,// form加载
-      confirmed: "",// 学籍确认状态
       btnDisabled: true,// 确认信息按钮禁用
       blockInfoDialogShow: false,// 交易详情显示
       data: {},// 学籍信息数据,除去照片信息
@@ -64,8 +53,18 @@ export default {
       blockDataInfo: []// 交易详情信息数据
     };
   },
-  props: ["xjConfirmed"],// 拿到infoConfirmed页面学籍确认状态
+  computed: {
+    ...mapGetters({
+      confirmed: "student/getConfirmed",
+      globalFile: "student/getFile"
+    })
+  },
   methods: {
+    ...mapMutations({
+      setFileDownloaded: "student/setDownloaded",
+      setFile: "student/setFile",
+      setConfirmed: "student/setConfirmed"
+    }),
     // 获取文件
     // Base64ToBlob(dataurl) {
     //   var arr = dataurl.split(','),
@@ -97,7 +96,7 @@ export default {
     // 利用a标签下载文件,并公开部分信息
     downloadFile(Url, filename) {
       let data = new FormData();
-      data.append("dataFile", this.file);
+      data.append("dataFile", this.globalFile);
       // 此时默认公开部分信息
       this.loadText = "正在为您公开部分信息,此过程较慢,请耐心等待";
       data.append("body", JSON.stringify({ "ShareItems": [{ "Path": ["profile", this.staffID, "Name"] }, { "Path": ["profile", this.staffID, "UnitName"] }, { "Path": ["profile", this.staffID, "MajorName"] }, { "Path": ["profile", this.staffID, "StaffID"] }, { "Path": ["profile", this.staffID, "MajorCode"] }, { "Path": ["profile", this.staffID, "UnitCode"] }, { "Path": ["profile", this.staffID, "ClassCode"] }] }));
@@ -140,8 +139,7 @@ export default {
       document.body.appendChild(eleLink);
       eleLink.click();
       document.body.removeChild(eleLink);
-      this.confirmed = true;
-      this.$emit("func2", this.confirmed);
+      this.setConfirmed(true);
     },
     // 确认学籍
     submit() {
@@ -184,8 +182,9 @@ export default {
                 name: translation[blockName[i]]
               });
             //最后更新页面中的全局file
-            this.file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
-            var Url = URL.createObjectURL(this.file);
+            this.setFile(this.dataURLtoFile(response.data.data.DataFile, "学业文件"));
+            this.setFileDownloaded(false);
+            const Url = URL.createObjectURL(this.globalFile);
             this.$confirm("学籍信息确认成功! 请务必下载并保存好您的学业文件,以免档案丢失将无法正常使用本系统", "提示", {
               confirmButtonText: "确定并下载",
               cancelButtonText: "查看此次交易详情",
@@ -199,18 +198,18 @@ export default {
               dangerouslyUseHTMLString: true,
               type: "success"
             }).then(() => {
-              this.$emit("func", this.file);
               this.downloadFile(Url, "学业文件.enc");
+              this.setFileDownloaded(true);
             }).catch(() => {
-              this.$emit("func", this.file);
               this.downloadFile(Url, "学业文件.enc");
+              this.setFileDownloaded(true);
             });
           }).catch(() => {
-            this.$message.error("出错啦,请稍后再试");
+            this.$message.error("确认学籍信息出错啦,请稍后再试");
             this.loading = false;
           });
         }).catch(() => {
-          this.$message.error("出错啦,请稍后再试");
+          this.$message.error("生成初始文件出错啦,请稍后再试");
           this.loading = false;
         });
       }).catch(() => {
@@ -219,13 +218,6 @@ export default {
           message: "确认操作已取消"
         });
       });
-    }
-  },
-  watch: {
-    xjConfirmed: {
-      handler(newValue) {
-        this.confirmed = newValue;
-      }
     }
   },
   mounted() {
@@ -241,16 +233,12 @@ export default {
       })
     }).then((response) => {
       this.staffID = response.data.data[0].Key;
-      this.confirmed = this.xjConfirmed;
-      this.$emit("func2", this.confirmed);
       this.pic = response.data.data[0].Value.Photo;
       delete response.data.data[0].Value.Photo;// 将照片信息单独拿出放到pic
       this.data = response.data.data[0].Value;
       this.loading = false;
       this.btnDisabled = false;
     }).catch(() => {
-      this.confirmed = this.xjConfirmed;
-      this.$emit("func2", this.confirmed);
       this.$message.error("获取学籍信息出错啦,请稍后再试");
       this.loading = false;
     });
@@ -261,18 +249,23 @@ export default {
 .form1 {
   margin: 0 !important;
 }
+
 .el-descriptions {
   padding: 20px 0;
 }
+
 .demo-drawer__footer {
   text-align: center;
 }
+
 .demo-drawer__footer button {
   width: 100px;
 }
+
 .el-drawer h4 {
   margin: 10px 50px;
 }
+
 .el-drawer .content span {
   margin: 10px 0 0 70px;
   display: block;

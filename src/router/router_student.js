@@ -67,13 +67,11 @@ const router = new VueRouter({
     { path: "/accountManage", component: accountManage }
   ]
 });
-// router.beforeEach((to, from, next) => {
-//   if (!localStorage.getItem("jw_student_file") || JSON.parse(localStorage.getItem("jw_student_file")).xjConfirmed === undefined)
-//     return window.location.reload();
-//   if (to.path !== "/infoConfirm/profileConfirm" && !JSON.parse(localStorage.getItem("jw_student_file")).xjConfirmed) {
-//     return router.push("/infoConfirm/profileConfirm");
-//   }
-//   next();
-// });
+router.beforeEach((to, from, next) => {
+  if (to.path !== "/infoConfirm/profileConfirm" && !JSON.parse(localStorage.getItem("jw_student_file")).xjConfirmed) {
+    return router.push("/infoConfirm/profileConfirm");
+  }
+  next();
+});
 
 export default router;

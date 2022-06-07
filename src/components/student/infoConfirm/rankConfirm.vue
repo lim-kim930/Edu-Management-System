@@ -4,53 +4,32 @@
     <span v-show="loading2" class="loadmask">
       <i style="dispaly: block" class="el-icon-loading"></i>
       <span>正在为您努力计算排名,请稍等</span>
-      <el-progress
-        style="width: 300px; margin-bottom: 10px; display: inline-block"
-        :stroke-width="10"
-        :percentage="percentage"
-      ></el-progress>
+      <el-progress style="width: 300px; margin-bottom: 10px; display: inline-block" :stroke-width="10"
+        :percentage="percentage"></el-progress>
       <br />( 注: 由于GPA信息为实时计算,最终结果可能出现偏差 )
     </span>
     <h4 v-show="JSON.stringify(oldData) !== '{}'" style="margin: 0 0 10px 5px">上次确认的结果:</h4>
     <el-descriptions style="padding: 0;" :column="3" border v-show="oldData">
       <el-descriptions-item v-for="item in oldData" v-bind:key="item.id">
-        <template slot="label">{{item.VisibleName}}</template>
-        {{item.Value}}
+        <template slot="label">{{ item.VisibleName }}</template>
+        {{ item.Value }}
       </el-descriptions-item>
     </el-descriptions>
     <h4 v-show="JSON.stringify(oldData) !== '{}'" style="margin: 10px 0 10px 5px">新计算的结果:</h4>
     <el-descriptions style="padding: 0;" :column="3" border v-show="data">
       <el-descriptions-item v-for="item in data" v-bind:key="item.id">
-        <template slot="label">{{item.VisibleName}}</template>
-        {{item.Value}}
+        <template slot="label">{{ item.VisibleName }}</template>
+        {{ item.Value }}
       </el-descriptions-item>
     </el-descriptions>
-    <el-button
-      type="primary"
-      @click="submit()"
-      plain
-      v-show="!confirmed&&JSON.stringify(data) !== '{}'"
-      :disabled="file===''"
-      style="margin: 10px 0 0 calc(100% - 210px)"
-    >确认信息</el-button>
-    <!-- 使用typeValue、Confirmed和Data.length来判断按钮是否显示和禁用 -->
-    <el-button
-      type="info"
-      @click="dialog = true;"
-      plain
-      v-show="!confirmed&&JSON.stringify(data) !== '{}'"
-    >错误反馈</el-button>
+    <el-button type="primary" @click="submit()" plain v-show="!confirmed && JSON.stringify(data) !== '{}'"
+      :disabled="globalFile === null" style="margin: 10px 0 0 calc(100% - 210px)">确认信息</el-button>
+    <el-button type="info" @click="dialog = true;" plain v-show="!confirmed && JSON.stringify(data) !== '{}'">错误反馈
+    </el-button>
     <el-empty :image-size="150" v-show="JSON.stringify(data) === '{}'" description="未查询到您的排名信息"></el-empty>
     <el-result icon="success" title="排名信息已确认" v-show="confirmed"></el-result>
-    <el-drawer
-      title="排名信息错误反馈提示"
-      :visible.sync="dialog"
-      direction="rtl"
-      custom-class="demo-drawer"
-      ref="drawer"
-      :show-close="false"
-      :close-on-press-escape="false"
-    >
+    <el-drawer title="排名信息错误反馈提示" :visible.sync="dialog" direction="rtl" custom-class="demo-drawer" ref="drawer"
+      :show-close="false" :close-on-press-escape="false">
       <h4>请联系教务处修改后返回系统，检查无误后继续完成排名确认</h4>
       <h4>教务处联系信息:</h4>
       <div class="content">
@@ -72,6 +51,8 @@
   </el-form>
 </template>
 <script>
+import FormData from 'form-data';
+import { mapGetters, mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -79,17 +60,25 @@ export default {
       dialog: false,//错误反馈显示
       loading: false,//form加载
       loading2: false,
-      file: "",//学业文件
       data: {},//信息数据
       oldData: {},
-      confirmed: false,
+      confirmed: false,//排名确认
       secLoading: false,//查询按钮加载
       dialogTableVisible: false,//交易详情显示
       blockDataInfo: []//交易详情信息数据
     };
   },
-  props: ["globalFile"],//拿到infoConfirmed页面file
+  computed: {
+    ...mapGetters({
+      globalFile: "student/getFile"
+    })
+  },
   methods: {
+    ...mapMutations({
+      setFileDownloaded: "student/setDownloaded",
+      setFile: "student/setFile",
+      setConfirmed: "student/setConfirmed"
+    }),
     dataURLtoFile(dataurl, filename) {
       let arr = dataurl.split(","),
         bstr = atob(arr[0]),
@@ -101,7 +90,7 @@ export default {
       return new File([u8arr], filename, { type: "enc" });
     },
     downloadFile(filename) {
-      const Url = URL.createObjectURL(this.file);
+      const Url = URL.createObjectURL(this.globalFile);
       const eleLink = document.createElement("a");
       eleLink.download = filename;
       eleLink.style.display = "none";
@@ -109,8 +98,8 @@ export default {
       document.body.appendChild(eleLink);
       eleLink.click();
       document.body.removeChild(eleLink);
+      this.setFileDownloaded(true);
       setTimeout(() => {
-        this.$emit("func4", true);
         this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
           confirmButtonText: "确定",
           showCancelButton: false,
@@ -120,7 +109,7 @@ export default {
     },
     //根据存的项目名判断确认状态
     checkConfirm() {
-      if (this.file === "") {
+      if (this.globalFile === null) {
         this.confirmed = false;
         return;
       }
@@ -137,7 +126,7 @@ export default {
     getFileInfo() {
       this.loading = true;
       var data = new FormData();
-      data.append("dataFile", this.file);
+      data.append("dataFile", this.globalFile);
       // 拿到学生档案明文
       this.axios({
         method: "post",
@@ -216,10 +205,10 @@ export default {
         type: "warning",
       }).then(() => {
         var data = new FormData();
-        data.append("dataFile", this.file);
+        data.append("dataFile", this.globalFile);
         data.append("condMap", "{\"SchoolCode\": 1,\"StaffID\": " + JSON.parse(localStorage.getItem("jw_student_file")).staffID + "}");
         this.loading = true;
-        this.$emit("func2", false);
+        this.setConfirmed(false);
         this.$emit("func3", 4);
         this.axios({
           method: "put",
@@ -227,6 +216,7 @@ export default {
           headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
           data
         }).then((response) => {
+          this.setFileDownloaded(false);
           var block = response.data.data.TransactionDetail.detail.result[0];
           var blockName = Object.keys(block);
           const translation = {
@@ -243,9 +233,9 @@ export default {
               name: translation[blockName[i]]
             });
           sessionStorage.removeItem("gpa");
-          this.file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
-          this.$emit("func", this.file);
-          this.$emit("func2", true);
+          const file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
+          this.setFile(file);
+          this.setConfirmed(true);
           this.$emit("func3", null);
           this.$confirm("排名信息确认成功! 继续确认请点击任意空白区域", "提示", {
             confirmButtonText: "下载新的学业文件",
@@ -267,7 +257,7 @@ export default {
           this.loading = false;
           this.confirmed = true;
         }).catch(() => {
-          this.$emit("func2", true);
+          this.setConfirmed(true);
           this.$emit("func3", null);
           this.$message.error("出错啦,请稍后再试");
           this.loading = false;
@@ -278,23 +268,10 @@ export default {
     },
   },
   mounted() {
-    if (JSON.parse(localStorage.getItem("jw_student_file")).staffID !== null) {
-      this.file = this.globalFile;
-      if (this.file === "")
-        this.getInfo();
-      else
-        this.getFileInfo();
-    }
+    if (this.globalFile === null)
+      this.getInfo();
     else
-      this.$confirm("您还未登录,请前往登录", "提示", {
-        confirmButtonText: "确定",
-        showCancelButton: false,
-        type: "warning"
-      }).then(() => {
-        window.location.href = "https://edu.limkim.cn/sign";
-      }).catch(() => {
-        window.location.href = "https://edu.limkim.cn/sign";
-      });
+      this.getFileInfo();
   },
 };
 </script>
@@ -304,9 +281,11 @@ export default {
   min-height: 200px;
   position: relative;
 }
+
 .el-table {
   margin: 20px 0;
 }
+
 .upload {
   display: inline-block;
   margin-left: 10px;
@@ -320,12 +299,14 @@ export default {
   color: #409eff;
   border-radius: 5px;
 }
+
 .el-tag {
   height: 40px;
   font-size: 16px;
   line-height: 40px;
   margin: 10px;
 }
+
 .loadmask {
   text-align: center;
   background-color: #fff;
@@ -343,6 +324,7 @@ export default {
 .el-dialog .el-textarea__inner {
   padding-right: 20px;
 }
+
 .el-dialog .el-textarea .el-input__count {
   line-height: 20px;
   height: 20px;

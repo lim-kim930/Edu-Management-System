@@ -1,80 +1,41 @@
 <template>
-  <el-form
-    ref="ruleForm"
-    label-width="100px"
-    v-loading="loading"
-    element-loading-text="拼命加载中"
-    class="form"
-    :style="{'max-height': this.wh - 105 + 'px'}"
-  >
-    <el-menu
-      :default-active="activeIndex"
-      class="el-menu-demo"
-      mode="horizontal"
-      @select="indexRouteSwitch"
-    >
-      <el-menu-item index="1" style="font-size: 18px" :disabled="route!==null&&route!==0">学籍确认</el-menu-item>
-      <el-menu-item
-        index="2"
-        style="font-size: 18px"
-        :disabled="(route===null&&!confirmed)||(route!==null&&route!==1)"
-      >学业成绩确认</el-menu-item>
-      <el-menu-item
-        index="3"
-        style="font-size: 18px"
-        :disabled="(route===null&&!confirmed)||(route!==null&&route!==2)"
-      >综合素质确认</el-menu-item>
-      <el-menu-item
-        index="4"
-        style="font-size: 18px"
-        :disabled="(route===null&&!confirmed)||(route!==null&&route!==4)"
-      >排名确认</el-menu-item>
-      <el-menu-item
-        index="5"
-        style="font-size: 18px"
-        :disabled="(route===null&&!confirmed)||(route!==null&&route!==5)"
-      >毕业确认</el-menu-item>
-      <el-menu-item
-        index="6"
-        style="font-size: 18px"
-        :disabled="(route===null&&!confirmed)||(route!==null&&route!==3)"
-      >个人填写</el-menu-item>
+  <el-form ref="ruleForm" label-width="100px" v-loading="loading" element-loading-text="拼命加载中" class="form"
+    :style="{ 'max-height': this.vh - 105 + 'px' }">
+    <el-menu :default-active="activeIndex" class="header_menu" mode="horizontal" @select="indexRouteSwitch">
+      <el-menu-item index="1" style="font-size: 18px" :disabled="route !== null && route !== 0">学籍确认</el-menu-item>
+      <el-menu-item index="2" style="font-size: 18px" >
+        学业成绩确认</el-menu-item>
+      <el-menu-item index="3" style="font-size: 18px" :disabled="(route === null && !confirmed) || (route !== null && route !== 2)">
+        综合素质确认</el-menu-item>
+      <el-menu-item index="4" style="font-size: 18px" :disabled="(route === null && !confirmed) || (route !== null && route !== 4)">
+        排名确认</el-menu-item>
+      <el-menu-item index="5" style="font-size: 18px" :disabled="(route === null && !confirmed) || (route !== null && route !== 5)">
+        毕业确认</el-menu-item>
+      <el-menu-item index="6" style="font-size: 18px" :disabled="(route === null && !confirmed) || (route !== null && route !== 3)">
+        个人填写</el-menu-item>
     </el-menu>
-    <router-view
-      @func="getFile"
-      @func2="getConfirmed"
-      @func3="getRoute"
-      @func4="getDownloaded"
-      :globalFile="file"
-      :xjConfirmed="xjConfirmed"
-      :wh="wh"
-    ></router-view>
+    <router-view @func3="getRoute" style="padding-top: 60px;"></router-view>
   </el-form>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
       route: null,
       activeIndex: "1",
       loading: false,
-      confirmed: ""// 学籍确认状态
     };
   },
-  props: ["file", "xjConfirmed", "wh"],// 拿到student页面传来的数据
+  computed: {
+    ...mapGetters({
+      vh: "view/afterCompared",
+      confirmed: "student/getConfirmed"
+    })
+  },
   methods: {
-    getFile(file) {
-      this.$emit("func", file);
-    },
     getRoute(route) {
       this.route = route;
-    },
-    getConfirmed(confirmed) {
-      this.confirmed = confirmed;
-      this.$emit("func2", confirmed);
-    },
-    getDownloaded(downloaded) {
-      this.$emit("func5", downloaded);
     },
     indexRouteSwitch(key) {
       switch (key) {
@@ -124,16 +85,9 @@ export default {
   watch: {
     $route() {
       this.redirect();
-    },
-    // 用来规避刷新时主路由并没有得到确认状态的延迟
-    xjConfirmed: {
-      handler(newValue) {
-        this.confirmed = newValue;
-      }
     }
   },
   mounted() {
-    this.confirmed = this.xjConfirmed;
     this.redirect();
   },
 };
@@ -141,6 +95,7 @@ export default {
 
 <style scoped>
 .form {
+  position: relative;
   overflow: auto;
   margin: 10px;
   width: calc(100% - 20px);
@@ -150,5 +105,11 @@ export default {
   border: 1px solid rgba(204, 204, 204, 0.5);
   box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+}
+.header_menu {
+  position: absolute;
+  top: 20px;
+  width: calc(100% - 160px);
+  z-index: 10;
 }
 </style>

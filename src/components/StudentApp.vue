@@ -6,17 +6,17 @@
         <span>教务—学业分享系统</span>
       </div>
       <div class="user">
-        <el-badge v-if="file !== ''" is-dot :hidden="downloaded" class="item"
-          style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important">
-          <i :title="downloaded ? '下载学业文件' : '新的学业文件未下载'" class="el-icon-download"
-            style="font-size: 20px; color: #fff; cursor: pointer;" @click="downloadFile('学业文件.enc')"></i>
-        </el-badge>
-        <el-badge v-if="file === ''" :hidden="true" class="item"
+        <el-badge v-if="globalFile === null" :hidden="true" class="item"
           style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important">
           <el-upload ref="file-upload" class="upload" action="#" :http-request="uploadFile" :limit="1" accept=".enc"
-            :show-file-list="false">
+            :show-file-list="false" :disabled="loading">
             <i class="el-icon-upload2" title="上传学业文件" style="color: #fff; font-size:20px"></i>
           </el-upload>
+        </el-badge>
+        <el-badge v-else is-dot :hidden="fileDownloaded" class="item"
+          style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important">
+          <i :title="fileDownloaded ? '下载学业文件' : '新的学业文件未下载'" class="el-icon-download"
+            style="font-size: 20px; color: #fff; cursor: pointer;" @click="downloadFile('学业文件.enc')"></i>
         </el-badge>
         <el-badge :value="received" :hidden="received === 0" class="item"
           style="width: 30px; height: 30px; margin-right: 20px; line-height: 30px !important">
@@ -82,9 +82,8 @@
       </el-aside>
       <!-- 内容 -->
       <el-main :style="{ 'height': this.vh - 80 + 'px' }">
-        <router-view v-loading="loading" element-loading-text="拼命加载中" @func="getFile" @func2="getConfirmed"
-          @func3="getReceived" @func4="getFrequency" @func5="getDownloaded" :frequency="reqFrequency" :file="file"
-          :xjConfirmed="xjConfirmed" :received="received" :wh="vh"></router-view>
+        <router-view v-loading="loading" element-loading-text="拼命加载中" @func3="getReceived" @func4="getFrequency"
+          :frequency="reqFrequency" :received="received"></router-view>
       </el-main>
       <el-drawer :show-close="false" :with-header="false" :visible="noticeShow" direction="rtl" size="50%">
         <h2 style="text-align: center; padding: 10px; user-select: none;">首次使用须知! ! ! !</h2>
@@ -118,28 +117,38 @@
 </template>
 <script>
 import getOrigionWindowHeight from '../util/viewHeight';
-import { mapState, mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 export default {
   data() {
     return {
       circleUrl: "https://edu.limkim.cn/static/user.png",// 头像url
       activeIndex: "1",// 侧边导航默认选中值
       loading: false,// main的加载
-      uName: "",// 用户名
-      file: "",// 文件
+      uName: null,// 用户名
+      file: null,// 文件
       received: 0,// 收件箱数量
-      xjConfirmed: "",// 学籍确认状态
       reqFrequency: 300,
-      msgTimer: "",
+      msgTimer: null,
       known: false,
       isCollapse: false,
-      noticeShow: true,
+      noticeShow: false,
       downloaded: true,
     };
   },
+  computed: {
+    ...mapGetters({
+      vh: "view/afterCompared",
+      globalFile: "student/getFile",
+      fileDownloaded: "student/getFileDownloaded",
+      xjConfirmed: "student/getConfirmed"
+    })
+  },
   methods: {
     ...mapMutations({
-      setViewHeight: "view/setHeight"
+      setViewHeight: "view/setHeight",
+      setFile: "student/setFile",
+      setFileDownloaded: "student/setDownloaded",
+      setConfirmed: "student/setConfirmed"
     }),
     // 页面自适应屏幕高度
     adaptiveHeight() {
@@ -154,17 +163,18 @@ export default {
     },
     // 右上角按钮下载文件
     downloadFile(filename) {
-      const Url = URL.createObjectURL(this.file);
+      const Url = URL.createObjectURL(this.globalFile);
       const eleLink = document.createElement("a");
       eleLink.download = filename;
       eleLink.style.display = "none";
       eleLink.href = Url;
+      eleLink.target = "_blank";
       document.body.appendChild(eleLink);
       eleLink.click();
       document.body.removeChild(eleLink);
+      this.setFileDownloaded(true);
       setTimeout(() => {
-        this.downloaded = true;
-        this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
+        this.$confirm("学业文件已经开始下载, 请前往浏览器默认下载位置查看, 如未设置, 请手动选择下载路径并妥善保存", "提示", {
           confirmButtonText: "确定",
           showCancelButton: false,
           type: "success"
@@ -178,6 +188,9 @@ export default {
       this.file = file;
     },
     uploadFile(params) {
+      const len = params.file.name.length;
+      if (params.file.name.substr(len - 4, 4) !== ".enc")
+        return this.$message.error("请上传正确的学业文件");
       this.loading = true;
       let data = new FormData();
       data.append("dataFile", params.file);
@@ -188,7 +201,7 @@ export default {
         data
       }).then(() => {
         this.loading = false;
-        this.file = params.file;
+        this.setFile(params.file);
       }).catch((err) => {
         if (err.response.data.msg === "file hash does not equal to chain")
           this.$message.error("学业文件错误或者过期,请检查后再试");
@@ -196,16 +209,16 @@ export default {
           this.$message.error("获取学业文件信息出错啦,请稍后再试");
         this.loading = false;
         this.$refs["file-upload"].clearFiles();
-        this.file = "";
+        this.setFile(null);
       });
     },
     //拿到子组件传来的学籍确认状态,全局存储在student页面
-    getConfirmed(confirmed) {
-      let userData = JSON.parse(localStorage.getItem("jw_student_file"));
-      this.xjConfirmed = confirmed;
-      userData.xjConfirmed = this.xjConfirmed;
-      localStorage.setItem("jw_student_file", JSON.stringify(userData));
-    },
+    // getConfirmed(confirmed) {
+    //   let userData = JSON.parse(localStorage.getItem("jw_student_file"));
+    //   this.xjConfirmed = confirmed;
+    //   userData.xjConfirmed = this.xjConfirmed;
+    //   localStorage.setItem("jw_student_file", JSON.stringify(userData));
+    // },
     getDownloaded(downloaded) {
       this.downloaded = downloaded;
     },
@@ -256,7 +269,7 @@ export default {
         location.href = "https://edu.limkim.cn/sign";
       }
       else {
-        this.$confirm("确定要退出登录吗?" + (this.downloaded ? "" : "你好像还没有下载最新的学业文件到本地"), "提示", {
+        this.$confirm("确定要退出登录吗?" + (this.fileDownloaded ? "" : "你好像还没有下载最新的学业文件到本地"), "提示", {
           confirmButtonText: "确定",
           cancelButtonText: this.file === "" ? "取消" : "现在下载",
           type: "warning"
@@ -274,7 +287,7 @@ export default {
     },
     //根据路由匹配activeIndex
     redirect() {
-      if (this.xjConfirmed)
+      if (this.xjConfirmed === true)
         switch (this.$route.path) {
           case "/infoConfirm/scoreConfirm":
           case "/infoConfirm/rewardConfirm":
@@ -307,7 +320,7 @@ export default {
             this.activeIndex = "6";
             break;
         }
-      else
+      else if (this.xjConfirmed === false)
         switch (this.$route.path) {
           case "/infoConfirm/profileConfirm":
             this.activeIndex = "1-1";
@@ -317,14 +330,19 @@ export default {
               this.$confirm("您还没有确认学籍信息,请确认后再来吧", "提示", {
                 confirmButtonText: "确定",
                 showCancelButton: false,
-                type: "warning"
+                type: "warning",
+                showClose: false,
+                closeOnClickModal: false,
+                closeOnPressEscape: false
               }).then(() => {
-                this.$router.push("/infoConfirm/profileConfirm");
-              }).catch(() => {
                 this.$router.push("/infoConfirm/profileConfirm");
               });
             }, 100);
         }
+      else {
+        this.$router.push("/infoConfirm/profileConfirm");
+        this.activeIndex = "1-1";
+      }
     },
     getMsg(userData) {
       this.axios({
@@ -358,15 +376,6 @@ export default {
       });
     }
   },
-  computed: {
-    ...mapState([
-      "view",
-      "xj"
-    ]),
-    ...mapGetters({
-      vh: "view/afterCompared"
-    })
-  },
   watch: {
     $route() {
       this.redirect();
@@ -374,7 +383,8 @@ export default {
   },
   created() {
     // 判断是否登录
-    if (localStorage.getItem("jw_student_file") === null)
+    if (localStorage.getItem("jw_student_file") === null) {
+      this.redirect();
       this.$confirm("您还未登录,请前往登录", "提示", {
         confirmButtonText: "去登录",
         showCancelButton: false,
@@ -385,20 +395,22 @@ export default {
       }).then(() => {
         window.location.href = "https://edu.limkim.cn/sign";
       });
+    }
     else {
+      this.loading = true;
       let userData = JSON.parse(localStorage.getItem("jw_student_file"));
       this.uName = userData.staffID;
       if (!JSON.parse(localStorage.getItem("jw_student_msg")))
         localStorage.setItem("jw_student_msg", 300);
       this.reqFrequency = JSON.parse(localStorage.getItem("jw_student_msg"));
-      this.loading = true;
       // 拿学籍确认状态
       this.axios({
         method: "get",
         url: "/dataFile/getFileID",
         headers: { "Authorization": "token " + userData.token },
       }).then((response) => {
-        this.xjConfirmed = response.data.data.FileID === "null" ? false : true;
+        const confirmed = response.data.data.FileID === "null" ? false : true;
+        this.setConfirmed(confirmed);
         userData.xjConfirmed = this.xjConfirmed;
         localStorage.setItem("jw_student_file", JSON.stringify(userData));
         this.redirect();
@@ -444,7 +456,7 @@ export default {
   mounted() {
     // 刷新和关闭标签页提示
     window.onbeforeunload = (e) => {
-      if (!this.downloaded) {
+      if (!this.fileDownloaded) {
         e = e || window.event;
         // 兼容IE8和Firefox 4之前的版本
         if (e)

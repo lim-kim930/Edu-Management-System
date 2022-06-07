@@ -1,76 +1,29 @@
 <template>
   <el-form ref="form" v-loading="loading" element-loading-text="拼命加载中">
-    <el-tag
-      type="success"
-      style="margin: 10px 0 0 0"
-      v-show="file != ''"
-      :disable-transitions="true"
-    >
-      <i class="el-icon-success"></i> 学业文件已上传
-    </el-tag>
     <span>请选择类型:</span>
-    <el-select
-      v-model="typeValue"
-      placeholder="请选择"
-      style="width: 150px; margin: 15px;"
-      @change="getScore()"
-    >
-      <el-option
-        v-for="item in typeOptions"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      ></el-option>
+    <el-select v-model="typeValue" placeholder="请选择" style="width: 150px; margin: 15px;" @change="getScore()">
+      <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
     </el-select>
     <span>请选择学年:</span>
     <el-select v-model="yearValue" placeholder="请选择" style="width: 150px; margin: 15px;">
-      <el-option
-        v-for="item in yearOptions"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      ></el-option>
+      <el-option v-for="item in yearOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
     </el-select>
     <span>学期:</span>
     <el-select v-model="termValue" placeholder="请选择" style="width: 150px; margin: 15px;">
-      <el-option
-        v-for="item in termOptions"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      ></el-option>
+      <el-option v-for="item in termOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
     </el-select>
     <el-button type="primary" icon="el-icon-search" @click="getScore()" :loading="secLoading">查询</el-button>
-    <el-button
-      type="primary"
-      @click="scoreSubmit()"
-      plain
-      v-show="typeValue==='score'"
-      :disabled="multipleSelection.length === 0 || scoreBtnDisabled"
-    >确认信息</el-button>
-    <el-button
-      type="primary"
-      @click="levelSubmit()"
-      plain
-      v-show="typeValue==='level_exam'"
-      :disabled="levelBtnDisabled"
-    >确认信息</el-button>
-    <el-button
-      type="info"
-      @click="feedbackDialogShow = true"
-      plain
-      v-show="(typeValue==='score'&&!scoreConfirmed)||(typeValue==='level_exam'&&!levelConfirmed)"
-    >错误反馈</el-button>
-    <el-table
-      v-show="typeValue==='score'"
-      :data="Score.slice(page*parseInt((wh - 470)/53), (page+1)*parseInt((wh - 470)/53))"
-      border
-      :row-key="selectGetId"
-      style="width: 100%; margin-top: 0;"
-      @selection-change="handleSelectionChange"
-      @sort-change="sortChange"
-      @filter-change="filterHandler"
-    >
+    <el-button type="primary" @click="scoreSubmit()" plain v-show="typeValue === 'score'"
+      :disabled="multipleSelection.length === 0 || scoreBtnDisabled">确认信息</el-button>
+    <el-button type="primary" @click="levelSubmit()" plain v-show="typeValue === 'level_exam'"
+      :disabled="levelBtnDisabled">确认信息</el-button>
+    <el-button type="info" @click="feedbackDialogShow = true" plain
+      v-show="(typeValue === 'score' && !scoreConfirmed) || (typeValue === 'level_exam' && !levelConfirmed)">错误反馈
+    </el-button>
+    <el-table v-show="typeValue === 'score'"
+      :data="Score.slice(page * parseInt((vh - 470) / 53), (page + 1) * parseInt((vh - 470) / 53))" border
+      :row-key="selectGetId" style="width: 100%; margin-top: 0;" @selection-change="handleSelectionChange"
+      @sort-change="sortChange" @filter-change="filterHandler">
       <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="selectable"></el-table-column>
       <el-table-column prop="Value.CourseName.Value" label="课程"></el-table-column>
       <el-table-column prop="Term" label="学期" width="150"></el-table-column>
@@ -78,59 +31,30 @@
       <el-table-column prop="Value.ScoreFinal.Value" label="期末成绩" width="120"></el-table-column>
       <el-table-column prop="ScoreMakeup" label="补考成绩" width="120"></el-table-column>
       <el-table-column prop="GP" label="绩点" width="120" sortable></el-table-column>
-      <el-table-column
-        prop="Confirmed.value"
-        label="确认状态"
-        width="130"
-        :filters="[{'text':'未确认', 'value': 'warning'}, {'text':'已确认', 'value': 'success'}]"
-      >
+      <el-table-column prop="Confirmed.value" label="确认状态" width="130"
+        :filters="[{ 'text': '未确认', 'value': 'warning' }, { 'text': '已确认', 'value': 'success' }]">
         <template slot-scope="scope">
-          <el-tag
-            style="height: 30px;line-height: 30px"
-            :type="scope.row.Confirmed.value"
-            disable-transitions
-          >{{scope.row.Confirmed.label}}</el-tag>
+          <el-tag style="height: 30px;line-height: 30px" :type="scope.row.Confirmed.value" disable-transitions>
+            {{ scope.row.Confirmed.label }}</el-tag>
         </template>
       </el-table-column>
     </el-table>
-    <el-table
-      v-show="typeValue==='level_exam'"
-      :data="LevelScore[page]"
-      border
-      style="width: 100%; margin-top: 0;"
-    >
+    <el-table v-show="typeValue === 'level_exam'" :data="LevelScore[page]" border style="width: 100%; margin-top: 0;">
       <el-table-column prop="Value.ExamName.Value" label="考试名称"></el-table-column>
       <el-table-column prop="Value.Score.Value" label="考试成绩"></el-table-column>
       <el-table-column prop="Value.RegID.Value" label="准考证号"></el-table-column>
       <el-table-column prop="Value.ExamDate.Value" label="考试日期"></el-table-column>
       <el-table-column prop="Confirmed.value" label="确认状态" width="130">
         <template slot-scope="scope">
-          <el-tag
-            style="height: 30px;line-height: 30px"
-            :type="scope.row.Confirmed.value"
-            disable-transitions
-          >{{scope.row.Confirmed.label}}</el-tag>
+          <el-tag style="height: 30px;line-height: 30px" :type="scope.row.Confirmed.value" disable-transitions>
+            {{ scope.row.Confirmed.label }}</el-tag>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-      background
-      @current-change="currentChange"
-      :page-size="parseInt((this.wh - 470)/53)"
-      :pager-count="9"
-      layout="prev, pager, next"
-      :total="total"
-      style="margin-bottom: 10px"
-    ></el-pagination>
-    <el-drawer
-      title="学业信息错误反馈提示"
-      :visible.sync="feedbackDialogShow"
-      direction="rtl"
-      custom-class="demo-drawer"
-      ref="drawer"
-      :show-close="false"
-      :close-on-press-escape="false"
-    >
+    <el-pagination background @current-change="currentChange" :page-size="parseInt((this.vh - 470) / 53)"
+      :pager-count="9" layout="prev, pager, next" :total="total" style="margin-bottom: 10px"></el-pagination>
+    <el-drawer title="学业信息错误反馈提示" :visible.sync="feedbackDialogShow" direction="rtl" custom-class="demo-drawer"
+      ref="drawer" :show-close="false" :close-on-press-escape="false">
       <h4>请联系教务处修改后返回系统，检查无误后继续完成成绩确认</h4>
       <h4>教务处联系信息:</h4>
       <div class="content">
@@ -152,7 +76,8 @@
   </el-form>
 </template>
 <script>
-let FormData = require("form-data");
+import FormData from 'form-data';
+import { mapGetters, mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -192,14 +117,23 @@ export default {
       levelConfirmed: false,//等级考试信息确认状态
       scoreBtnDisabled: true,//学期成绩信息确认按钮禁用
       levelBtnDisabled: true,//等级考试信息确认按钮禁用
-      file: "",//学业文件
       blockInfoDialogShow: false,//交易详情显示
       blockDataInfo: [],//交易详情信息数据
       multipleSelection: []
     };
   },
-  props: ["globalFile", "wh"],//拿到infoConfirmed页面file
+  computed: {
+    ...mapGetters({
+      vh: "view/afterCompared",
+      globalFile: "student/getFile"
+    })
+  },
   methods: {
+    ...mapMutations({
+      setFileDownloaded: "student/setDownloaded",
+      setFile: "student/setFile",
+      setConfirmed: "student/setConfirmed"
+    }),
     selectGetId(row) {
       return row.Value.CourseCode.Value;
     },
@@ -248,28 +182,16 @@ export default {
       this.Score = newData;
       this.total = this.Score.length;
     },
-    //文件上传成功后
-    // getFile(params) {
-    //   this.file = params.file;
-    //   this.$emit("func", params.file);
-    //   this.getScore();
-    // },
     //删除文件
     reupload() {
       this.$refs["file-upload"].clearFiles();
-      this.file = "";
+      this.setFile(null);
       sessionStorage.removeItem("score");
       sessionStorage.removeItem("level_exam");
       sessionStorage.removeItem("hj");
       this.scoreBtnDisabled = true;
       this.levelBtnDisabled = true;
-      this.$emit("func", "");
     },
-    // change() {
-    //   sessionStorage.removeItem("score");
-    //   sessionStorage.removeItem("level_exam");
-    //   sessionStorage.removeItem("hj");
-    // },
     dataURLtoFile(dataurl, filename) {
       let arr = dataurl.split(","),
         bstr = atob(arr[0]),
@@ -281,7 +203,7 @@ export default {
       return new File([u8arr], filename, { type: "enc" });
     },
     downloadFile(filename) {
-      var Url = URL.createObjectURL(this.file);
+      var Url = URL.createObjectURL(this.globalFile);
       const eleLink = document.createElement("a");
       eleLink.download = filename;
       eleLink.style.display = "none";
@@ -289,8 +211,8 @@ export default {
       document.body.appendChild(eleLink);
       eleLink.click();
       document.body.removeChild(eleLink);
+      this.setFileDownloaded(true);
       setTimeout(() => {
-        this.$emit("func4", true);
         this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
           confirmButtonText: "确定",
           showCancelButton: false,
@@ -345,10 +267,10 @@ export default {
           this.loading = false;
         }
         else {
-          if (this.file !== "") {//如果上传了文件
+          if (this.globalFile !== null) {//如果上传了文件
             // if (sessionStorage.getItem(this.typeValue) === null) {//如果没有存对应类型成绩的已确认的学期,需要请求明文
             var data = new FormData();
-            data.append("dataFile", this.file);
+            data.append("dataFile", this.globalFile);
             // 拿到学生档案明文
             this.axios({
               method: "post",
@@ -526,7 +448,7 @@ export default {
     },
     confirm() {
       let data = new FormData();
-      data.append("dataFile", this.file);
+      data.append("dataFile", this.globalFile);
       if (this.typeValue === "score") {
         let courseCodes = [];
         for (let i = 0; i < this.multipleSelection.length; i++)
@@ -541,7 +463,7 @@ export default {
       }
       // data.append("condMap", "{\"SchoolCode\": 1,\"StaffID\": " + JSON.parse(localStorage.getItem("jw_student_file")).staffID + ", \"SchoolYear\": \"2020-2021\", \"Semester\": 1}");
       this.loading = true;
-      this.$emit("func2", false);
+      this.setConfirmed(false);
       this.$emit("func3", 1);
       this.axios({
         method: "put",
@@ -549,6 +471,7 @@ export default {
         headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
         data
       }).then((response) => {
+        this.setFileDownloaded(false);
         var block = response.data.data.TransactionDetail.detail.result[0];
         var blockName = Object.keys(block);
         const translation = {
@@ -566,9 +489,9 @@ export default {
           });
         }
         sessionStorage.removeItem(this.typeValue);//清空之前存储的学期信息
-        this.file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
-        this.$emit("func", this.file);
-        this.$emit("func2", true);
+        const file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
+        this.setFile(file);
+        this.setConfirmed(true);
         this.$emit("func3", null);
         this.$confirm("学业信息确认成功! 继续确认请点击任意空白区域", "提示", {
           confirmButtonText: "下载新的学业文件",
@@ -651,7 +574,6 @@ export default {
     },
   },
   mounted() {
-    this.file = this.globalFile;
     var grade = +JSON.parse(localStorage.getItem("jw_student_file")).staffID.substr(0, 2);
     //根据学号判断年级,提供对应的4年学年选择
     for (var i = 0; i < 4; i++)
@@ -668,9 +590,11 @@ export default {
 .el-form {
   overflow: auto;
 }
+
 .el-table {
   margin: 20px 0;
 }
+
 .upload {
   display: inline-block;
   margin-left: 10px;
@@ -684,6 +608,7 @@ export default {
   color: #409eff;
   border-radius: 5px;
 }
+
 .el-tag {
   height: 40px;
   font-size: 16px;

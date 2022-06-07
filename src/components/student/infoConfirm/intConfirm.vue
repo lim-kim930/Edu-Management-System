@@ -5,6 +5,7 @@
     v-loading="loading"
     element-loading-text="拼命加载中"
     label-width="80px"
+    :style="{ 'max-height': this.vh - 235 + 'px'}"
   >
     <span>请选择类型:</span>
     <el-select
@@ -30,7 +31,7 @@
       v-show="typeValue === 'int' || typeValue === 'intention'"
       @click="save()"
     >暂时保存</el-button>
-    <el-button plain type="primary" :disabled="file === ''" @click="confirm()">写入文件</el-button>
+    <el-button plain type="primary" :disabled="globalFile === null" @click="confirm()">写入文件</el-button>
     <mavonEditor
       v-show="typeValue === 'int'"
       :placeholder="holder"
@@ -45,7 +46,7 @@
       @change="change"
       v-model="content"
       @imgAdd="imgAdd"
-      :style="{'width': '99%', 'margin-top': '10px', 'height': this.wh - 310 + 'px'}"
+      :style="{'width': '99%', 'margin-top': '10px', 'height': this.vh - 310 + 'px'}"
     ></mavonEditor>
     <el-form-item label="意向岗位" v-show="typeValue==='intention'">
       <el-form-item style="min-height: 50px">
@@ -318,7 +319,8 @@
 import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
 import { Base64 } from "js-base64";
-let FormData = require("form-data");
+import FormData from 'form-data';
+import { mapGetters, mapMutations } from 'vuex';
 import { provinceAndCityData, CodeToText } from "element-china-area-data";
 export default {
   data() {
@@ -430,7 +432,6 @@ export default {
         name: "其他",
         value: ["法务", "科研", "销售", "教师", "翻译", "编辑/文案", "培训", "其他"]
       }],
-      file: "",//学业文件
       loading: false,
       dialogTableVisible: false,//交易详情显示
       blockDataInfo: [],//交易详情信息数据
@@ -438,9 +439,19 @@ export default {
       html: ""
     };
   },
-  props: ["globalFile", "wh"],
+  computed: {
+    ...mapGetters({
+      vh: "view/afterCompared",
+      globalFile: "student/getFile"
+    })
+  },
   components: { mavonEditor },
   methods: {
+    ...mapMutations({
+      setFileDownloaded: "student/setDownloaded",
+      setFile: "student/setFile",
+      setConfirmed: "student/setConfirmed"
+    }),
     compareDate() {
       if (this.typeValue === "club") {
         if (this.clubAddData.StartAt.length === 0 || this.clubAddData.StartAt.length === 0)
@@ -522,7 +533,7 @@ export default {
       return new File([u8arr], filename, { type: "enc" });
     },
     downloadFile(filename) {
-      var Url = URL.createObjectURL(this.file);
+      var Url = URL.createObjectURL(this.globalFile);
       const eleLink = document.createElement("a");
       eleLink.download = filename;
       eleLink.style.display = "none";
@@ -530,8 +541,8 @@ export default {
       document.body.appendChild(eleLink);
       eleLink.click();
       document.body.removeChild(eleLink);
+      this.setFileDownloaded(true);
       setTimeout(() => {
-        this.$emit("func4", true);
         this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
           confirmButtonText: "确定",
           showCancelButton: false,
@@ -882,10 +893,10 @@ export default {
           headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
           data
         }).then(() => {
-          this.$emit("func2", false);
+          this.setConfirmed(false);
           this.$emit("func3", 3);
           let data = new FormData();
-          data.append("dataFile", this.file);
+          data.append("dataFile", this.globalFile);
           let url = "";
           switch (this.typeValue) {
             case "int":
@@ -927,9 +938,9 @@ export default {
                 name: translation[blockName[i]]
               });
             }
-            this.file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
-            this.$emit("func", this.file);
-            this.$emit("func2", true);
+            const file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
+            this.setFile(file);
+            this.setConfirmed(true);
             this.$emit("func3", null);
             this.$confirm("个人填写信息确认成功! 继续确认请点击任意空白区域", "提示", {
               confirmButtonText: "下载新的学业文件",
@@ -993,7 +1004,6 @@ export default {
     }
   },
   mounted() {
-    this.file = this.globalFile;
     this.typeChange();
   },
 };
@@ -1026,6 +1036,12 @@ export default {
   width: 155px;
   height: 40px;
   line-height: 40px;
+}
+.form1 {
+  overflow: auto;
+  margin-top: 65px !important;
+  padding-top: 0 !important;
+  padding-right: 5px;
 }
 .form1 .type {
   margin: 10px 0;
