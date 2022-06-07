@@ -15,10 +15,9 @@ import "element-ui/lib/theme-chalk/index.css";
 // import router from "./router/router_sign";
 
 //剪切板组件
-import VueClipboard from "vue-clipboard2";
 import APP from "./components/StudentApp.vue";
 import router from "./router/router_student";
-Vue.use(VueClipboard);
+import store from "./store";
 
 // import APP from "./components/CompanyApp.vue";
 // import router from "./router/router_company";
@@ -45,5 +44,6 @@ const config = {
   render: c => c(APP)
 };
 if (router) config.router = router;
+if (store) config.store = store;
 
 new Vue(config);
