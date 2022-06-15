@@ -222,6 +222,8 @@ export default {
   },
   mounted() {
     //加载页面的时候拿学籍信息
+    if(!localStorage.getItem("jw_student_file"))
+      return;
     this.loading = true;
     this.axios({
       method: "post",
