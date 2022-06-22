@@ -142,7 +142,7 @@ export default {
           center: true
         }).then(() => {
           localStorage.removeItem("jw_ent_file");
-          window.location.href = "https://edu.limkim.cn/sign";
+          window.location.href = "../sign";
         });
       }
     },
@@ -202,9 +202,9 @@ export default {
         showCancelButton: false,
         type: "warning"
       }).then(() => {
-        window.location.href = "https://edu.limkim.cn/sign";
+        window.location.href = "../sign";
       }).catch(() => {
-        window.location.href = "https://edu.limkim.cn/sign";
+        window.location.href = "../sign";
       });
     else {
       this.axios({

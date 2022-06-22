@@ -277,7 +277,7 @@ export default {
           //清除localStorage里的用户信息,定向到登录
           localStorage.removeItem("jw_student_file");
           localStorage.removeItem("jw_student_msg");
-          window.location.href = "https://edu.limkim.cn/sign";
+          window.location.href = "../sign";
         }).catch(() => {
           if (this.file === "")
             return;
@@ -393,7 +393,7 @@ export default {
         closeOnClickModal: false,
         closeOnPressEscape: false
       }).then(() => {
-        window.location.href = "https://edu.limkim.cn/sign";
+        window.location.href = "../sign";
       });
     }
     else {
@@ -445,7 +445,7 @@ export default {
             closeOnClickModal: false,
             closeOnPressEscape: false
           }).then(() => {
-            window.location.href = "https://edu.limkim.cn/sign";
+            window.location.href = "./sign";
           });
         }
         this.$message.error("获取学业文件状态出错啦,请稍后重试");

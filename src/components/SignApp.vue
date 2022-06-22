@@ -86,9 +86,9 @@ export default {
   },
   created() {
     if (localStorage.getItem("jw_student_file") !== null && localStorage.getItem("jw_ent_file") === null)
-      window.location.href = "https://edu.limkim.cn/student";
+      window.location.href = "../student";
     else if (localStorage.getItem("jw_student_file") === null && localStorage.getItem("jw_ent_file") !== null)
-      window.location.href = "https://edu.limkim.cn/company";
+      window.location.href = "../company";
   },
   mounted() {
     this.wh = this.windowHeight() < 600 ? 600 : this.windowHeight();
