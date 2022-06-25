@@ -78,6 +78,7 @@
 <script>
 import FormData from 'form-data';
 import { mapGetters, mapMutations } from 'vuex';
+import { dataURLtoFile, downloadFile } from '../../../util/fileHandler';
 export default {
   data() {
     return {
@@ -191,34 +192,6 @@ export default {
       sessionStorage.removeItem("hj");
       this.scoreBtnDisabled = true;
       this.levelBtnDisabled = true;
-    },
-    dataURLtoFile(dataurl, filename) {
-      let arr = dataurl.split(","),
-        bstr = atob(arr[0]),
-        n = bstr.length,
-        u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], filename, { type: "enc" });
-    },
-    downloadFile(filename) {
-      var Url = URL.createObjectURL(this.globalFile);
-      const eleLink = document.createElement("a");
-      eleLink.download = filename;
-      eleLink.style.display = "none";
-      eleLink.href = Url;
-      document.body.appendChild(eleLink);
-      eleLink.click();
-      document.body.removeChild(eleLink);
-      this.setFileDownloaded(true);
-      setTimeout(() => {
-        this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
-          confirmButtonText: "确定",
-          showCancelButton: false,
-          type: "success"
-        });
-      }, 400);
     },
     //拿到学期成绩信息
     getScore() {//上传文件调用的,就不需要提示选择学期了
@@ -489,7 +462,7 @@ export default {
           });
         }
         sessionStorage.removeItem(this.typeValue);//清空之前存储的学期信息
-        const file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
+        const file = dataURLtoFile(response.data.data.DataFile, "学业文件");
         this.setFile(file);
         this.setConfirmed(true);
         this.$emit("func3", null);
@@ -506,7 +479,14 @@ export default {
           dangerouslyUseHTMLString: true,
           type: "success"
         }).then(() => {
-          this.downloadFile("学业文件.enc");
+          downloadFile("学业文件.enc");
+          setTimeout(() => {
+          this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
+            confirmButtonText: "确定",
+            showCancelButton: false,
+            type: "success"
+          });
+        }, 400);
         }).catch(() => {
           this.$message({
             type: "info",

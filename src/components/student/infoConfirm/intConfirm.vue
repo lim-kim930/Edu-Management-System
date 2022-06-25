@@ -321,6 +321,7 @@ import "mavon-editor/dist/css/index.css";
 import { Base64 } from "js-base64";
 import FormData from 'form-data';
 import { mapGetters, mapMutations } from 'vuex';
+import { dataURLtoFile, downloadFile } from '../../../util/fileHandler';
 import { provinceAndCityData, CodeToText } from "element-china-area-data";
 export default {
   data() {
@@ -521,34 +522,6 @@ export default {
         };
       }
 
-    },
-    dataURLtoFile(dataurl, filename) {
-      let arr = dataurl.split(","),
-        bstr = atob(arr[0]),
-        n = bstr.length,
-        u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], filename, { type: "enc" });
-    },
-    downloadFile(filename) {
-      var Url = URL.createObjectURL(this.globalFile);
-      const eleLink = document.createElement("a");
-      eleLink.download = filename;
-      eleLink.style.display = "none";
-      eleLink.href = Url;
-      document.body.appendChild(eleLink);
-      eleLink.click();
-      document.body.removeChild(eleLink);
-      this.setFileDownloaded(true);
-      setTimeout(() => {
-        this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
-          confirmButtonText: "确定",
-          showCancelButton: false,
-          type: "success"
-        });
-      }, 400);
     },
     change(value, render) {
       // render 为 markdown 解析后的结果[html]
@@ -938,7 +911,7 @@ export default {
                 name: translation[blockName[i]]
               });
             }
-            const file = this.dataURLtoFile(response.data.data.DataFile, "学业文件");
+            const file = dataURLtoFile(response.data.data.DataFile, "学业文件");
             this.setFile(file);
             this.setConfirmed(true);
             this.$emit("func3", null);
@@ -955,7 +928,14 @@ export default {
               dangerouslyUseHTMLString: true,
               type: "success"
             }).then(() => {
-              this.downloadFile("学业文件.enc");
+              downloadFile("学业文件.enc");
+              setTimeout(() => {
+                this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
+                  confirmButtonText: "确定",
+                  showCancelButton: false,
+                  type: "success"
+                });
+              }, 400);
             }).catch(() => {
               this.$message({
                 type: "info",

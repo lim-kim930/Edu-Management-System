@@ -348,7 +348,7 @@
           <i id="shareLink" slot="reference">{{ shareLink }}</i>
         </el-popover>
         <el-tooltip class="item" effect="dark" content="复制" placement="right">
-          <el-button @click="ddddd">
+          <el-button @click="copyText">
             <i class="el-icon-document-copy"></i>
           </el-button>
         </el-tooltip>
@@ -475,8 +475,8 @@ export default {
   props: ["wh", "file"],
   components: { mavonEditor },
   methods: {
-    ddddd() {
-      navigator.clipboard.writeText("ddddddd").then(() => {
+    copyText() {
+      navigator.clipboard.writeText(this.shareLink).then(() => {
         this.$notify({
           title: "成功",
           message: "复制成功,快去分享吧",

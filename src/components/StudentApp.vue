@@ -16,7 +16,7 @@
         <el-badge v-else is-dot :hidden="fileDownloaded" class="item"
           style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important">
           <i :title="fileDownloaded ? '下载学业文件' : '新的学业文件未下载'" class="el-icon-download"
-            style="font-size: 20px; color: #fff; cursor: pointer;" @click="downloadFile('学业文件.enc')"></i>
+            style="font-size: 20px; color: #fff; cursor: pointer;" @click="DownloadFile('学业文件.enc')"></i>
         </el-badge>
         <el-badge :value="received" :hidden="received === 0" class="item"
           style="width: 30px; height: 30px; margin-right: 20px; line-height: 30px !important">
@@ -118,6 +118,7 @@
 <script>
 import getOrigionWindowHeight from '../util/viewHeight';
 import { mapGetters, mapMutations } from 'vuex';
+import { downloadFile } from '../util/fileHandler';
 export default {
   data() {
     return {
@@ -162,17 +163,8 @@ export default {
         this.$router.push("/message/" + command);
     },
     // 右上角按钮下载文件
-    downloadFile(filename) {
-      const Url = URL.createObjectURL(this.globalFile);
-      const eleLink = document.createElement("a");
-      eleLink.download = filename;
-      eleLink.style.display = "none";
-      eleLink.href = Url;
-      eleLink.target = "_blank";
-      document.body.appendChild(eleLink);
-      eleLink.click();
-      document.body.removeChild(eleLink);
-      this.setFileDownloaded(true);
+    DownloadFile(filename) {
+      downloadFile(filename);
       setTimeout(() => {
         this.$confirm("学业文件已经开始下载, 请前往浏览器默认下载位置查看, 如未设置, 请手动选择下载路径并妥善保存", "提示", {
           confirmButtonText: "确定",
@@ -281,7 +273,7 @@ export default {
         }).catch(() => {
           if (this.file === "")
             return;
-          this.downloadFile("学业文件.enc");
+          this.DownloadFile("学业文件.enc");
         });
       }
     },
@@ -466,7 +458,7 @@ export default {
           cancelButtonText: "已下载",
           type: "warning"
         }).then(() => {
-          this.downloadFile("学业文件.enc");
+          this.DownloadFile("学业文件.enc");
         });
       }
     };

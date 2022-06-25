@@ -1,8 +1,8 @@
+import store from '../store';
+
 const dataURLtoFile = (dataurl, filename) => {
-    let arr = dataurl.split(","),
-        bstr = atob(arr[0]),
-        n = bstr.length,
-        u8arr = new Uint8Array(n);
+    const arr = dataurl.split(","), bstr = atob(arr[0]);
+    let n = bstr.length, u8arr = new Uint8Array(n);
     while (n--) {
         u8arr[n] = bstr.charCodeAt(n);
     }
@@ -18,6 +18,7 @@ const downloadFile = (file, filename) => {
     document.body.appendChild(eleLink);
     eleLink.click();
     document.body.removeChild(eleLink);
+    store.commit("setDownloaded", true);
 };
 
 export { dataURLtoFile, downloadFile };
