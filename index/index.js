@@ -2,8 +2,9 @@
     if (location.search.split("?")[1] !== undefined) {
         if (location.search.split("?")[1].split("=")[0] === "type") {
             sessionStorage.setItem("jw_from", "hduhelp");
-            return window.location.href = "https://edu.limkim.cn/sign";
+            return window.location.href = "./sign";
         }
+        // TODO:增加Url参数的校验
         const requestOptions = {
             method: "GET",
             redirect: "follow",
@@ -39,11 +40,13 @@
             document.querySelector("#errorInfo").innerText = error;
         });
     }
-    if (localStorage.getItem("jw_student_file") !== null)
-        return window.location.href = "/student";
-    if (localStorage.getItem("jw_ent_file") !== null)
-        return window.location.href = "/company";
-    if (localStorage.getItem("jw_manager_file") !== null)
-        return window.location.href = "/manager";
-    window.location.href = "./sign";
+    else {
+        if (localStorage.getItem("jw_student_file") !== null)
+            return window.location.href = "./student";
+        else if (localStorage.getItem("jw_ent_file") !== null)
+            return window.location.href = "./company";
+        else if (localStorage.getItem("jw_manager_file") !== null)
+            return window.location.href = "./manager";
+        window.location.href = "./sign";
+    }
 })();
