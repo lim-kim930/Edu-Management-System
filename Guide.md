@@ -204,4 +204,30 @@
     
     ###### <mark>很多地方都是类似的一整套逻辑框架</mark>，可以试着去理解，重复代码和调试的废弃代码都很多，可以自己改写抽离。
 
+### 截至6-25的代码更新说明
 
+- ##### 学生端添加使用vuex做学业文件、文件下载状态和页面高度的存储
+  
+  ```javascript
+  // store\index.js
+  
+  import Vue from 'vue';
+  import Vuex from 'vuex';
+  import view from "./modules/viewHeight";
+  import student from "./modules/studentInfo";
+  
+  Vue.use(Vuex);
+  
+  const store = new Vuex.Store({
+      modules: {
+          view,
+          student
+      }
+  });
+  
+  export default store;
+  ```
+- ##### 跟着上一项的修改，将上传和下载学业文件统一移至右上角
+- ##### 将downloadFile、函数和页面高度获取的函数，抽离出单独文件
+- ##### 将注释main.js的操作去除，使用vue-cli的pages配置
+- ##### 去除Homepage.vue，继续使用index.html，便于打包部署
