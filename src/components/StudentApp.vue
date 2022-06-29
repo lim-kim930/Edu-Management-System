@@ -16,7 +16,7 @@
         <el-badge v-else is-dot :hidden="fileDownloaded" class="item"
           style="width: 30px; height: 30px; margin-right: 15px; line-height: 30px !important">
           <i :title="fileDownloaded ? '下载学业文件' : '新的学业文件未下载'" class="el-icon-download"
-            style="font-size: 20px; color: #fff; cursor: pointer;" @click="DownloadFile('学业文件.enc')"></i>
+            style="font-size: 20px; color: #fff; cursor: pointer;" @click="DownloadFile()"></i>
         </el-badge>
         <el-badge :value="received" :hidden="received === 0" class="item"
           style="width: 30px; height: 30px; margin-right: 20px; line-height: 30px !important">
@@ -163,8 +163,8 @@ export default {
         this.$router.push("/message/" + command);
     },
     // 右上角按钮下载文件
-    DownloadFile(filename) {
-      downloadFile(filename);
+    DownloadFile() {
+      downloadFile();
       setTimeout(() => {
         this.$confirm("学业文件已经开始下载, 请前往浏览器默认下载位置查看, 如未设置, 请手动选择下载路径并妥善保存", "提示", {
           confirmButtonText: "确定",
@@ -273,7 +273,7 @@ export default {
         }).catch(() => {
           if (this.file === "")
             return;
-          this.DownloadFile("学业文件.enc");
+          this.DownloadFile();
         });
       }
     },
@@ -458,7 +458,7 @@ export default {
           cancelButtonText: "已下载",
           type: "warning"
         }).then(() => {
-          this.DownloadFile("学业文件.enc");
+          this.DownloadFile();
         });
       }
     };

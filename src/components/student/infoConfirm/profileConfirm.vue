@@ -84,7 +84,7 @@ export default {
     //   return theBlob;
     // },
     // 利用a标签下载文件,并公开部分信息
-    DownloadFile(filename) {
+    DownloadFile() {
       let data = new FormData();
       data.append("dataFile", this.globalFile);
       // 此时默认公开部分信息
@@ -122,7 +122,7 @@ export default {
         this.$message.error("公开信息出错啦,请稍后再试");
         this.loading = false;
       });
-      downloadFile(filename);
+      downloadFile();
       this.setConfirmed(true);
     },
     // 确认学籍
@@ -142,7 +142,7 @@ export default {
         }).then((response) => {
           // 成功后确认学籍信息
           var data = new FormData();
-          data.append("dataFile", dataURLtoFile(response.data.data.DataFile, "学业文件"));
+          data.append("dataFile", dataURLtoFile(response.data.data.DataFile));
           data.append("condMap", "{\"SchoolCode\": 1,\"StaffID\": " + JSON.parse(localStorage.getItem("jw_student_file")).staffID + "}");
           this.axios({
             method: "put",
@@ -166,7 +166,7 @@ export default {
                 name: translation[blockName[i]]
               });
             //最后更新页面中的全局file
-            this.setFile(dataURLtoFile(response.data.data.DataFile, "学业文件"));
+            this.setFile(dataURLtoFile(response.data.data.DataFile));
             this.setFileDownloaded(false);
             
             this.$confirm("学籍信息确认成功! 请务必下载并保存好您的学业文件,以免档案丢失将无法正常使用本系统", "提示", {
@@ -185,7 +185,7 @@ export default {
               dangerouslyUseHTMLString: true,
               type: "success"
             }).then(() => {
-              this.DownloadFile("学业文件.enc");
+              this.DownloadFile();
             });
           }).catch(() => {
             this.$message.error("确认学籍信息出错啦,请稍后再试");

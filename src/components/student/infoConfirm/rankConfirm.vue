@@ -206,7 +206,7 @@ export default {
               name: translation[blockName[i]]
             });
           sessionStorage.removeItem("gpa");
-          const file = dataURLtoFile(response.data.data.DataFile, "学业文件");
+          const file = dataURLtoFile(response.data.data.DataFile);
           this.setFile(file);
           this.setConfirmed(true);
           this.$emit("func3", null);
@@ -223,7 +223,7 @@ export default {
             dangerouslyUseHTMLString: true,
             type: "success"
           }).then(() => {
-            downloadFile("学业文件.enc");
+            downloadFile();
             setTimeout(() => {
               this.$confirm("学业文件已经下载至浏览器默认下载位置,如未设置,请手动选择下载路径并妥善保存", "提示", {
                 confirmButtonText: "确定",

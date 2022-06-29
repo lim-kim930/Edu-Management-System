@@ -110,14 +110,17 @@ export default {
   z-index: 99;
   height: 80px !important;
 }
+
 .el-header .el-menu-item {
   padding: 0 30px !important;
 }
+
 .el-main {
   padding: 20px;
   min-width: 1440px;
   background-color: #f5f5f6;
 }
+
 .tittle {
   height: 80px;
   margin-left: 100px;
@@ -126,6 +129,7 @@ export default {
   line-height: 80px;
   /* border-left: 1px solid ; */
 }
+
 .ad_content {
   float: left;
   width: 30%;
@@ -136,6 +140,7 @@ export default {
   background-size: 75%;
   background-position: 50px 100px;
 }
+
 .log_content {
   float: left;
   position: relative;
@@ -147,9 +152,11 @@ export default {
   box-shadow: 0 2px 15px rgb(0 0 0 / 10%);
   border-radius: 10px;
 }
+
 .method_switch {
   height: 52px;
 }
+
 .method_switch div {
   float: left;
   margin: 0 !important;
@@ -160,9 +167,11 @@ export default {
   border-bottom: 1px solid #ccc;
   cursor: pointer;
 }
+
 #signUp {
   border-right: 1px solid #ccc;
 }
+
 .el-divider--horizontal {
   margin: 10px 0 !important;
 }
@@ -176,6 +185,7 @@ export default {
   outline: none;
   box-sizing: border-box;
 }
+
 body {
   margin: 0 !important;
 }

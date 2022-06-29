@@ -1,6 +1,6 @@
 import store from '../store';
 
-const dataURLtoFile = (dataurl, filename) => {
+const dataURLtoFile = (dataurl, filename = "学业文件.enc") => {
     const arr = dataurl.split(","), bstr = atob(arr[0]);
     let n = bstr.length, u8arr = new Uint8Array(n);
     while (n--) {
@@ -9,16 +9,25 @@ const dataURLtoFile = (dataurl, filename) => {
     return new File([u8arr], filename, { type: "enc" });
 };
 
-const downloadFile = (file, filename) => {
-    const Url = URL.createObjectURL(file);
+const downloadFile = () => {
+    const file = store.state.student.file;
+    const filename = file.name || "学业文件.enc";
+    const blobUrl = URL.createObjectURL(file);
     const eleLink = document.createElement("a");
-    eleLink.download = filename;
     eleLink.style.display = "none";
-    eleLink.href = Url;
+    eleLink.href = blobUrl;
+    eleLink.download = filename;
     document.body.appendChild(eleLink);
-    eleLink.click();
+    // This is necessary as eleLink.click() does not work on the latest firefox
+    eleLink.dispatchEvent(
+        new MouseEvent('click', { 
+        bubbles: true, 
+        cancelable: true, 
+        view: window 
+        })
+    );
     document.body.removeChild(eleLink);
-    store.commit("setDownloaded", true);
+    store.commit("student/setDownloaded", true);
 };
 
 export { dataURLtoFile, downloadFile };
