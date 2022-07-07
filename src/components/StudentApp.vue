@@ -437,7 +437,7 @@ export default {
             closeOnClickModal: false,
             closeOnPressEscape: false
           }).then(() => {
-            window.location.href = "./sign";
+            window.location.href = "../sign";
           });
         }
         this.$message.error("获取学业文件状态出错啦,请稍后重试");
