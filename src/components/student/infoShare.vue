@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form :model="ruleForm" v-loading="loading" element-loading-text="拼命加载中" ref="ruleForm" label-width="150px"
-      :style="{ 'max-height': this.wh - 105 + 'px' }">
+      :style="{ 'max-height': this.vh - 105 + 'px' }">
       <el-steps :active="stepActive" align-center finish-status="success" style="height: 70px; margin-bottom: 30px">
         <el-step title="步骤 1" description="请上传您之前生成的学业文件" icon="el-icon-user"></el-step>
         <el-step title="步骤 2" description="请确定此次分享的各项信息" icon="el-icon-edit"></el-step>
@@ -18,7 +18,7 @@
         </el-upload>
         <el-button class="next" type="primary" plain v-show="btnShow" @click="next()">下一步</el-button>
       </div>
-      <div v-show="stepActive === 1" class="info-select" :style="{ overflow: 'auto', 'max-height': this.wh - 280 + 'px' }">
+      <div v-show="stepActive === 1" class="info-select" :style="{ overflow: 'auto', 'max-height': this.vh - 280 + 'px' }">
         <el-form-item label="要分享的学籍信息">
           <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="CheckAllChange($event, 1)" border
             v-show="profileData.length !== 0" style="width: 80px">全选</el-checkbox>
@@ -77,7 +77,7 @@
           <el-checkbox v-show="selfData[0].md" v-model="ruleForm.selfChecked">选择</el-checkbox>
           <mavonEditor :toolbars="toolbars" :autofocus="false" defaultOpen="preview" :editable="false"
             v-show="selfData[0].md" v-model="selfData[0].md"
-            :style="{ 'width': '90%', 'margin-top': '10px', 'height': this.wh - 300 + 'px' }" />
+            :style="{ 'width': '90%', 'margin-top': '10px', 'height': this.vh - 300 + 'px' }" />
         </el-form-item>
         <el-form-item label="班团经历">
           <h4 v-show="clubData.length === 0">暂无信息</h4>
@@ -156,52 +156,17 @@
             <span class="title">交易哈希</span>
             <span id="hash_content">0x****************************************************************</span>
           </div>
-          <div class="name">
-            <span class="title">姓名</span>
-            <span class="content">{{ profileValue.Name }}</span>
-          </div>
-          <div class="sex">
-            <span class="title">性别</span>
-            <span class="content">{{ profileValue.Sex }}</span>
-          </div>
-          <div class="nation">
-            <span class="title">民族</span>
-            <span class="content">{{ profileValue.Nation }}</span>
-          </div>
-          <div class="classCode">
-            <span class="title">GPA</span>
-            <span class="content">{{ rankValue.GPA }}</span>
-          </div>
-          <div class="className">
-            <span class="title">班级名称</span>
-            <span class="content">{{ profileValue.ClassName }}</span>
-          </div>
+          <div class="name"><span class="title">姓名</span><span class="content">{{ profileValue.Name }}</span></div><div class="sex"><span class="title">性别</span><span class="content">{{ profileValue.Sex }}</span></div>
+          <div class="nation"><span class="title">民族</span><span class="content">{{ profileValue.Nation }}</span></div>
+          <div class="staffID"><span class="title">学号</span><span class="content">{{ profileValue.StaffID }}</span></div>
+          <div class="className"><span class="title">班级名称</span><span class="content">{{ profileValue.ClassName }}</span></div>
+          <div class="gpa"><span class="title">GPA</span><span class="content">{{ rankValue.GPA }}</span></div>
+          <div class="gpaRank"><span class="title">GPA排名</span><span class="content">{{ rankValue.Rank }}</span></div>
           <div class="pic" :style="{ background: 'url(' + profileValue.Photo + ') no-repeat' }"></div>
-
-          <div class="schoolCode">
-            <span class="title">学校代码</span>
-            <span class="content">{{ profileValue.SchoolCode }}</span>
-          </div>
-          <div class="staffID">
-            <span class="title">学号</span>
-            <span class="content">{{ profileValue.StaffID }}</span>
-          </div>
-          <div class="unitCode">
-            <span class="title">学院代码</span>
-            <span class="content">{{ profileValue.UnitCode }}</span>
-          </div>
-          <div class="unitName">
-            <span class="title">学院名称</span>
-            <span class="content">{{ profileValue.UnitName }}</span>
-          </div>
-          <div class="majorCode">
-            <span class="title">GPA排名</span>
-            <span class="content">{{ rankValue.Rank }}</span>
-          </div>
-          <div class="majorName">
-            <span class="title">专业名称</span>
-            <span class="content">{{ profileValue.MajorName }}</span>
-          </div>
+          <div class="majorName"><span class="title">专业名称</span><span class="content">{{profileValue.MajorName }}</span></div>
+          <div class="unitCode"><span class="title">学院代码</span><span class="content">{{ profileValue.UnitCode }}</span></div>
+          <div class="unitName"><span class="title">学院名称</span><span class="content">{{ profileValue.UnitName }}</span></div>
+          <div class="schoolCode"><span class="title">学校代码</span><span class="content">{{ profileValue.SchoolCode }}</span></div>
           <div class="score" :style="{ height: score_height }">
             <span class="title" :style="{ height: score_height, paddingTop: title_paddingTop }">成绩单</span>
             <div class="score_content" :style="{ height: score_height }">
@@ -310,7 +275,7 @@
       <h3 style="margin-left: 5%" v-show="this.switch === 2 && selfValue.md">自我介绍</h3>
       <mavonEditor :toolbars="toolbars" :autofocus="false" defaultOpen="preview" :editable="false"
         v-show="this.switch === 2 && selfValue.md" v-model="selfValue.md"
-        :style="{ 'width': '90%', 'margin': ' 10px 5%', 'height': this.wh - 300 + 'px' }" />
+        :style="{ 'width': '90%', 'margin': ' 10px 5%', 'height': this.vh - 300 + 'px' }" />
       <h3 style="margin-left: 5%" v-show="this.switch === 2 && clubValue.length !== 0">班团经历</h3>
       <el-table :data="clubValue" tooltip-effect="dark" :style="{ 'width': '90%', 'margin': ' 10px 5%' }" border
         v-show="this.switch === 2 && clubValue.length !== 0">
@@ -362,6 +327,7 @@
 </template>
 <script>
 let FormData = require("form-data");
+import { mapGetters, mapMutations } from "vuex";
 import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
 import { Base64 } from "js-base64";
@@ -472,9 +438,17 @@ export default {
       switch: 1
     };
   },
-  props: ["wh", "file"],
+  computed: {
+    ...mapGetters({
+      vh: "view/afterCompared",
+      globalFile: "student/getFile"
+    })
+  },
   components: { mavonEditor },
   methods: {
+    ...mapMutations({
+      setFile: "student/setFile"
+    }),
     copyText() {
       navigator.clipboard.writeText(this.shareLink).then(() => {
         this.$notify({
@@ -600,6 +574,7 @@ export default {
         data
       }).then((response) => {
         this.content = response.data.data.Body.data_map;
+        this.setFile(this.dataFile);
         this.axios({
           method: "get",
           url: "/company/lookup",
@@ -1000,7 +975,10 @@ export default {
       this.axios({
         method: "post",
         url: "/share/share?topic=profile&staffID=" + JSON.parse(localStorage.getItem("jw_student_file")).staffID,
-        headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token 
+        },
         data: this.data
       }).then((response) => {
         this.shareLink = "/share/verify?fileID=" + response.data.data.Body.FileID + "&encryptedK1S=" + response.data.data.Body.EncryptedK1S;
@@ -1024,8 +1002,8 @@ export default {
     }
   },
   mounted() {
-    if (this.file) {
-      this.dataFile = this.file;
+    if (this.globalFile) {
+      this.dataFile = this.globalFile;
       this.next();
     }
   }
@@ -1137,7 +1115,7 @@ export default {
 
 #hash_content {
   display: inline-block;
-  width: 810px;
+  width: 806px;
   height: 60px;
   line-height: 60px;
   font-size: 16px;
@@ -1161,6 +1139,7 @@ export default {
   width: 158px;
   height: 60px;
   text-align: center;
+  position: absolute;
   border-bottom: 1px solid #ccc;
   line-height: 60px;
   box-sizing: border-box;
@@ -1178,16 +1157,16 @@ export default {
 
 .sex {
   top: 60px;
-  left: 246px;
+  left: 245px;
 }
 
 .nation {
   top: 60px;
-  left: 492px;
+  left: 490px;
 }
 
 .staffID {
-  left: 738px;
+  left: 735px;
   top: 60px;
 }
 
@@ -1198,30 +1177,42 @@ export default {
 }
 
 .pic {
-  left: 984px;
-  width: 180px;
+  left: 980px;
+  width: 184px;
+  /* 图片比例应该为3/4,这里宽度拉长4像素为了不留空隙 */
   height: 240px;
   border-left: 1px solid #ccc;
-  background-size: 180px !important;
+  background-size: 184px !important;
 }
 
 .className {
   top: 120px;
 }
 
-.classCode {
+.gpa {
   top: 120px;
-  left: 246px;
+  left: 245px;
+  width: 250px;
 }
 
-.majorCode {
+.gpaRank {
   top: 120px;
-  left: 492px;
+  left: 490px;
+}
+
+.gpa .title,
+.gpaRank .title {
+  position: absolute;
+}
+
+.gpa .content,
+.gpaRank .content {
+  margin-left: 87px;
 }
 
 .majorName {
   top: 120px;
-  left: 738px;
+  left: 735px;
 }
 
 .unitCode {
@@ -1237,7 +1228,7 @@ export default {
 
 .unitName {
   top: 180px;
-  left: 246px;
+  left: 245px;
 }
 
 .unitName .title {
@@ -1245,13 +1236,13 @@ export default {
 }
 
 .unitName .content {
-  width: 404px;
+  width: 403px;
   border-bottom: none;
 }
 
 .schoolCode {
   top: 180px;
-  left: 738px;
+  left: 735px;
 }
 
 .score {
@@ -1259,6 +1250,7 @@ export default {
 }
 
 .score .title {
+  position: absolute;
   width: 100px;
   /* height: 500px; */
   line-height: 50px;
@@ -1269,6 +1261,7 @@ export default {
 }
 
 .score .score_content {
+  display: inline-block;
   position: relative;
   width: 1064px;
   margin-left: 100px;
@@ -1315,7 +1308,7 @@ export default {
   font-size: 14px;
   box-sizing: content-box;
   overflow: hidden;
-  /* white-space: pre-wrap; */
+  /* vhite-space: pre-wrap; */
   /* text-overflow: ellipsis;
   -o-text-overflow: ellipsis; */
   margin: 0;
@@ -1364,6 +1357,7 @@ export default {
 
 .level .title,
 .reward .title {
+  position: absolute;
   width: 100px;
   /* height: 500px; */
   line-height: 50px;
@@ -1507,6 +1501,7 @@ export default {
 }
 
 .info .title {
+  position: absolute;
   width: 100px;
   height: 259px;
   border-bottom: none;
