@@ -126,14 +126,14 @@ export default {
       activeIndex: "1",// 侧边导航默认选中值
       loading: false,// main的加载
       uName: null,// 用户名
-      file: null,// 文件
+      // file: null,// 文件
       received: 0,// 收件箱数量
       reqFrequency: 300,
       msgTimer: null,
       known: false,
       isCollapse: false,
       noticeShow: false,
-      downloaded: true,
+      // downloaded: true,
     };
   },
   computed: {
@@ -174,11 +174,11 @@ export default {
       }, 400);
     },
     //拿到子组件传来的学业文件,全局存储在student页面
-    getFile(file) {
-      if (this.file !== "")
-        this.downloaded = false;
-      this.file = file;
-    },
+    // getFile(file) {
+    //   if (this.file !== "")
+    //     this.downloaded = false;
+    //   this.file = file;
+    // },
     uploadFile(params) {
       const len = params.file.name.length;
       if (params.file.name.substr(len - 4, 4) !== ".enc")
@@ -211,9 +211,9 @@ export default {
     //   userData.xjConfirmed = this.xjConfirmed;
     //   localStorage.setItem("jw_student_file", JSON.stringify(userData));
     // },
-    getDownloaded(downloaded) {
-      this.downloaded = downloaded;
-    },
+    // getDownloaded(downloaded) {
+    //   this.downloaded = downloaded;
+    // },
     getReceived(received) {
       this.received = received;
     },
@@ -263,7 +263,7 @@ export default {
       else {
         this.$confirm("确定要退出登录吗?" + (this.fileDownloaded ? "" : "你好像还没有下载最新的学业文件到本地"), "提示", {
           confirmButtonText: "确定",
-          cancelButtonText: this.file === "" ? "取消" : "现在下载",
+          cancelButtonText: this.fileDownloaded ? "取消" : "现在下载",
           type: "warning"
         }).then(() => {
           //清除localStorage里的用户信息,定向到登录
@@ -271,7 +271,7 @@ export default {
           localStorage.removeItem("jw_student_msg");
           window.location.href = "../sign";
         }).catch(() => {
-          if (this.file === "")
+          if (this.fileDownloaded)
             return;
           this.DownloadFile();
         });

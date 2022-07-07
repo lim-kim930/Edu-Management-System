@@ -5,7 +5,7 @@
     element-loading-text="拼命加载中"
     ref="ruleForm"
     label-width="150px"
-    :style="{'max-height': this.wh - 105 + 'px', 'overflow': loading?'hidden':'auto'}"
+    :style="{'max-height': this.vh - 105 + 'px', 'overflow': loading?'hidden':'auto'}"
   >
     <div class="infoShow" v-show="dataFile === ''">
       <span>当前公开的信息:</span>
@@ -207,6 +207,7 @@
   </el-form>
 </template>
 <script>
+import { mapGetters, mapMutations } from "vuex";
 let FormData = require("form-data");
 export default {
   data() {
@@ -243,8 +244,16 @@ export default {
       loading: false
     };
   },
-  props: ["wh", "file"],
+  computed: {
+    ...mapGetters({
+      vh: "view/afterCompared",
+      globalFile: "student/getFile"
+    })
+  },
   methods: {
+    ...mapMutations({
+      setFile: "student/setFile"
+    }),
     switcher() {
       if (!this.disclose) {
         this.resetForm();
@@ -433,8 +442,8 @@ export default {
     //下一步
     next() {
       if (!this.upload)
-        this.dataFile = this.file;
-      document.querySelector(".disclose").style.maxHeight = this.wh - 300 + "px";
+        this.dataFile = this.globalFile;
+      document.querySelector(".disclose").style.maxHeight = this.vh - 300 + "px";
       this.resetForm();
       this.loading = true;
       var data = new FormData();
@@ -445,6 +454,7 @@ export default {
         headers: { "Authorization": "token " + JSON.parse(localStorage.getItem("jw_student_file")).token },
         data,
       }).then((response) => {
+        this.setFile(this.dataFile);
         this.content = response.data.data.Body.data_map;
         var range = Object.keys(this.content);
         for (var i = 0; i < range.length; i++) {
@@ -662,7 +672,7 @@ export default {
     },
   },
   mounted() {
-    if (this.file) {
+    if (this.globalFile) {
       this.upload = false;
     }
     this.getInfo();

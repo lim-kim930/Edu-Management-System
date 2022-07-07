@@ -5,7 +5,7 @@
     label-width="0px"
     v-loading="loading"
     element-loading-text="拼命加载中"
-    :style="{'max-height': wh - 105 + 'px'}"
+    :style="{'max-height': vh - 105 + 'px'}"
   >
     <span>请选择筛选条件:</span>
     <el-select
@@ -60,9 +60,9 @@
     ></el-autocomplete>
     <el-button type="primary" @click="getInfo()" style="margin: 20px" icon="el-icon-search">点击查询</el-button>
     <el-table
-      :data="tableData.slice(page*parseInt((wh - 360)/53), (page+1)*parseInt((wh - 360)/53))"
+      :data="tableData.slice(page*parseInt((vh - 360)/53), (page+1)*parseInt((vh - 360)/53))"
       style="width: 100%"
-      border
+      :border="true"
       @sort-change="sortChange"
       @filter-change="filterHandler"
     >
@@ -120,7 +120,7 @@
     <el-pagination
       background
       @current-change="currentChange"
-      :page-size="parseInt((this.wh - 360)/53)"
+      :page-size="parseInt((this.vh - 360)/53)"
       :pager-count="9"
       layout="prev, pager, next"
       :total="total"
@@ -130,6 +130,7 @@
 </template>
 <script>
 import { provinceAndCityData, CodeToText } from "element-china-area-data";
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -180,7 +181,11 @@ export default {
       gpa: false
     };
   },
-  props: ["wh"],
+  computed: {
+    ...mapGetters({
+      vh: "view/afterCompared"
+    })
+  },
   methods: {
     filterHandler(value) {
       const key = Object.keys(value);
