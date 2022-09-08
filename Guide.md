@@ -40,7 +40,7 @@
     // signIn.vue
     
     byHDU() {
-        window.location.href = "https://api.hduhelp.com/gormja_wrapper/oauth/request";
+        window.location.href = "https://jl.hdu.edu.cn/gormja_wrapper/oauth/request";
     },
     ```
   

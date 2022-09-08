@@ -104,7 +104,7 @@ export default {
 .el-header {
   background: url(../assets/img/logo2.png) no-repeat;
   background-size: 90px;
-  background-position: 10px 0;
+  background-position: 20px 50%;
   background-color: #fff;
   box-shadow: 0 2px 4px 1px var(--cb-color-shadow, rgba(0, 0, 0, 0.13));
   z-index: 99;

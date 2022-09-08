@@ -35,15 +35,12 @@ export default {
     //   this.$router.push("/testSignIn");
     // },
     byHDU() {
-      this.axios({
-        method: "get",
-        url: "/oauth/request"
-      }).then((res) => {
-        const _redirect = decodeURI(res.data.redirect);
-        window.location.href = _redirect;
-      }).catch(() => {
-        this.$message.error("登录请求出错啦,请稍后再试");
-      });
+       // 定义重定向地址并将转换成URL编码
+      const redirectHost = encodeURI("https://edu.limkim.cn");
+
+      // 直接跳转 后端帮助重定向  
+      window.location.href = `https://jl.hdu.edu.cn/gormja_wrapper/oauth/request?debugRedirectHost=${redirectHost}`;
+
     },
     onSubmit() {
     }
