@@ -3,7 +3,7 @@
     :style="{ 'max-height': this.vh - 105 + 'px' }">
     <el-menu :default-active="activeIndex" class="header_menu" mode="horizontal" @select="indexRouteSwitch">
       <el-menu-item index="1" style="font-size: 18px" :disabled="route !== null && route !== 0">学籍确认</el-menu-item>
-      <el-menu-item index="2" style="font-size: 18px" >
+      <el-menu-item index="2" style="font-size: 18px" :disabled="(route === null && !confirmed) || (route !== null && route !== 1)">
         学业成绩确认</el-menu-item>
       <el-menu-item index="3" style="font-size: 18px" :disabled="(route === null && !confirmed) || (route !== null && route !== 2)">
         综合素质确认</el-menu-item>
