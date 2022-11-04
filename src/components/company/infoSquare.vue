@@ -4,7 +4,10 @@
     label-width="80px"
     v-loading="loading"
     element-loading-text="拼命加载中"
-    :style="{'max-height': this.wh - 105 + 'px', 'overflow': this.loading?'hidden':'auto'}"
+    :style="{
+      'max-height': this.wh - 105 + 'px',
+      overflow: this.loading ? 'hidden' : 'auto',
+    }"
   >
     <!-- <el-select
       v-model="conditions.UnitCode"
@@ -40,92 +43,142 @@
         :value="item.value"
       ></el-option>
     </el-select>-->
-    <el-collapse @change="collapse" value="1">
-      <el-collapse-item name="1">
-        <template slot="title">
-          <span style="font-size: 16px">请选择筛选条件:</span>
-          <el-button type="primary" @click.stop="getInfo()" style="margin: 0 0 0 10px">点击筛选</el-button>
-          <el-button type="primary" plain @click.stop="resetConditions()" style>清空</el-button>
-          <span style="width: 50%; text-align: center; user-select: none;">{{"点击" + title + "条件"}}</span>
-        </template>
-        <el-form class="coditions" label-width="110px" style="user-select: none;">
-          <el-form-item label="匹配规则">
-            <el-radio-group v-model="method">
-              <el-radio
-                style="margin: 0 5px"
-                :label="item.value"
-                v-for="item in options[7].children"
-                :key="item.value"
-                border
-              >{{item.label}}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="就读专业">
-            <el-cascader
-              placeholder="请选择"
-              style="width: 190px; margin-left: 5px"
-              filterable
-              v-model="conditions.MajorCode"
-              :options="options[0].children"
-              clearable
-            ></el-cascader>
-          </el-form-item>
-          <el-form-item label="意向岗位">
-            <el-cascader
-              placeholder="请选择"
-              style="width: 190px; margin-left: 5px"
-              filterable
-              v-model="conditions.JobTypeIntent"
-              :options="options[8].children"
-              clearable
-            ></el-cascader>
-          </el-form-item>
-          <el-form-item label="GPA">
-            <el-input
-              style="width: 90px; margin-left: 5px"
-              v-model="conditions.GPA[0]"
-              placeholder="gpa下限"
-            ></el-input>
-            <el-input
-              style="width: 90px; margin: 0 10px"
-              v-model="conditions.GPA[1]"
-              placeholder="gpa上限"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="奖学金获得情况">
-            <el-radio-group v-model="conditions.RewardLevel">
-              <el-radio
-                style="margin: 0 5px"
-                :label="item.value"
-                border
-                v-for="item in options[3].children"
-                :key="item.value"
-              >{{item.label}}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="竞赛获奖情况">
-            <el-radio-group v-model="conditions.RaceLevel">
-              <el-radio
-                style="margin: 0 5px"
-                border
-                :label="item.value"
-                v-for="item in options[4].children"
-                :key="item.value"
-              >{{item.label}}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="班团经历">
-            <el-radio-group v-model="conditions.OrgLevel">
-              <el-radio
-                style="margin: 0 5px"
-                :label="item.value"
-                border
-                v-for="item in options[5].children"
-                :key="item.value"
-              >{{item.label}}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <!-- <el-form-item label="社会工作">
+    <div class="recommend">
+      <div class="top">
+        <h2 class="title__name">推荐岗位信息</h2>
+        <el-button
+          type="primary"
+          icon="el-icon-refresh"
+          class="refreshBtn"
+          @click="randomRecommend"
+          >换一批</el-button
+        >
+      </div>
+
+      <ul class="recommend-card">
+        <li
+          class="recommend-item"
+          v-for="(item, index) in recommendList"
+          :key="index"
+        >
+          <company-recommend-card :recommend="item">
+            <template #base>
+              <div class="bottom-btn">
+                <el-button type="primary" size="mini">宣讲会通知</el-button>
+              </div>
+            </template>
+          </company-recommend-card>
+        </li>
+      </ul>
+    </div>
+    <div class="filter">
+      <el-collapse @change="collapse" value="1">
+        <el-collapse-item name="1">
+          <template slot="title">
+            <span style="font-size: 16px">请选择筛选条件:</span>
+            <el-button
+              type="primary"
+              @click.stop="getInfo()"
+              style="margin: 0 0 0 10px"
+              >点击筛选</el-button
+            >
+            <el-button
+              type="primary"
+              plain
+              @click.stop="resetConditions()"
+              style
+              >清空</el-button
+            >
+            <span style="width: 50%; text-align: center; user-select: none">{{
+              "点击" + title + "条件"
+            }}</span>
+          </template>
+          <el-form
+            class="coditions"
+            label-width="110px"
+            style="user-select: none"
+          >
+            <el-form-item label="匹配规则">
+              <el-radio-group v-model="method">
+                <el-radio
+                  style="margin: 0 5px"
+                  :label="item.value"
+                  v-for="item in options[7].children"
+                  :key="item.value"
+                  border
+                  >{{ item.label }}</el-radio
+                >
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="就读专业">
+              <el-cascader
+                placeholder="请选择"
+                style="width: 190px; margin-left: 5px"
+                filterable
+                v-model="conditions.MajorCode"
+                :options="options[0].children"
+                clearable
+              ></el-cascader>
+            </el-form-item>
+            <el-form-item label="意向岗位">
+              <el-cascader
+                placeholder="请选择"
+                style="width: 190px; margin-left: 5px"
+                filterable
+                v-model="conditions.JobTypeIntent"
+                :options="options[8].children"
+                clearable
+              ></el-cascader>
+            </el-form-item>
+            <el-form-item label="GPA">
+              <el-input
+                style="width: 90px; margin-left: 5px"
+                v-model="conditions.GPA[0]"
+                placeholder="gpa下限"
+              ></el-input>
+              <el-input
+                style="width: 90px; margin: 0 10px"
+                v-model="conditions.GPA[1]"
+                placeholder="gpa上限"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="奖学金获得情况">
+              <el-radio-group v-model="conditions.RewardLevel">
+                <el-radio
+                  style="margin: 0 5px"
+                  :label="item.value"
+                  border
+                  v-for="item in options[3].children"
+                  :key="item.value"
+                  >{{ item.label }}</el-radio
+                >
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="竞赛获奖情况">
+              <el-radio-group v-model="conditions.RaceLevel">
+                <el-radio
+                  style="margin: 0 5px"
+                  border
+                  :label="item.value"
+                  v-for="item in options[4].children"
+                  :key="item.value"
+                  >{{ item.label }}</el-radio
+                >
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="班团经历">
+              <el-radio-group v-model="conditions.OrgLevel">
+                <el-radio
+                  style="margin: 0 5px"
+                  :label="item.value"
+                  border
+                  v-for="item in options[5].children"
+                  :key="item.value"
+                  >{{ item.label }}</el-radio
+                >
+              </el-radio-group>
+            </el-form-item>
+            <!-- <el-form-item label="社会工作">
         <el-radio-group v-model="conditions.Social">
           <el-radio
             style="margin: 0 5px"
@@ -136,95 +189,151 @@
           >{{item.label}}</el-radio>
         </el-radio-group>
           </el-form-item>-->
-          <el-form-item label="性别">
-            <el-radio-group v-model="conditions.Sex">
-              <el-radio
-                style="margin: 0 5px"
-                border
-                :label="item.value"
-                v-for="item in options[2].children"
-                :key="item.value"
-              >{{item.label}}</el-radio>
-            </el-radio-group>
+            <el-form-item label="性别">
+              <el-radio-group v-model="conditions.Sex">
+                <el-radio
+                  style="margin: 0 5px"
+                  border
+                  :label="item.value"
+                  v-for="item in options[2].children"
+                  :key="item.value"
+                  >{{ item.label }}</el-radio
+                >
+              </el-radio-group>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-divider>
+        <i class="el-icon-collection-tag">为您找到以下结果</i>
+      </el-divider>
+      <el-button
+        style="float: right; margin-bottom: 10px"
+        :disabled="selectedFileID.length === 0"
+        type="primary"
+        plain
+        @click="askMore(0, { FileID: 0, Name: 'selected' })"
+        >批量发送简历请求</el-button
+      >
+      <el-button
+        style="float: right; margin: 0 10px 10px 10px"
+        :disabled="selectedFileID.length === 0"
+        type="primary"
+        plain
+        @click="editNotice(0, { FileID: 0, Name: 'selected' })"
+        >批量发送通知</el-button
+      >
+      <el-table
+        v-show="exposeData.length !== 0"
+        style="width: 100%; margin-top: 20px"
+        border
+        :row-key="selectGetId"
+        :data="
+          exposeData.slice(
+            page * parseInt((wh - 440) / 53),
+            (page + 1) * parseInt((wh - 440) / 53)
+          )
+        "
+        :default-sort="{ prop: 'id', order: 'descending' }"
+        :max-height="this.wh - 270"
+        @selection-change="selectionChange"
+      >
+        <el-table-column
+          type="selection"
+          :reserve-selection="true"
+          width="55"
+        ></el-table-column>
+        <el-table-column
+          label="姓名"
+          prop="Name"
+          width="120px"
+        ></el-table-column>
+        <el-table-column
+          label="年级"
+          prop="Grade"
+          width="150px"
+          :filters="[
+            { text: '2017', value: '2017' },
+            { text: '2018', value: '2018' },
+            { text: '2019', value: '2019' },
+            { text: '2020', value: '2020' },
+            { text: '2021', value: '2021' },
+            { text: '2022', value: '2022' },
+          ]"
+          :filter-method="filterHandler"
+        ></el-table-column>
+        <el-table-column label="学院" prop="UnitName"></el-table-column>
+        <el-table-column label="专业" prop="MajorName"></el-table-column>
+        <el-table-column label="发送">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="askMore(scope.$index, scope.row)"
+              >详细简历请求</el-button
+            >
+            <el-button size="mini" @click="editNotice(scope.$index, scope.row)"
+              >宣讲会通知</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        @current-change="currentChange"
+        :page-size="parseInt((this.wh - 440) / 53)"
+        :pager-count="9"
+        layout="prev, pager, next"
+        :total="total"
+        style="margin: 10px 0"
+      ></el-pagination>
+      <el-empty :image-size="200" v-show="exposeData.length === 0"></el-empty>
+      <el-dialog
+        title="请填写您想详细了解的内容"
+        :visible.sync="reqDialogVisible"
+        style="width: 100%"
+      >
+        <el-form label-width="100px">
+          <el-form-item label="请求对象">
+            <el-input
+              style="width: 150px"
+              disabled
+              :placeholder="chossenName"
+            ></el-input>
           </el-form-item>
-        </el-form>
-      </el-collapse-item>
-    </el-collapse>
-    <el-divider>
-      <i class="el-icon-collection-tag">为您找到以下结果</i>
-    </el-divider>
-    <el-button
-      style="float: right; margin-bottom: 10px"
-      :disabled="selectedFileID.length === 0"
-      type="primary"
-      plain
-      @click="askMore(0, { FileID: 0, Name: 'selected' });"
-    >批量发送简历请求</el-button>
-    <el-button
-      style="float: right; margin: 0 10px 10px 10px"
-      :disabled="selectedFileID.length === 0"
-      type="primary"
-      plain
-      @click="editNotice(0, { FileID: 0, Name: 'selected' });"
-    >批量发送通知</el-button>
-    <el-table
-      v-show="exposeData.length !== 0"
-      style="width: 100%; margin-top: 20px"
-      border
-      :row-key="selectGetId"
-      :data="exposeData.slice(page*parseInt((wh - 440)/53), (page+1)*parseInt((wh - 440)/53))"
-      :default-sort="{prop: 'id', order: 'descending'}"
-      :max-height="this.wh - 270"
-      @selection-change="selectionChange"
-    >
-      <el-table-column type="selection" :reserve-selection="true" width="55"></el-table-column>
-      <el-table-column label="姓名" prop="Name" width="120px"></el-table-column>
-      <el-table-column
-        label="年级"
-        prop="Grade"
-        width="150px"
-        :filters="[{text: '2017', value: '2017'},{text: '2018', value: '2018'},{text: '2019', value: '2019'},{text: '2020', value: '2020'},{text: '2021', value: '2021'},{text: '2022', value: '2022'}]"
-        :filter-method="filterHandler"
-      ></el-table-column>
-      <el-table-column label="学院" prop="UnitName"></el-table-column>
-      <el-table-column label="专业" prop="MajorName"></el-table-column>
-      <el-table-column label="发送">
-        <template slot-scope="scope">
-          <el-button size="mini" @click="askMore(scope.$index, scope.row)">详细简历请求</el-button>
-          <el-button size="mini" @click="editNotice(scope.$index, scope.row)">宣讲会通知</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      background
-      @current-change="currentChange"
-      :page-size="parseInt((this.wh - 440)/53)"
-      :pager-count="9"
-      layout="prev, pager, next"
-      :total="total"
-      style="margin: 10px 0"
-    ></el-pagination>
-    <el-empty :image-size="200" v-show="exposeData.length === 0"></el-empty>
-    <el-dialog title="请填写您想详细了解的内容" :visible.sync="reqDialogVisible" style="width: 100%;">
-      <el-form label-width="100px">
-        <el-form-item label="请求对象">
-          <el-input style="width: 150px" disabled :placeholder="chossenName"></el-input>
-        </el-form-item>
-        <el-form-item label="其他请求描述" class="text">
-          <el-alert v-show="template" type="info" style="width: 500px" :closable="false">
-            【{{uname}}】亲爱的同学你好，
-            <el-button
-              style="margin-left: 180px"
-              icon="el-icon-edit"
-              circle
-              @click="template = !template"
-            ></el-button>
-            <br />由于您的信息与我们岗位: 【
+          <el-form-item label="其他请求描述" class="text">
+            <el-alert
+              v-show="template"
+              type="info"
+              style="width: 500px"
+              :closable="false"
+            >
+              【{{ uname }}】亲爱的同学你好，
+              <el-button
+                style="margin-left: 180px"
+                icon="el-icon-edit"
+                circle
+                @click="template = !template"
+              ></el-button>
+              <br />由于您的信息与我们岗位: 【
+              <el-select
+                style="width: 150px"
+                v-model="reqForm.FromJobID"
+                filterable
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in jobList"
+                  :key="item.JobID"
+                  :label="item.Name"
+                  :value="item.JobID"
+                ></el-option> </el-select
+              >】的需求高度匹配，为进一步了解，诚邀您提供一份完整的简历。如有意向，请尽快登录学业分享系统分享完整版简历。如有任何问题，请联系HR，联系方式:
+              <el-input v-model="reqForm.Text" style="width: 150px"></el-input>
+            </el-alert>
             <el-select
+              v-show="!template"
               style="width: 150px"
               v-model="reqForm.FromJobID"
               filterable
-              placeholder="请选择"
+              placeholder="请选择符合岗位"
             >
               <el-option
                 v-for="item in jobList"
@@ -232,185 +341,269 @@
                 :label="item.Name"
                 :value="item.JobID"
               ></el-option>
-            </el-select>】的需求高度匹配，为进一步了解，诚邀您提供一份完整的简历。如有意向，请尽快登录学业分享系统分享完整版简历。如有任何问题，请联系HR，联系方式:
-            <el-input v-model="reqForm.Text" style="width: 150px;"></el-input>
-          </el-alert>
-          <el-select
-            v-show="!template"
-            style="width: 150px"
-            v-model="reqForm.FromJobID"
-            filterable
-            placeholder="请选择符合岗位"
-          >
-            <el-option
-              v-for="item in jobList"
-              :key="item.JobID"
-              :label="item.Name"
-              :value="item.JobID"
-            ></el-option>
-          </el-select>
-          <br />
-          <el-input
-            v-show="!template"
-            type="textarea"
-            v-model="reqForm.Text"
-            :rows="10"
-            resize="none"
-            show-word-limit
-            maxlength="500"
-            style="width: 400px; margin-top: 10px"
-          ></el-input>
-          <el-button
-            v-show="!template"
-            style="margin: 0 0 180px 10px"
-            icon="el-icon-edit"
-            circle
-            @click="template = !template"
-          ></el-button>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="reqDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="sendAsk()">确 定</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog title="请填写宣讲会相关信息" :visible.sync="noticeDialogVisible" style="width: 100%;">
-      <el-form label-width="100px">
-        <el-form-item label="发送对象">
-          <el-input style="width: 150px" disabled :placeholder="chossenName"></el-input>
-        </el-form-item>
-        <el-form-item label="宣讲会主题">
-          <el-input style="width: 200px" v-model="noticeForm.Topic" placeholder="请填写"></el-input>
-        </el-form-item>
-        <el-form-item label="宣讲时间" class="text">
-          <el-date-picker
-            v-model="noticeForm.StartAt"
-            :picker-options="pickerOptions"
-            value-format="timestamp"
-            type="datetime"
-            placeholder="选择日期时间"
-          ></el-date-picker>
-        </el-form-item>
-        <el-form-item label="其他细节">
-          <el-input
-            type="textarea"
-            v-model="noticeForm.Detail"
-            :rows="10"
-            resize="none"
-            show-word-limit
-            maxlength="500"
-            placeholder="请填写宣讲会地点、形式等其他细节内容"
-            style="width: 400px; margin-top: 10px"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="noticeDialogVisible =  false">取 消</el-button>
-        <el-button type="primary" @click="sendNotice()">确 定</el-button>
-      </div>
-    </el-dialog>
+            </el-select>
+            <br />
+            <el-input
+              v-show="!template"
+              type="textarea"
+              v-model="reqForm.Text"
+              :rows="10"
+              resize="none"
+              show-word-limit
+              maxlength="500"
+              style="width: 400px; margin-top: 10px"
+            ></el-input>
+            <el-button
+              v-show="!template"
+              style="margin: 0 0 180px 10px"
+              icon="el-icon-edit"
+              circle
+              @click="template = !template"
+            ></el-button>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="reqDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="sendAsk()">确 定</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog
+        title="请填写宣讲会相关信息"
+        :visible.sync="noticeDialogVisible"
+        style="width: 100%"
+      >
+        <el-form label-width="100px">
+          <el-form-item label="发送对象">
+            <el-input
+              style="width: 150px"
+              disabled
+              :placeholder="chossenName"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="宣讲会主题">
+            <el-input
+              style="width: 200px"
+              v-model="noticeForm.Topic"
+              placeholder="请填写"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="宣讲时间" class="text">
+            <el-date-picker
+              v-model="noticeForm.StartAt"
+              :picker-options="pickerOptions"
+              value-format="timestamp"
+              type="datetime"
+              placeholder="选择日期时间"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item label="其他细节">
+            <el-input
+              type="textarea"
+              v-model="noticeForm.Detail"
+              :rows="10"
+              resize="none"
+              show-word-limit
+              maxlength="500"
+              placeholder="请填写宣讲会地点、形式等其他细节内容"
+              style="width: 400px; margin-top: 10px"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="noticeDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="sendNotice()">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </el-form>
 </template>
 <script>
+import companyRecommendCard from "../common_components/companyRecommendCard.vue";
+
 export default {
+  components: { companyRecommendCard },
   data() {
     return {
+      recommendList: [
+        {
+          jobName: "许*",
+          subtitle: "网络工程",
+          tags: [
+            {
+              text: "GPA:3.7",
+              id: 1,
+            },
+            {
+              text: "实习经验",
+              id: 2,
+            },
+            {
+              text: "项目经验",
+              id: 3,
+            },
+          ],
+          companyName: "Web开发",
+          short_desc: "杭州电子科技大学",
+          base: "不限",
+          salary: "7k",
+        },
+        {
+          jobName: "赵*",
+
+          subtitle: "计算机科学与技术",
+
+          tags: [
+            {
+              text: "GPA:4.3",
+              id: 1,
+            },
+            {
+              text: "国家奖学金",
+              id: 2,
+            },
+            {
+              text: "实习经验",
+              id: 3,
+            },
+          ],
+          companyName: "软件开发",
+          short_desc: "杭州电子科技大学",
+          base: "杭州",
+          salary: "10k",
+        },
+        {
+          jobName: "李*亦",
+          subtitle: "数字与媒体设计",
+          tags: [
+            {
+              text: "GPA:3.4",
+              id: 1,
+            },
+            {
+              text: "校一等奖学金",
+              id: 2,
+            },
+            {
+              text: "项目经验",
+              id: 3,
+            },
+          ],
+          companyName: "UI设计",
+          short_desc: "杭州电子科技大学",
+          base: "成都",
+          salary: "9k",
+        },
+      ],
       total: 0,
       page: 0,
       template: true,
       exposeData: [],
       uname: "",
       loading: false,
-      options: [{
-        value: "UnitCode",
-        label: "学院",
-        children: []
-      }, {
-        value: "MajorCode",
-        label: "专业",
-        children: [
-          { value: "", label: "不限" },
-          { value: "0304", label: "管理科学与工程类" },
-          { value: "0648", label: "生物医学工程" },
-          { value: "1406", label: "会计学类" },
-          { value: "2703", label: "网络空间安全专业" }
-        ]
-      }, {
-        value: "Sex",
-        label: "性别",
-        children: [
-          { value: "", label: "不限" },
-          { value: "男", label: "男" },
-          { value: "女", label: "女" }
-        ]
-      }, {
-        value: "RewardLevel",
-        label: "奖学金情况",
-        children: [
-          { value: "", label: "不限" },
-          { value: "国家级", label: "获得过国家级奖学金" },
-          { value: "省级", label: "获得过省级奖学金" },
-          { value: "校级", label: "获得过校级奖学金" }
-        ]
-      }, {
-        value: "RaceLevel",
-        label: "竞赛获奖情况",
-        children: [
-          { value: "", label: "不限" },
-          { value: "国家级及以上", label: "获得过国赛级奖项" },
-          { value: "省部级", label: "获得过省赛级奖项" },
-          { value: "校级", label: "获得过校赛级奖项" },
-          { value: "院级", label: "获得过院赛级奖项" }
-        ]
-      }, {
-        value: "OrgLevel",
-        label: "班团经历",
-        children: [
-          { value: "", label: "不限" },
-          { value: "校级", label: "曾任校级工作" },
-          { value: "院级", label: "曾任院级工作" },
-          { value: "班级", label: "曾任班级工作" }
-        ]
-      }, {
-        value: "social",
-        label: "社会工作",
-        children: [
-          { value: "", label: "不限" },
-          { value: "1", label: "实习经历" }
-        ]
-      }, {
-        value: "method",
-        label: "各条件匹配规则",
-        children: [
-          { value: "must", label: "全部符合" },
-          { value: "should", label: "满足一项及以上" }
-        ]
-      }, {
-        value: "JobTypeIntent",
-        label: "意向职位",
-        children: [
-          {
-            value: "不限",
-            label: "不限",
-          }, {
-            value: "IT互联网",
-            label: "IT互联网",
-            children: []
-          }, {
-            value: "会计管理",
-            label: "会计管理",
-            children: []
-          }, {
-            value: "设计制造",
-            label: "设计制造",
-            children: []
-          }, {
-            value: "其他",
-            label: "其他",
-            children: []
-          },
-        ]
-      }],
+      options: [
+        {
+          value: "UnitCode",
+          label: "学院",
+          children: [],
+        },
+        {
+          value: "MajorCode",
+          label: "专业",
+          children: [
+            { value: "", label: "不限" },
+            { value: "0304", label: "管理科学与工程类" },
+            { value: "0648", label: "生物医学工程" },
+            { value: "1406", label: "会计学类" },
+            { value: "2703", label: "网络空间安全专业" },
+          ],
+        },
+        {
+          value: "Sex",
+          label: "性别",
+          children: [
+            { value: "", label: "不限" },
+            { value: "男", label: "男" },
+            { value: "女", label: "女" },
+          ],
+        },
+        {
+          value: "RewardLevel",
+          label: "奖学金情况",
+          children: [
+            { value: "", label: "不限" },
+            { value: "国家级", label: "获得过国家级奖学金" },
+            { value: "省级", label: "获得过省级奖学金" },
+            { value: "校级", label: "获得过校级奖学金" },
+          ],
+        },
+        {
+          value: "RaceLevel",
+          label: "竞赛获奖情况",
+          children: [
+            { value: "", label: "不限" },
+            { value: "国家级及以上", label: "获得过国赛级奖项" },
+            { value: "省部级", label: "获得过省赛级奖项" },
+            { value: "校级", label: "获得过校赛级奖项" },
+            { value: "院级", label: "获得过院赛级奖项" },
+          ],
+        },
+        {
+          value: "OrgLevel",
+          label: "班团经历",
+          children: [
+            { value: "", label: "不限" },
+            { value: "校级", label: "曾任校级工作" },
+            { value: "院级", label: "曾任院级工作" },
+            { value: "班级", label: "曾任班级工作" },
+          ],
+        },
+        {
+          value: "social",
+          label: "社会工作",
+          children: [
+            { value: "", label: "不限" },
+            { value: "1", label: "实习经历" },
+          ],
+        },
+        {
+          value: "method",
+          label: "各条件匹配规则",
+          children: [
+            { value: "must", label: "全部符合" },
+            { value: "should", label: "满足一项及以上" },
+          ],
+        },
+        {
+          value: "JobTypeIntent",
+          label: "意向职位",
+          children: [
+            {
+              value: "不限",
+              label: "不限",
+            },
+            {
+              value: "IT互联网",
+              label: "IT互联网",
+              children: [],
+            },
+            {
+              value: "会计管理",
+              label: "会计管理",
+              children: [],
+            },
+            {
+              value: "设计制造",
+              label: "设计制造",
+              children: [],
+            },
+            {
+              value: "其他",
+              label: "其他",
+              children: [],
+            },
+          ],
+        },
+      ],
       conditions: {
         GPA: [],
         MajorCode: "",
@@ -420,57 +613,178 @@ export default {
         Social: "",
         RewardLevel: "",
         RaceLevel: "",
-      },// 选择的条件
+      }, // 选择的条件
       title: "收起",
-      translation: [{
-        name: "不限",
-        value: ["不限"]
-      }, {
-        name: "IT互联网",
-        value: ["编程/IT开发", "测试", "IT运维", "通信工程", "数字多媒体", "产品", "运营"]
-      }, {
-        name: "会计管理",
-        value: ["财务/会计", "金融", "审计", "出纳", "采购", "行政", "人力资源", "贸易/进出口", "质量管理", "项目管理", "项目实施"]
-      }, {
-        name: "设计制造",
-        value: ["工业设计", "工程设计", "平面设计", "室内设计", "生产/制造"]
-      }, {
-        name: "其他",
-        value: ["法务", "科研", "销售", "教师", "翻译", "编辑/文案", "培训", "其他"]
-      }],
+      translation: [
+        {
+          name: "不限",
+          value: ["不限"],
+        },
+        {
+          name: "IT互联网",
+          value: [
+            "编程/IT开发",
+            "测试",
+            "IT运维",
+            "通信工程",
+            "数字多媒体",
+            "产品",
+            "运营",
+          ],
+        },
+        {
+          name: "会计管理",
+          value: [
+            "财务/会计",
+            "金融",
+            "审计",
+            "出纳",
+            "采购",
+            "行政",
+            "人力资源",
+            "贸易/进出口",
+            "质量管理",
+            "项目管理",
+            "项目实施",
+          ],
+        },
+        {
+          name: "设计制造",
+          value: ["工业设计", "工程设计", "平面设计", "室内设计", "生产/制造"],
+        },
+        {
+          name: "其他",
+          value: [
+            "法务",
+            "科研",
+            "销售",
+            "教师",
+            "翻译",
+            "编辑/文案",
+            "培训",
+            "其他",
+          ],
+        },
+      ],
       method: "must",
-      Predicates: [],// 要传给后端的筛选条件
+      Predicates: [], // 要传给后端的筛选条件
       reqDialogVisible: false,
       noticeDialogVisible: false,
       reqForm: {
-        "ExposeFileID": "",
-        "Text": "",
-        "FromJobID": ""
+        ExposeFileID: "",
+        Text: "",
+        FromJobID: "",
       },
       noticeForm: {
-        "Topic": "",
-        "SchoolCode": "",
-        "StaffIDs": [],
-        "StartAt": "",
-        "Detail": ""
+        Topic: "",
+        SchoolCode: "",
+        StaffIDs: [],
+        StartAt: "",
+        Detail: "",
       },
       chossenName: "",
       pickerOptions: {
         disabledDate(v) {
           return v.getTime() < Date.now();
-        }
+        },
       },
       jobList: [],
-      selectedFileID: []
+      selectedFileID: [],
     };
   },
   props: ["wh"],
   methods: {
+    getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min; //含最大值，含最小值
+    },
+    randomRecommend() {
+      this.recommendList = [];
+      const names = ["许", "王", "赵", "李", "汤", "陈", "章"];
+      const tags = [
+        "校一等奖学金",
+        "项目经验",
+        "实习经验",
+        "国家奖学金",
+        "校二等奖学金",
+        "省政府奖学金",
+        "校三等奖学金",
+        "班委",
+      ];
+      const jobs = [
+        "Web开发",
+        "软件开发",
+        "UI设计",
+        "网络优化",
+        "产品经理",
+        "软件工程师",
+        "前端开发实习生",
+        "后端开发实习生",
+        "算法工程师",
+      ];
+      const majors = [
+        "网络工程",
+        "信息安全",
+        "网络安全",
+        "软件工程",
+        "计算机科学与技术",
+        "数字媒体与技术",
+      ];
+
+      const bases = [
+        "成都",
+        "重庆",
+        "杭州",
+        "北京",
+        "上海",
+        "苏州",
+        "南京",
+        "深圳",
+        "不限",
+        "长沙",
+      ];
+      const n = 3;
+      for (let i = 0; i < n; i++) {
+        const tagsNum = this.getRandomInt(0, tags.length - 1);
+        let tagsNum2 = this.getRandomInt(0, tags.length - 1);
+        while (tagsNum === tagsNum2) {
+          tagsNum2 = this.getRandomInt(0, tags.length - 1);
+        }
+        const recommendItem = {
+          jobName: names[this.getRandomInt(0, names.length - 1)] + "**",
+          subtitle: majors[this.getRandomInt(0, majors.length - 1)],
+          tags: [
+            {
+              text:
+                "GPA:" +
+                this.getRandomInt(2, 4) +
+                "." +
+                this.getRandomInt(0, 9),
+              id: 1,
+            },
+            {
+              text: tags[tagsNum],
+              id: 2,
+            },
+            {
+              text: tags[tagsNum2],
+              id: 3,
+            },
+          ],
+          companyName: jobs[this.getRandomInt(0, jobs.length - 1)],
+          short_desc: "杭州电子科技大学",
+          base: bases[this.getRandomInt(0, bases.length - 1)],
+          salary: this.getRandomInt(6, 15) + "k",
+        };
+        this.recommendList.push(recommendItem);
+      }
+    },
     selectGetId(row) {
       return row.FileID;
     },
     filterHandler(value, row, column) {
-      const property = column['property'];
+      const property = column["property"];
       return row[property] === value;
     },
     currentChange(v) {
@@ -493,18 +807,18 @@ export default {
     },
     resetReqForm() {
       this.reqForm = {
-        "ExposeFileID": "",
-        "Text": "",
-        "FromJobID": ""
+        ExposeFileID: "",
+        Text: "",
+        FromJobID: "",
       };
     },
     resetNoticeForm() {
       this.noticeForm = {
-        "Topic": "",
-        "SchoolCode": "",
-        "StaffIDs": [],
-        "StartAt": "",
-        "Detail": ""
+        Topic: "",
+        SchoolCode: "",
+        StaffIDs: [],
+        StartAt: "",
+        Detail: "",
       };
     },
     selectionChange(v) {
@@ -523,15 +837,17 @@ export default {
       for (let i = 0; i < this.selectedFileID.length; i++) {
         methods.push(this.askRequest(this.selectedFileID[i]));
       }
-      Promise.all(methods).then(() => {
-        this.$message.success("已成功向求职者发送详细简历请求");
-        this.resetReqForm();
-        this.reqDialogVisible = false;
-        this.loading = false;
-      }).catch(() => {
-        this.$message.error("请求详细简历出错啦,请稍后再试");
-        this.loading = false;
-      });
+      Promise.all(methods)
+        .then(() => {
+          this.$message.success("已成功向求职者发送详细简历请求");
+          this.resetReqForm();
+          this.reqDialogVisible = false;
+          this.loading = false;
+        })
+        .catch(() => {
+          this.$message.error("请求详细简历出错啦,请稍后再试");
+          this.loading = false;
+        });
     },
     getInfo() {
       this.loading = true;
@@ -549,53 +865,52 @@ export default {
             case "GPA":
               path = ["data_map", "rank", "*", "GPA"];
               pre = {
-                "from": +this.conditions[index[i]][0],
-                "to": +this.conditions[index[i]][1]
+                from: +this.conditions[index[i]][0],
+                to: +this.conditions[index[i]][1],
               };
               break;
             case "OrgLevel":
               path = ["data_map", "org_experience", "*", "OrgLevel"];
-              pre = { "value": this.conditions[index[i]] };
+              pre = { value: this.conditions[index[i]] };
               break;
             case "RaceLevel":
               path = ["data_map", "race_reward", "*", "RaceLevel.keyword"];
-              pre = { "value": this.conditions[index[i]] };
+              pre = { value: this.conditions[index[i]] };
               break;
             case "RewardLevel":
               path = ["data_map", "reward", "*", "RewardLevel.keyword"];
-              pre = { "value": this.conditions[index[i]] };
+              pre = { value: this.conditions[index[i]] };
               break;
             case "MajorCode":
               path = ["data_map", "profile", "*", "MajorCode"];
-              pre = { "value": this.conditions[index[i]][1] };
+              pre = { value: this.conditions[index[i]][1] };
               break;
             case "JobTypeIntent":
-              if (this.conditions[index[i]][0] === "不限")
-                continue;
+              if (this.conditions[index[i]][0] === "不限") continue;
               path = ["data_map", "career_intent", "*", "JobTypeIntent"];
-              pre = { "value": this.conditions[index[i]][0] };
+              pre = { value: this.conditions[index[i]][0] };
               break;
             default:
               path = ["data_map", "profile", "*", index[i]];
-              pre = { "value": this.conditions[index[i]] };
+              pre = { value: this.conditions[index[i]] };
               break;
           }
           this.Predicates.push({
-            "FieldPath": path,
-            "RelationType": this.method,
-            "NodeType": index[i] === "GPA" ? "range" : "match",
-            "Predicate": pre
+            FieldPath: path,
+            RelationType: this.method,
+            NodeType: index[i] === "GPA" ? "range" : "match",
+            Predicate: pre,
           });
         }
       }
       this.axios({
         method: "post",
         url: "/expose/search",
-        data: { "Predicates": this.Predicates }
+        data: { Predicates: this.Predicates },
       }).then((response) => {
         this.total = 0;
         if (response.data.data.Results.length === 0)
-          return this.loading = false;
+          return (this.loading = false);
         const result = response.data.data.Results;
         for (let i = 0; i < result.length; i++) {
           this.total++;
@@ -615,10 +930,8 @@ export default {
           //     data.Name = name + data.Name.substr(data.Name.length - 1);
           //   }
           // }
-          if (data.ClassCode)
-            data.Grade = "20" + data.ClassCode.substr(0, 2);
-          else
-            data.Grade = "/";
+          if (data.ClassCode) data.Grade = "20" + data.ClassCode.substr(0, 2);
+          else data.Grade = "/";
           data.FileID = result[i].FileID;
           this.exposeData.push(data);
         }
@@ -632,8 +945,7 @@ export default {
       this.reqDialogVisible = true;
     },
     editNotice(index, row) {
-      if (row.StaffID)
-        this.noticeForm.StaffIDs = [row.StaffID];
+      if (row.StaffID) this.noticeForm.StaffIDs = [row.StaffID];
       else {
         const StaffIDs = this.noticeForm.StaffIDs;
         this.resetNoticeForm();
@@ -649,39 +961,51 @@ export default {
       if (this.noticeForm.StartAt === "")
         return this.$message.error("请选择宣讲时间");
       this.loading = true;
-      const date = new Date(+new Date(this.noticeForm.StartAt) + 8 * 3600 * 1000);
+      const date = new Date(
+        +new Date(this.noticeForm.StartAt) + 8 * 3600 * 1000
+      );
       this.noticeForm.StartAt = date.toISOString().split(".")[0] + "+08:00";
       this.axios({
         method: "post",
         url: "/campusTalk/publish",
-        headers: { "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization },
-        data: this.noticeForm
-      }).then(() => {
-        this.$message.success("已成功发送宣讲会通知");
-        this.resetNoticeForm();
-        this.noticeDialogVisible = false;
-        this.loading = false;
-      }).catch(() => {
-        this.$message.error("发送宣讲会通知出错啦,请稍后再试");
-        this.loading = false;
-      });
+        headers: {
+          Authorization: JSON.parse(localStorage.getItem("jw_ent_file"))
+            .authorization,
+        },
+        data: this.noticeForm,
+      })
+        .then(() => {
+          this.$message.success("已成功发送宣讲会通知");
+          this.resetNoticeForm();
+          this.noticeDialogVisible = false;
+          this.loading = false;
+        })
+        .catch(() => {
+          this.$message.error("发送宣讲会通知出错啦,请稍后再试");
+          this.loading = false;
+        });
     },
     askRequest(FileID) {
       return new Promise((resolve, reject) => {
         this.axios({
           method: "post",
           url: "/share/addFurtherShareRequest",
-          headers: { "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization },
+          headers: {
+            Authorization: JSON.parse(localStorage.getItem("jw_ent_file"))
+              .authorization,
+          },
           data: {
-            "ExposeFileID": FileID,
-            "Text": this.reqForm.Text,
-            "FromJobID": this.reqForm.FromJobID
-          }
-        }).then(() => {
-          resolve();
-        }).catch((err) => {
-          reject(err);
-        });
+            ExposeFileID: FileID,
+            Text: this.reqForm.Text,
+            FromJobID: this.reqForm.FromJobID,
+          },
+        })
+          .then(() => {
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
       });
     },
     sendAsk() {
@@ -696,38 +1020,48 @@ export default {
             break;
           }
         }
-        this.reqForm.Text = "【" + this.uname + "】亲爱的同学你好，由于您的信息与我们岗位: 【" + JobName + "】的需求高度匹配，为进一步了解，诚邀您提供一份完整的简历。如有意向，请尽快登录学业分享系统分享完整版简历。如有任何问题，请联系HR，联系方式:" + this.reqForm.Text;
+        this.reqForm.Text =
+          "【" +
+          this.uname +
+          "】亲爱的同学你好，由于您的信息与我们岗位: 【" +
+          JobName +
+          "】的需求高度匹配，为进一步了解，诚邀您提供一份完整的简历。如有意向，请尽快登录学业分享系统分享完整版简历。如有任何问题，请联系HR，联系方式:" +
+          this.reqForm.Text;
       }
-      if (this.chossenName === "selected")
-        return this.batchRequest();
+      if (this.chossenName === "selected") return this.batchRequest();
       this.axios({
         method: "post",
         url: "/share/addFurtherShareRequest",
-        headers: { "Authorization": JSON.parse(localStorage.getItem("jw_ent_file")).authorization },
-        data: this.reqForm
-      }).then(() => {
-        this.$message.success("已成功发送详细简历请求");
-        this.resetReqForm();
-        this.reqDialogVisible = false;
-        this.loading = false;
-      }).catch(() => {
-        this.$message.error("请求详细简历出错啦,请稍后再试");
-        this.loading = false;
-      });
-    }
+        headers: {
+          Authorization: JSON.parse(localStorage.getItem("jw_ent_file"))
+            .authorization,
+        },
+        data: this.reqForm,
+      })
+        .then(() => {
+          this.$message.success("已成功发送详细简历请求");
+          this.resetReqForm();
+          this.reqDialogVisible = false;
+          this.loading = false;
+        })
+        .catch(() => {
+          this.$message.error("请求详细简历出错啦,请稍后再试");
+          this.loading = false;
+        });
+    },
   },
   watch: {
     conditions: {
       handler() {
         this.getInfo();
       },
-      deep: true
+      deep: true,
     },
     method: {
       handler() {
         this.getInfo();
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.loading = true;
@@ -735,72 +1069,100 @@ export default {
     this.axios({
       method: "get",
       url: "/info/listMajor",
-    }).then(response => {
-      let units = {}, majors = [{ value: "", label: "不限" }], flag = 1;
-      const data = response.data.data;
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].UnitName in units) {
-          majors[units[data[i].UnitName]].children.push({
-            value: data[i].MajorCode,
-            label: data[i].MajorName
-          });
-        }
-        else {
-          units[[data[i].UnitName]] = flag;
-          majors.push({
-            value: data[i].UnitCode,
-            label: data[i].UnitName,
-            children: [{
+    })
+      .then((response) => {
+        let units = {},
+          majors = [{ value: "", label: "不限" }],
+          flag = 1;
+        const data = response.data.data;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].UnitName in units) {
+            majors[units[data[i].UnitName]].children.push({
               value: data[i].MajorCode,
-              label: data[i].MajorName
-            }]
-          });
-          flag++;
-        }
-      }
-      this.options[0].children = majors;
-      return;
-    }).then(() => {
-      return this.axios({
-        method: "post",
-        url: "/job/lookup",
-        data: { "CompanyCode": this.uname }
-      });
-    }).then(response => {
-      const type = Object.keys(response.data.data);
-      for (let i = 0; i < type.length; i++)
-        for (let j = 0; j < response.data.data[type[i]].length; j++)
-          this.jobList.push(response.data.data[type[i]][j]);
-      return this.axios({
-        method: "get",
-        url: "/job/type/list"
-      });
-    }).then((response) => {
-      const data = response.data.data;
-      let other = null;
-      // this.options[8].children = [];
-      for (let i = 0; i < data.length; i++) {
-        for (let j = 1; j < 5; j++) {
-          if (this.translation[j].value.indexOf(data[i].Name) !== -1) {
-            this.options[8].children[j].children.push({
-              value: data[i].JobTypeCode,
-              label: data[i].Name
+              label: data[i].MajorName,
             });
+          } else {
+            units[[data[i].UnitName]] = flag;
+            majors.push({
+              value: data[i].UnitCode,
+              label: data[i].UnitName,
+              children: [
+                {
+                  value: data[i].MajorCode,
+                  label: data[i].MajorName,
+                },
+              ],
+            });
+            flag++;
           }
         }
-      }
-      if (other)
-        this.jobOpitions[4].push(other);
-      this.getInfo();
-    }).catch(() => {
-      this.$message.error("获取筛选条件失败啦,请稍后重试");
-      this.loading = false;
-    });
-  }
+        this.options[0].children = majors;
+        return;
+      })
+      .then(() => {
+        return this.axios({
+          method: "post",
+          url: "/job/lookup",
+          data: { CompanyCode: this.uname },
+        });
+      })
+      .then((response) => {
+        const type = Object.keys(response.data.data);
+        for (let i = 0; i < type.length; i++)
+          for (let j = 0; j < response.data.data[type[i]].length; j++)
+            this.jobList.push(response.data.data[type[i]][j]);
+        return this.axios({
+          method: "get",
+          url: "/job/type/list",
+        });
+      })
+      .then((response) => {
+        const data = response.data.data;
+        let other = null;
+        // this.options[8].children = [];
+        for (let i = 0; i < data.length; i++) {
+          for (let j = 1; j < 5; j++) {
+            if (this.translation[j].value.indexOf(data[i].Name) !== -1) {
+              this.options[8].children[j].children.push({
+                value: data[i].JobTypeCode,
+                label: data[i].Name,
+              });
+            }
+          }
+        }
+        if (other) this.jobOpitions[4].push(other);
+        this.getInfo();
+      })
+      .catch(() => {
+        this.$message.error("获取筛选条件失败啦,请稍后重试");
+        this.loading = false;
+      });
+  },
 };
 </script>
 
 <style scoped>
+.bottom-btn {
+  margin-bottom: -5px;
+}
+.title__name {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+.recommend-card {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+.recommend-item {
+  margin-bottom: 20px;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .form {
   overflow: auto;
   margin: 10px;
